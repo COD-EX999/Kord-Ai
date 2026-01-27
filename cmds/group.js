@@ -2430,3 +2430,142 @@ cmd: "kickr",
     return await m.sendErr(e)
   }
 })
+
+
+
+
+
+
+kord({
+  on: "all",
+  fromMe: true
+}, async (m, text) => {
+  if (!text) return
+
+  const msg = text.trim().toLowerCase()
+
+  // --- 1. System Triggers ---
+  if (msg === "codex" || msg === "codex!") {
+    return await m.send("_Online. Awaiting command._")
+  }
+
+  if (msg === "codex ping") {
+    const start = Date.now()
+    const sent = await m.send("Pinging...")
+    const ping = Date.now() - start
+    return await sent.edit(`Pong! ${ping}ms`)
+  }
+
+  // --- 2. Security Protocols ---
+  if (msg === "codex lock") {
+    const meta = await getMeta(m.chat)
+    if (!(meta?.participants?.some(p => p.id === m.client.user.id && p.admin))) return await m.send("Access Denied.")
+    await m.client.groupSettingUpdate(m.chat, 'announcement')
+    return await m.send("That's sorted. Group locked.")
+  }
+
+  if (msg.startsWith("codex unlock") || msg === "codex unmute") {
+    const args = text.split(" ").slice(2)
+    const timeInput = args[0]
+
+    if (!timeInput) {
+      await m.client.groupSettingUpdate(m.chat, 'not_announcement')
+      return await m.send("That's sorted. Group unlocked.")
+    }
+
+    const timeValue = parseInt(timeInput)
+    const unit = timeInput.replace(/[0-9]/g, '').toLowerCase()
+    let delay = unit === 'm' ? timeValue * 60 * 1000 : unit === 'h' ? timeValue * 3600 * 1000 : 0
+
+    await m.send(`That's sorted. Group will be unlocked after ${timeInput}.`)
+    setTimeout(async () => {
+      await m.client.groupSettingUpdate(m.chat, 'not_announcement')
+      await m.send("┏━━━━━━━━━━━━━━┓\n┃ --- CODEX TIMER\n┗━━━━━━━━━━━━━━┛\nGroup unlocked automatically.")
+    }, delay)
+    return
+  }
+
+  if (msg.startsWith("codex mute")) {
+    const args = text.split(" ").slice(2)
+    const timeInput = args[0]
+    if (msg.includes("scheduler")) return; 
+
+    const meta = await getMeta(m.chat)
+    if (!(meta?.participants?.some(p => p.id === m.client.user.id && p.admin))) return await m.send("Access Denied.")
+
+    if (!timeInput) {
+      await m.client.groupSettingUpdate(m.chat, 'announcement')
+      return await m.send("That's sorted. Group locked.")
+    }
+
+    const timeValue = parseInt(timeInput)
+    const unit = timeInput.replace(/[0-9]/g, '').toLowerCase()
+    let delay = unit === 'm' ? timeValue * 60 * 1000 : unit === 'h' ? timeValue * 3600 * 1000 : 0
+
+    await m.client.groupSettingUpdate(m.chat, 'announcement')
+    await m.send(`That's sorted. Group locked for ${timeInput}.`)
+    setTimeout(async () => {
+      await m.client.groupSettingUpdate(m.chat, 'not_announcement')
+      await m.send("┏━━━━━━━━━━━━━━┓\n┃ --- CODEX TIMER\n┗━━━━━━━━━━━━━━┛\nGroup unlocked automatically.")
+    }, delay)
+    return
+  }
+
+  // --- 3. Tactical Commands (SMD) ---
+  if (msg.startsWith("codex smd")) {
+    const args = text.split(" ").slice(2)
+    const timeInput = args[0]
+    const content = args.slice(1).join(" ")
+    if (!timeInput || !content) return await m.send("Usage: codex smd [time] [message]")
+
+    const timeValue = parseInt(timeInput)
+    const unit = timeInput.replace(/[0-9]/g, '').toLowerCase()
+    let delay = unit === 's' ? timeValue * 1000 : unit === 'm' ? timeValue * 60 * 1000 : 0
+
+    const sent = await m.send(`That's sorted. Message deployed.\n\n${content}\n\n_(Deleting in ${timeInput})_`)
+    setTimeout(async () => { try { await sent.delete() } catch (e) {} }, delay)
+    return
+  }
+
+  // --- 4. Information & System Diagnostics ---
+  if (msg === "codex mute scheduler stats") {
+    const now = new Date(); const hr = now.getHours()
+    const isNight = hr >= 22 || hr < 6
+    return await m.send(
+      `┏━━━━━━━━━━━━━━┓\n┃ --- 𝙲𝙾𝙳𝙴𝚇 𝚂𝚈𝚂𝚃𝙴𝙼\n┗━━━━━━━━━━━━━━┛\n\n` +
+      `--- 𝚂𝚃𝙰𝚃𝚄𝚂: ${isNight ? "[LOCKED]" : "[OPEN]"}\n` +
+      `--- 𝙼𝙾𝙳𝙴: ${isNight ? "NIGHT_SHIFT" : "DAY_SHIFT"}\n` +
+      `--- 𝙽𝙴𝚇𝚃_𝙴𝚅𝙴𝙽𝚃: ${hr >= 6 && hr < 22 ? "22:00 (MUTE)" : "06:00 (UNMUTE)"}\n` +
+      `--- 𝙰𝚄𝚃𝙾𝙼𝙰𝚃𝙸𝙾𝙽: ACTIVE\n\n_System diagnostics complete._`
+    )
+  }
+
+  if (msg === "codex status") {
+    const uptime = process.uptime()
+    const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60)
+    return await m.send(`That's sorted. Uptime: ${h}h ${m_}m.`)
+  }
+
+  // --- 5. Clean Tech Interface (Help) ---
+  if (msg === "codex help") {
+    return await m.send(
+      `┏━━━━━━━━━━━━━━┓\n` +
+      `┃ --- 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴\n` +
+      `┗━━━━━━━━━━━━━━┛\n\n` +
+      `--- 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻𝚂\n` +
+      `- lock ............. [Close Group]\n` +
+      `- unlock [t] ....... [Open Group]\n` +
+      `- mute [t] ......... [Timed Lock]\n\n` +
+      `--- 𝚃𝙰𝙲𝚃𝙸𝙲𝙰𝙻_𝙾𝙿𝚂\n` +
+      `- smd [t] [msg] .... [Self-Destruct]\n\n` +
+      `--- 𝚂𝚈𝚂𝚃𝙴𝙼_𝙳𝙰𝚃𝙰\n` +
+      `- status ........... [Uptime/Admin]\n` +
+      `- mute scheduler stats\n` +
+      `- group info\n` +
+      `- ping\n\n` +
+      `--- 𝚅𝙴𝚁𝚂𝙸𝙾𝙽: 2.0.1\n` +
+      `--- 𝙰𝚄𝚃𝙷: Verified_Admin`
+    )
+  }
+})
+               
