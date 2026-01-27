@@ -2446,7 +2446,7 @@ kord({
 
   // --- 1. System Triggers ---
   if (msg === "codex" || msg === "codex!") {
-    return await m.send("_Online. Awaiting command._")
+    return await m.send("_All system Online, Awaiting for your command Sir._")
   }
 
   if (msg === "codex ping") {
@@ -2568,4 +2568,7 @@ kord({
     )
   }
 })
-               
+    
+
+
+    
