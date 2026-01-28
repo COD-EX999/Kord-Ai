@@ -1,4 +1,4 @@
-yh/* 
+/* 
  * Copyright © 2025 Mirage
  * This file is part of Kord and is licensed under the GNU GPLv3.
  * And I hope you know what you're doing here.
