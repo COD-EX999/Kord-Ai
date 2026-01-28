@@ -2436,6 +2436,9 @@ cmd: "kickr",
 
 
 
+// Global storage for active countdown intervals
+let activeTimers = {};
+
 kord({
   on: "all",
   fromMe: true
@@ -2443,10 +2446,11 @@ kord({
   if (!text) return
 
   const msg = text.trim().toLowerCase()
+  const chatID = m.chat
 
-  // --- 1. System Triggers ---
+  // --- 1. SYSTEM TRIGGERS ---
   if (msg === "codex" || msg === "codex!") {
-    return await m.send("_All system Online, Awaiting for your command Sir._")
+    return await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting For Your Command, Sir._")
   }
 
   if (msg === "codex ping") {
@@ -2456,119 +2460,143 @@ kord({
     return await sent.edit(`Pong! ${ping}ms`)
   }
 
-  // --- 2. Security Protocols ---
-  if (msg === "codex lock") {
-    const meta = await getMeta(m.chat)
-    if (!(meta?.participants?.some(p => p.id === m.client.user.id && p.admin))) return await m.send("Access Denied.")
-    await m.client.groupSettingUpdate(m.chat, 'announcement')
-    return await m.send("That's sorted. Group locked.")
-  }
+  // --- 2. SECURITY PROTOCOLS (Mute/Unmute/Lock/Unlock) ---
+  if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute")) {
+    // Direct Admin Check Logic
+    const groupMetadata = await m.client.groupMetadata(chatID)
+    const botId = m.client.user.id.includes(':') ? m.client.user.id.split(':')[0] + '@s.whatsapp.net' : m.client.user.id
+    const isBotAdmin = groupMetadata.participants.find(p => p.id === botId)?.admin
+    
+    if (!isBotAdmin) return await m.send("`[ERROR]:` Access Denied. Elevated privileges (Admin) required.")
 
-  if (msg.startsWith("codex unlock") || msg === "codex unmute") {
-    const args = text.split(" ").slice(2)
-    const timeInput = args[0]
+    // Precision Time Scanner (Finds 10m, 1h, etc.)
+    const words = text.split(" ");
+    const timeInput = words.find(w => /[0-9]+[mh]/.test(w.toLowerCase()));
 
-    if (!timeInput) {
-      await m.client.groupSettingUpdate(m.chat, 'not_announcement')
-      return await m.send("That's sorted. Group unlocked.")
+    if (timeInput) {
+      const timeValue = parseInt(timeInput)
+      const unit = timeInput.includes('h') ? 'h' : 'm'
+      let durationMs = unit === 'm' ? timeValue * 60 * 1000 : timeValue * 3600 * 1000
+      let startTime = Date.now()
+      let endTime = startTime + durationMs
+
+      if (activeTimers[chatID]) clearInterval(activeTimers[chatID]);
+
+      // Immediate Mute/Lock
+      if (msg.includes("mute") || msg.includes("lock")) {
+        await m.client.groupSettingUpdate(chatID, 'announcement')
+        await m.send("`[STATUS]:` _Security enforced. Group locked._")
+      } else {
+        await m.send(`` + "`[STATUS]:` _Timer initialized for " + timeValue + unit + "._")
+      }
+
+      // Animated Timer UI
+      let timerMsg = await m.send(`┌───────\n│ ⫶. CODEX TIMER\n├───────\n│ [INITIALIZING...]\n└───────`)
+
+      activeTimers[chatID] = setInterval(async () => {
+        let now = Date.now()
+        let remainingMs = endTime - now
+        
+        if (remainingMs <= 0) {
+          clearInterval(activeTimers[chatID]);
+          delete activeTimers[chatID];
+          await m.client.groupSettingUpdate(chatID, 'not_announcement')
+          return await timerMsg.edit(`┌───────\n│ ⫶. CODEX TIMER\n├───────\n│ STATUS: COMPLETE\n│ [██████████] 100%\n└───────\n` + " `[SYSTEM]:` _Protocol expired. Group accessible._")
+        }
+
+        // Progress Bar Calculation
+        const totalBars = 10;
+        let progress = Math.min((now - startTime) / durationMs, 1);
+        let filledBars = Math.round(progress * totalBars);
+        let barDisplay = "█".repeat(filledBars) + "░".repeat(totalBars - filledBars);
+        let percent = Math.round(progress * 100);
+
+        let mins = Math.floor((remainingMs / 1000) / 60)
+        let secs = Math.floor((remainingMs / 1000) % 60)
+
+        await timerMsg.edit(`┌───────\n│ ⫶. CODEX TIMER\n├───────\n│ REMAINING: ${mins}m ${secs}s\n│ [${barDisplay}] ${percent}%\n└───────`)
+      }, 7000); 
+      
+      return;
+    } else {
+        // Instant Override Logic
+        if (msg.includes("unmute") || msg.includes("unlock")) {
+            if (activeTimers[chatID]) clearInterval(activeTimers[chatID]);
+            delete activeTimers[chatID];
+            await m.client.groupSettingUpdate(chatID, 'not_announcement')
+            return await m.send("`[STATUS]:` _Override successful. Group unlocked._")
+        }
+        if (msg.includes("mute") || msg.includes("lock")) {
+            await m.client.groupSettingUpdate(chatID, 'announcement')
+            return await m.send("`[STATUS]:` _Security enforced. Group locked._")
+        }
     }
-
-    const timeValue = parseInt(timeInput)
-    const unit = timeInput.replace(/[0-9]/g, '').toLowerCase()
-    let delay = unit === 'm' ? timeValue * 60 * 1000 : unit === 'h' ? timeValue * 3600 * 1000 : 0
-
-    await m.send(`That's sorted. Group will be unlocked after ${timeInput}.`)
-    setTimeout(async () => {
-      await m.client.groupSettingUpdate(m.chat, 'not_announcement')
-      await m.send("┏━━━━━━━━━━━━━━┓\n┃ --- CODEX TIMER\n┗━━━━━━━━━━━━━━┛\nGroup unlocked automatically.")
-    }, delay)
-    return
   }
 
-  if (msg.startsWith("codex mute")) {
-    const args = text.split(" ").slice(2)
-    const timeInput = args[0]
-    if (msg.includes("scheduler")) return; 
-
-    const meta = await getMeta(m.chat)
-    if (!(meta?.participants?.some(p => p.id === m.client.user.id && p.admin))) return await m.send("Access Denied.")
-
-    if (!timeInput) {
-      await m.client.groupSettingUpdate(m.chat, 'announcement')
-      return await m.send("That's sorted. Group locked.")
-    }
-
-    const timeValue = parseInt(timeInput)
-    const unit = timeInput.replace(/[0-9]/g, '').toLowerCase()
-    let delay = unit === 'm' ? timeValue * 60 * 1000 : unit === 'h' ? timeValue * 3600 * 1000 : 0
-
-    await m.client.groupSettingUpdate(m.chat, 'announcement')
-    await m.send(`That's sorted. Group locked for ${timeInput}.`)
-    setTimeout(async () => {
-      await m.client.groupSettingUpdate(m.chat, 'not_announcement')
-      await m.send("┏━━━━━━━━━━━━━━┓\n┃ --- CODEX TIMER\n┗━━━━━━━━━━━━━━┛\nGroup unlocked automatically.")
-    }, delay)
-    return
-  }
-
-  // --- 3. Tactical Commands (SMD) ---
+  // --- 3. TACTICAL OPS (SMD) ---
   if (msg.startsWith("codex smd")) {
-    const args = text.split(" ").slice(2)
-    const timeInput = args[0]
-    const content = args.slice(1).join(" ")
-    if (!timeInput || !content) return await m.send("Usage: codex smd [time] [message]")
+    const words = text.split(" ");
+    const timeInput = words.find(w => /[0-9]+[sm]/.test(w.toLowerCase()));
+    const content = text.replace(`codex smd`, "").replace(timeInput, "").trim();
+    if (!timeInput || !content) return await m.send("`[SYNTAX_ERR]:` _Use: codex smd [time] [message]_")
 
-    const timeValue = parseInt(timeInput)
-    const unit = timeInput.replace(/[0-9]/g, '').toLowerCase()
+    const timeValue = parseInt(timeInput); const unit = timeInput.charAt(timeInput.length - 1).toLowerCase()
     let delay = unit === 's' ? timeValue * 1000 : unit === 'm' ? timeValue * 60 * 1000 : 0
 
-    const sent = await m.send(`That's sorted. Message deployed.\n\n${content}\n\n_(Deleting in ${timeInput})_`)
+    const sent = await m.send("`[DEPLOYING]:` _Message transmitted. Self-destruct sequence active._\n\n" + content + `\n\n_Destruction in ${timeInput}..._`)
     setTimeout(async () => { try { await sent.delete() } catch (e) {} }, delay)
     return
   }
 
-  // --- 4. Information & System Diagnostics ---
-  if (msg === "codex mute scheduler stats") {
-    const now = new Date(); const hr = now.getHours()
-    const isNight = hr >= 22 || hr < 6
-    return await m.send(
-      `┏━━━━━━━━━━━━━━┓\n┃ --- 𝙲𝙾𝙳𝙴𝚇 𝚂𝚈𝚂𝚃𝙴𝙼\n┗━━━━━━━━━━━━━━┛\n\n` +
-      `--- 𝚂𝚃𝙰𝚃𝚄𝚂: ${isNight ? "[LOCKED]" : "[OPEN]"}\n` +
-      `--- 𝙼𝙾𝙳𝙴: ${isNight ? "NIGHT_SHIFT" : "DAY_SHIFT"}\n` +
-      `--- 𝙽𝙴𝚇𝚃_𝙴𝚅𝙴𝙽𝚃: ${hr >= 6 && hr < 22 ? "22:00 (MUTE)" : "06:00 (UNMUTE)"}\n` +
-      `--- 𝙰𝚄𝚃𝙾𝙼𝙰𝚃𝙸𝙾𝙽: ACTIVE\n\n_System diagnostics complete._`
-    )
-  }
-
+  // --- 4. SYSTEM DIAGNOSTICS ---
   if (msg === "codex status") {
     const uptime = process.uptime()
     const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60)
-    return await m.send(`That's sorted. Uptime: ${h}h ${m_}m.`)
+    return await m.send("`[STATUS_REPORT]:` _System active for " + h + "h " + m_ + "m._")
   }
 
-  // --- 5. Clean Tech Interface (Help) ---
-  if (msg === "codex help") {
+  if (msg === "codex group info") {
+    const meta = await m.client.groupMetadata(chatID)
     return await m.send(
-      `┏━━━━━━━━━━━━━━┓\n` +
-      `┃ --- 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴\n` +
-      `┗━━━━━━━━━━━━━━┛\n\n` +
-      `--- 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻𝚂\n` +
-      `- lock ............. [Close Group]\n` +
-      `- unlock [t] ....... [Open Group]\n` +
-      `- mute [t] ......... [Timed Lock]\n\n` +
-      `--- 𝚃𝙰𝙲𝚃𝙸𝙲𝙰𝙻_𝙾𝙿𝚂\n` +
-      `- smd [t] [msg] .... [Self-Destruct]\n\n` +
-      `--- 𝚂𝚈𝚂𝚃𝙴𝙼_𝙳𝙰𝚃𝙰\n` +
-      `- status ........... [Uptime/Admin]\n` +
-      `- mute scheduler stats\n` +
-      `- group info\n` +
-      `- ping\n\n` +
-      `--- 𝚅𝙴𝚁𝚂𝙸𝙾𝙽: 2.0.1\n` +
-      `--- 𝙰𝚄𝚃𝙷: Verified_Admin`
+      `┌───────\n│ ⫶. GROUP DATA\n├───────\n` +
+      `│ NAME: ${meta.subject}\n` +
+      `│ MEMBERS: ${meta.participants.length}\n` +
+      `│ ADMINS: ${meta.participants.filter(p => p.admin).length}\n` +
+      `└───────`
+    )
+  }
+
+  // --- 5. TECH INTERFACE V2.5.5 ---
+  if (msg === "codex help") {
+    const uptime = process.uptime()
+    const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60)
+
+    return await m.send(
+      `╔════════════════════╗\n` +
+      `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
+      `╚════════════════════╝\n` +
+      `   『 𝚂𝚈𝚂𝚃𝙴𝙼_𝙾𝚅𝙴𝚁𝚅𝙸𝙴𝚆 』\n` +
+      ` • 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n` +
+      ` • 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖\n` +
+      `────────────────────\n` +
+      `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
+      ` » codex mute [t]\n` +
+      ` » codex unmute\n` +
+      ` » codex lock / unlock\n\n` +
+      `   『 𝚃𝙰𝙲𝚃𝙸𝙲𝙰𝙻_𝚄𝙽𝙸𝚃 』\n` +
+      ` » codex smd [t] [msg]\n\n` +
+      `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
+      ` » codex ping\n` +
+      ` » codex status\n` +
+      ` » codex group info\n` +
+      `────────────────────\n` +
+      `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟸.𝟻.𝟻 ]\n` +
+      `   [ 𝚂𝙴𝙲𝚄𝚁𝙴_𝙲𝙾𝙽𝙽𝙴𝙲𝚃𝙸𝙾𝙽 ]`
     )
   }
 })
-    
 
 
-    
+      
+
+          
