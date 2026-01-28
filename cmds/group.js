@@ -2434,9 +2434,6 @@ cmd: "kickr",
 
 
 
-
-
-
 kord({
   on: "all",
   fromMe: true
@@ -2465,49 +2462,9 @@ kord({
       ` » **𝙲𝚘𝚍𝚎𝚡 𝙰𝙸 𝚜𝚢𝚜𝚝𝚎𝚖 𝚙𝚛𝚘𝚝𝚘𝚌𝚘𝚕𝚜 𝚒𝚗𝚒𝚝𝚒𝚊𝚕𝚒𝚣𝚎𝚍.**\n` +
       ` » **𝙰𝚠𝚊𝚒𝚝𝚒𝚗𝚐 𝚢𝚘𝚞𝚛 𝚘𝚛𝚍𝚎𝚛𝚜, 𝚂𝚒𝚛.**\n` +
       `────────────────────\n` +
+      ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
       ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻 [𝙲𝙾𝙳𝙴𝚇 𝙰𝙸]`
     );
-  }
-
-  // 2. DIAGNOSTICS
-  if (msg === "codex status") {
-    return await m.send(
-      `╔══════════════════════╗\n` +
-      `║                      ║\n` +
-      `  🚀  𝚂𝚈𝚂𝚃𝙴𝙼 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂  \n` +
-      `║                      ║\n` +
-      `╚══════════════════════╝\n` +
-      ` • 𝙰𝙲𝚃𝙸𝚅𝙴_𝚃𝙸𝙼𝙴𝚁: 𝚃𝚁𝚄𝙴\n` +
-      ` • 𝚆𝙰𝚁𝙽𝙸𝙽𝙶_𝚂𝚈𝚂𝚃𝙴𝙼: 𝙰𝙲𝚃𝙸𝚅𝙴\n` +
-      ` • 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙻𝙴𝚅𝙴𝙻: 𝙷𝙸𝙶𝙷\n` +
-      ` ______________________\n\n` +
-      ` » 𝙰𝙻𝙻 𝚂𝚈𝚂𝚃𝙴𝙼𝚂 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n` +
-      ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`
-    );
-  }
-
-  if (msg === "codex ping") {
-    const start = Date.now();
-    const sent = await m.send("`[𝙿𝙸𝙽𝙶𝙸𝙽𝙶]...` ");
-    return await sent.edit(`🚀 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳 🔮: ${Date.now() - start}𝚖𝚜`);
-  }
-
-  if (msg === "codex group info") {
-    try {
-      const metadata = await m.client.groupMetadata(chatJid);
-      return await m.send(
-        `╔══════════════════════╗\n` +
-        `║                      ║\n` +
-        `  📋  𝙶𝚁𝙾𝚄𝙿 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 \n` +
-        `║                      ║\n` +
-        `╚══════════════════════╝\n` +
-        ` • 𝙽𝙰𝙼𝙴: ${metadata.subject}\n` +
-        ` • 𝙼𝙴𝙼𝙱𝙴𝚁𝚂: ${metadata.participants.length}\n` +
-        ` • 𝙲𝚁𝙴𝙰𝚃𝙴𝙳: ${new Date(metadata.creation * 1000).toLocaleDateString()}\n` +
-        ` ______________________\n\n` +
-        ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`
-      );
-    } catch (e) { return await m.send("`[𝙴𝚁𝚁𝙾𝚁]:` _Command restricted to Group Chats._"); }
   }
 
   if (msg === "codex ai system time") {
@@ -2521,7 +2478,8 @@ kord({
       ` • 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽: 𝙻𝚊𝚐𝚘𝚜, 𝙽𝚒𝚐𝚎𝚛𝚒𝚊\n` +
       ` • 𝙲𝚄𝚁𝚁𝙴𝙽𝚃_𝚃𝙸𝙼𝙴: ${lagosTime}\n` +
       ` ______________________\n\n` +
-      ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`
+      ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
+      ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
     );
   }
 
@@ -2552,58 +2510,108 @@ kord({
         ` • 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽: ${input.toUpperCase()}\n` +
         ` • 𝙻𝙾𝙲𝙰𝙻_𝚃𝙸𝙼𝙴: ${remoteTime}\n` +
         ` ______________________\n\n` +
-        ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`
+        ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
+        ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
       );
     } catch (e) { return await m.send("`[𝙴𝚁𝚁𝙾𝚁]:` _Location signal not found._"); }
   }
 
-  if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute")) {
+  if (msg.includes("lock") || msg.includes("unlock") || msg.includes("mute") || msg.includes("unmute")) {
     const flexibleMatch = text.match(/(\d+)\s*(s|m|h)s?/i);
-    const isUnlockAction = msg.includes("unmute") || msg.includes("unlock");
+    const isUnlock = msg.includes("unlock") || msg.includes("unmute");
     const now = new Date();
     const timeStart = now.toLocaleTimeString('en-GB', lagosOptions);
     
+    let statusDisplay, durationText, timeEnd;
+
     if (flexibleMatch) {
       const amount = parseInt(flexibleMatch[1]);
       const unit = flexibleMatch[2].toLowerCase();
+      durationText = `${amount} ${unit}`;
+      statusDisplay = isUnlock ? "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝚄𝙽𝙻𝙾𝙲𝙺" : "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝙻𝙾𝙲𝙺";
       let ms = unit === 's' ? amount * 1000 : unit === 'm' ? amount * 60000 : amount * 3600000;
-      const timeEnd = new Date(now.getTime() + ms).toLocaleTimeString('en-GB', lagosOptions);
+      timeEnd = new Date(now.getTime() + ms).toLocaleTimeString('en-GB', lagosOptions);
 
       if (pendingTasks[chatJid]) clearTimeout(pendingTasks[chatJid]);
 
-      await m.send(
-        `╔════════════════════════╗\n` +
-        `║           ||           ║\n` +
-        `  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝚃𝙸𝙼𝙴𝚁  ◇  \n` +
-        `║           ||           ║\n` +
-        `╚════════════════════════╝\n\n` +
-        ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ⏳  𝙿𝙴𝙽𝙳𝙸𝙽𝙶_${isUnlockAction ? "𝚄𝙽𝙻𝙾𝙲𝙺" : "𝙻𝙾𝙲𝙺"}\n` +
-        ` [ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 ]: ${amount} ${unit}\n` +
-        ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeStart}\n` +
-        ` [ 𝙰𝚄𝚃𝙾-𝚁𝙴𝚅𝙴𝚁𝚃 ]: ${timeEnd}\n` +
-        ` ________________________\n\n` +
-        ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝙴𝙽𝙵𝙾𝚁𝙲𝙴𝙼𝙴𝙽𝚃 𝙲𝙸𝚁𝙲𝙻𝙴 𝙰𝙲𝚃𝙸𝚅𝙴\n` +
-        ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`
-      );
-
       if (ms > 30000) {
         setTimeout(async () => {
-          await m.send(`⚠️ [ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚆𝙰𝚁𝙽𝙸𝙽𝙶 ]**\n» 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝙳 ${isUnlockAction ? "𝚄𝙽𝙻𝙾𝙲𝙺" : "𝙻𝙾𝙲𝙺"} 𝙸𝙽 𝟹𝟶 𝚂𝙴𝙲𝙾𝙽𝙳𝚂.`);
+          await m.send(`⚠️ **[ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚆𝙰𝚁𝙽𝙸𝙽𝙶 ]**\n» 𝚂𝚈𝚂𝚃𝙴𝙼 𝚁𝙴𝚅𝙴𝚁𝚂𝙸𝙾𝙽 𝙸𝙽 𝟹𝟶 𝚂𝙴𝙲𝙾𝙽𝙳𝚂.`);
         }, ms - 30000);
       }
 
       pendingTasks[chatJid] = setTimeout(async () => {
-        await m.client.groupSettingUpdate(chatJid, isUnlockAction ? "not_announcement" : "announcement");
-        await m.send(
-          `𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻 :\n𝚂𝚃𝙰𝚃𝙴_𝚁𝙴𝚅𝙴𝚁𝚂𝙸𝙾𝙽_𝙸𝙽𝙸𝚃𝙸𝙰𝚃𝙴𝙳\n𝚂𝚃𝙰𝚃𝚄𝚂 : 𝙴𝙽𝙳_𝙾𝙵_𝙲𝚈𝙲𝙻𝙴\n\n✓ [ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 ] : ${isUnlockAction ? "𝚄𝙽𝙻𝙾𝙲𝙺" : "𝙻𝙾𝙲𝙺"} complete.`
-        );
+        await m.client.groupSettingUpdate(chatJid, isUnlock ? "not_announcement" : "announcement");
+        await m.send(`𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻 :\n𝚂𝚃𝙰𝚃𝙴_𝚁𝙴𝚅𝙴𝚁𝚂𝙸𝙾𝙽_𝙸𝙽𝙸𝚃𝙸𝙰𝚃𝙴𝙳\n𝚂𝚃𝙰𝚃𝚄𝚂 : 𝙴𝙽𝙳_𝙾𝙵_𝙲𝚈𝙲𝙻𝙴\n\n✓ [ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 ] : Reversion complete.`);
         delete pendingTasks[chatJid];
       }, ms);
-
     } else {
-      
-      await m.client.groupSettingUpdate(chatJid, isUnlockAction ? "not_announcement" : "announcement");
-      return await m.send(`✓ **[ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 ]**: Group ${isUnlockAction ? "𝚄𝙽𝙻𝙾𝙲𝙺𝙴𝙳" : "𝙻𝙾𝙲𝙺𝙴𝙳"} immediately.`);
+      statusDisplay = isUnlock ? "🔓  𝚄𝙽𝙻𝙾𝙲𝙺𝙴𝙳" : "🔒  𝙻𝙾𝙲𝙺𝙴𝙳";
+      durationText = "𝙸𝙽𝚂𝚃𝙰𝙽𝚃";
+      timeEnd = "𝙽/𝙰 (𝙼𝙰𝙽𝚄𝙰𝙻)";
+      await m.client.groupSettingUpdate(chatJid, isUnlock ? "not_announcement" : "announcement");
+    }
+
+    return await m.send(
+      `╔════════════════════════╗\n` +
+      `║           ||           ║\n` +
+      `  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝚃𝙸𝙼𝙴𝚁  ◇  \n` +
+      `║           ||           ║\n` +
+      `╚════════════════════════╝\n\n` +
+      ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ${statusDisplay}\n` +
+      ` [ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 ]: ${durationText}\n` +
+      ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeStart}\n` +
+      ` [ 𝙰𝚄𝚃𝙾-𝚁𝙴𝚅𝙴𝚁𝚃 ]: ${timeEnd}\n` +
+      ` ________________________\n\n` +
+      ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝙴𝙽𝙵𝙾𝚁𝙲𝙴𝙼𝙴𝙽𝚃 𝙲𝙸𝚁𝙲𝙻𝙴 𝙰𝙲𝚃𝙸𝚅𝙴\n` +
+      ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
+      ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
+    );
+  }
+
+  if (msg === "codex status") {
+    return await m.send(
+      `╔══════════════════════╗\n` +
+      `║                      ║\n` +
+      `  🚀  𝚂𝚈𝚂𝚃𝙴𝙼 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂  \n` +
+      `║                      ║\n` +
+      `╚══════════════════════╝\n` +
+      ` • 𝙰𝙲𝚃𝙸𝚅𝙴_𝚃𝙸𝙼𝙴𝚁: 𝚃𝚁𝚄𝙴\n` +
+      ` • 𝚆𝙰𝚁𝙽𝙸𝙽𝙶_𝚂𝚈𝚂𝚃𝙴𝙼: 𝙰𝙲𝚃𝙸𝚅𝙴\n` +
+      ` • 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙻𝙴𝚅𝙴𝙻: 𝙷𝙸𝙶𝙷\n` +
+      ` ______________________\n\n` +
+      ` » 𝙰𝙻𝙻 𝚂𝚈𝚂𝚃𝙴𝙼𝚂 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n` +
+      ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
+      ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
+    );
+  }
+
+  if (msg === "codex group info") {
+    try {
+      const metadata = await m.client.groupMetadata(chatJid);
+      return await m.send(
+        `╔══════════════════════╗\n` +
+        `║                      ║\n` +
+        `  📋  𝙶𝚁𝙾𝚄𝙿 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 \n` +
+        `║                      ║\n` +
+        `╚══════════════════════╝\n` +
+        ` • 𝙽𝙰𝙼𝙴: ${metadata.subject}\n` +
+        ` • 𝙼𝙴𝙼𝙱𝙴𝚁𝚂: ${metadata.participants.length}\n` +
+        ` • 𝙲𝚁𝙴𝙰𝚃𝙴𝙳: ${new Date(metadata.creation * 1000).toLocaleDateString()}\n` +
+        ` ______________________\n\n` +
+        ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
+        ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
+      );
+    } catch (e) { return await m.send("`[𝙴𝚁𝚁𝙾𝚁]:` _Command restricted to Group Chats._"); }
+  }
+
+  if (msg.startsWith("codex smd")) {
+    const match = text.match(/codex smd (\d+)(s|m|h)\s+(.+)/i);
+    if (match) {
+      const time = parseInt(match[1]), unit = match[2].toLowerCase(), content = match[3];
+      let ms = unit === 's' ? time * 1000 : unit === 'm' ? time * 60000 : time * 3600000;
+      await m.send(`╔════════════════════╗\n  ◈ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙼𝙳 𝚃𝙰𝚂𝙺 ◈\n╚════════════════════╝\n • 𝙼𝚂𝙶: ${content}\n • 𝙳𝙴𝙻𝙸𝚅𝙴𝚁𝚈: ${time}${unit}\n────────────────────\n 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`);
+      setTimeout(async () => { await m.send(content); }, ms);
     }
     return;
   }
@@ -2612,20 +2620,9 @@ kord({
     if (pendingTasks[chatJid]) {
       clearTimeout(pendingTasks[chatJid]);
       delete pendingTasks[chatJid];
-      return await m.send(`⚠️ [ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 ]: Scheduled task aborted.`);
+      return await m.send(`⚠️ **[ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 ]**: Scheduled task aborted.`);
     }
     return await m.send(`_No active tasks found._`);
-  }
-
-  if (msg.startsWith("codex smd")) {
-    const match = text.match(/codex smd (\d+)(s|m|h)\s+(.+)/i);
-    if (match) {
-      const time = parseInt(match[1]), unit = match[2].toLowerCase(), content = match[3];
-      let ms = unit === 's' ? time * 1000 : unit === 'm' ? time * 60000 : time * 3600000;
-      await m.send(`╔════════════════════╗\n  ◈ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙼𝙳 𝚃𝙰𝚂𝙺 ◈\n╚════════════════════╝\n • 𝙼𝚂𝙶: ${content}\n • 𝙳𝙴𝙻𝙸𝚅𝙴𝚁𝚈: ${time}${unit}\n────────────────────\n 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`);
-      setTimeout(async () => { await m.send(content); }, ms);
-    }
-    return;
   }
 
   if (msg === "codex help") {
@@ -2637,13 +2634,11 @@ kord({
       ` » codex mute [time]\n` +
       ` » codex unmute [time]\n` +
       ` » codex cancel\n\n` +
-      `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
-      ` » codex status\n` +
+      `   『 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 』\n` +
+      ` » codex group info\n` +
       ` » codex ai system time\n` +
-      ` » codex what's the time in [place]\n` +
-      ` » codex ping\n` +
-      ` » codex group info\n\n` +
-      `   『 𝚃𝙰𝙲𝚃𝙸𝙲𝙰𝙻_𝚄𝙽𝙸𝚃 』\n` +
+      ` » codex what's the time in [place]\n\n` +
+      `   『 𝚃𝙰𝙲𝚃𝙸𝙲𝙰𝙻 』\n` +
       ` » codex smd [time] [msg]\n` +
       `────────────────────\n` +
       ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
@@ -2651,5 +2646,4 @@ kord({
     );
   }
 });
-
-      
+```
