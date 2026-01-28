@@ -2532,7 +2532,6 @@ kord({
     );
   }
 
-  // --- 4. HELP INTERFACE ---
   if (msg === "codex help") {
     return await m.send(
       `╔════════════════════╗\n` +
