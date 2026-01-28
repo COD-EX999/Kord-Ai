@@ -2445,7 +2445,6 @@ kord({
   const msg = text.trim().toLowerCase();
   const chatJid = m.chat;
 
-  
   if (msg === "codex" || msg === "codex!") {
     return await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting for your orders sir._");
   }
@@ -2456,10 +2455,8 @@ kord({
     try {
       
       if (msg.includes("mute") || (msg.includes("lock") && !msg.includes("unlock"))) {
-        // Direct Action: No Admin Gate
         await m.client.groupSettingUpdate(chatJid, "announcement");
-        
-        if (!input) return await m.send("`[STATUS]:` _Security enforced. Group locked._");
+        if (!input) return await m.send("`[STATUS]:` _That's sorted. Group locked manually._");
 
         const timeMatch = input.match(/^(\d+)(s|m|hr|h|d|w)$/i);
         if (!timeMatch) return await m.send("✘ Invalid time format");
@@ -2471,18 +2468,17 @@ kord({
           case 's': ms = amount * 1000; break;
           case 'm': ms = amount * 60 * 1000; break;
           case 'h':
-          case 'hr': ms = amount * 60 * 60 * 1000; break;
-          case 'd': ms = amount * 24 * 60 * 60 * 1000; break;
-          case 'w': ms = amount * 7 * 24 * 60 * 60 * 1000; break;
+          case 'hr': ms = amount * 3600000; break;
+          case 'd': ms = amount * 86400000; break;
+          case 'w': ms = amount * 604800000; break;
         }
 
-        // Persistent Data Storage
         var muteData = await getData("mute_timers") || {};
-        muteData[chatJid] = { unmuteTime: Date.now() + ms, setBy: m.sender, type: "timer_mute" };
+        muteData[chatJid] = { unmuteTime: Date.now() + ms, setBy: m.sender };
         await storeData("mute_timers", muteData);
 
-        // BOX TIMER INTERFACE
-        await m.send(`┌───────\n│ ⫶. CODEX TIMER\n├───────\n│ STATUS: MUTED\n│ DURATION: ${amount}${unit}\n└───────`);
+        await m.send(`_That's sorted. Group muted for ${amount}${unit}._\n\n` +
+                     `┌───────\n│ ⫶. CODEX TIMER\n├───────\n│ STATUS: MUTED\n│ DURATION: ${amount}${unit}\n└───────`);
 
         if (activeTimers.has(chatJid)) clearTimeout(activeTimers.get(chatJid));
         activeTimers.set(chatJid, setTimeout(async () => {
@@ -2500,7 +2496,7 @@ kord({
           var currentData = await getData("mute_timers") || {};
           delete currentData[chatJid];
           await storeData("mute_timers", currentData);
-          return await m.send("✓ Group Unmuted");
+          return await m.send("`[STATUS]:` _That's sorted. Group unlocked._");
         }
 
         const timeMatch = input.match(/^(\d+)(s|m|hr|h|d|w)$/i);
@@ -2513,13 +2509,14 @@ kord({
           case 's': ms = amount * 1000; break;
           case 'm': ms = amount * 60 * 1000; break;
           case 'h':
-          case 'hr': ms = amount * 60 * 60 * 1000; break;
-          case 'd': ms = amount * 24 * 60 * 60 * 1000; break;
-          case 'w': ms = amount * 7 * 24 * 60 * 60 * 1000; break;
+          case 'hr': ms = amount * 3600000; break;
+          case 'd': ms = amount * 86400000; break;
+          case 'w': ms = amount * 604800000; break;
         }
 
         await m.client.groupSettingUpdate(chatJid, "not_announcement");
-        await m.send(`┌───────\n│ ⫶. CODEX TIMER\n├───────\n│ STATUS: UNMUTED\n│ RELOCK IN: ${amount}${unit}\n└───────`);
+        await m.send(`_That's sorted. Group opened for ${amount}${unit}._\n\n` +
+                     `┌───────\n│ ⫶. CODEX TIMER\n├───────\n│ STATUS: UNMUTED\n│ RELOCK IN: ${amount}${unit}\n└───────`);
 
         if (activeTimers.has(chatJid)) clearTimeout(activeTimers.get(chatJid));
         activeTimers.set(chatJid, setTimeout(async () => {
@@ -2544,6 +2541,19 @@ kord({
     return;
   }
 
+  if (msg === "codex status") {
+    const uptime = process.uptime()
+    const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60)
+    return await m.send("`[STATUS_REPORT]:` _System active for " + h + "h " + m_ + "m._")
+  }
+
+  if (msg === "codex ping") {
+    const start = Date.now();
+    const sent = await m.send("Pinging...");
+    const ping = Date.now() - start;
+    return await sent.edit(`Pong! ${ping}ms`);
+  }
+
   if (msg === "codex help") {
     const uptime = process.uptime();
     const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60);
@@ -2557,17 +2567,19 @@ kord({
       `────────────────────\n` +
       `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
       ` » codex mute [t]\n` +
-      ` » codex unmute [t]\n\n` +
+      ` » codex unmute [t]\n` +
+      ` » codex lock / unlock\n\n` +
       `   『 𝚃𝙰𝙲𝚃𝙸𝙲𝙰𝙻_𝚄𝙽𝙸𝚃 』\n` +
       ` » codex smd [t] [msg]\n\n` +
       `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
       ` » codex ping\n` +
       ` » codex status\n` +
       `────────────────────\n` +
-      `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟸.𝟻.𝟻 ]`
+      `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟸.𝟻.𝟻 ]\n` +
+      `   [ 𝚂𝙴𝙲𝚄𝚁𝙴_𝙲𝙾𝙽𝙽𝙴𝙲𝚃𝙸𝙾𝙽 ]`
     );
   }
 });
 
 
-            
+    
