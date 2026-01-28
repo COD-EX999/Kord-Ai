@@ -2434,6 +2434,9 @@ cmd: "kickr",
 
 
 
+
+
+
 kord({
   on: "all",
   fromMe: true
@@ -2466,6 +2469,7 @@ kord({
     );
   }
 
+  // 2. DIAGNOSTICS
   if (msg === "codex status") {
     return await m.send(
       `╔══════════════════════╗\n` +
@@ -2485,7 +2489,7 @@ kord({
   if (msg === "codex ping") {
     const start = Date.now();
     const sent = await m.send("`[𝙿𝙸𝙽𝙶𝙸𝙽𝙶]...` ");
-    return await sent.edit(`🚀 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳 🔮: ${Date.now() - start}𝚖𝚜**`);
+    return await sent.edit(`🚀 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳 🔮: ${Date.now() - start}𝚖𝚜`);
   }
 
   if (msg === "codex group info") {
@@ -2555,54 +2559,62 @@ kord({
 
   if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute")) {
     const flexibleMatch = text.match(/(\d+)\s*(s|m|h)s?/i);
-    const isUnlock = msg.includes("unmute") || msg.includes("unlock");
+    const isUnlockAction = msg.includes("unmute") || msg.includes("unlock");
     const now = new Date();
     const timeStart = now.toLocaleTimeString('en-GB', lagosOptions);
-    
-    let statusDisplay = isUnlock ? "🔓  𝚄𝙽𝙻𝙾𝙲𝙺𝙴𝙳" : "🔒  𝙻𝙾𝙲𝙺𝙴𝙳";
-    if (flexibleMatch) statusDisplay = isUnlock ? "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝚄𝙽𝙻𝙾𝙲𝙺" : "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝙻𝙾𝙲𝙺";
-    
-    let durationText = "𝙽/𝙰", timeEnd = "𝙼𝙰𝙽𝚄𝙰𝙻_𝚁𝙴𝚅𝙴𝚁𝚃";
     
     if (flexibleMatch) {
       const amount = parseInt(flexibleMatch[1]);
       const unit = flexibleMatch[2].toLowerCase();
-      durationText = `${amount} ${unit}`;
       let ms = unit === 's' ? amount * 1000 : unit === 'm' ? amount * 60000 : amount * 3600000;
-      timeEnd = new Date(now.getTime() + ms).toLocaleTimeString('en-GB', lagosOptions);
+      const timeEnd = new Date(now.getTime() + ms).toLocaleTimeString('en-GB', lagosOptions);
 
-      // --- 30 SECOND WARNING PROTOCOL ---
+      if (pendingTasks[chatJid]) clearTimeout(pendingTasks[chatJid]);
+
+      await m.send(
+        `╔════════════════════════╗\n` +
+        `║           ||           ║\n` +
+        `  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝚃𝙸𝙼𝙴𝚁  ◇  \n` +
+        `║           ||           ║\n` +
+        `╚════════════════════════╝\n\n` +
+        ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ⏳  𝙿𝙴𝙽𝙳𝙸𝙽𝙶_${isUnlockAction ? "𝚄𝙽𝙻𝙾𝙲𝙺" : "𝙻𝙾𝙲𝙺"}\n` +
+        ` [ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 ]: ${amount} ${unit}\n` +
+        ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeStart}\n` +
+        ` [ 𝙰𝚄𝚃𝙾-𝚁𝙴𝚅𝙴𝚁𝚃 ]: ${timeEnd}\n` +
+        ` ________________________\n\n` +
+        ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝙴𝙽𝙵𝙾𝚁𝙲𝙴𝙼𝙴𝙽𝚃 𝙲𝙸𝚁𝙲𝙻𝙴 𝙰𝙲𝚃𝙸𝚅𝙴\n` +
+        ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`
+      );
+
       if (ms > 30000) {
         setTimeout(async () => {
-          await m.send(
-            `⚠️ **[ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚆𝙰𝚁𝙽𝙸𝙽𝙶 ]**\n` +
-            `────────────────────\n` +
-            `» 𝚂𝚈𝚂𝚃𝙴𝙼 𝚁𝙴𝚅𝙴𝚁𝚂𝙸𝙾𝙽 𝙸𝙽 𝟹𝟶 𝚂𝙴𝙲𝙾𝙽𝙳𝚂.`
-          );
+          await m.send(`⚠️ [ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚆𝙰𝚁𝙽𝙸𝙽𝙶 ]**\n» 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝙳 ${isUnlockAction ? "𝚄𝙽𝙻𝙾𝙲𝙺" : "𝙻𝙾𝙲𝙺"} 𝙸𝙽 𝟹𝟶 𝚂𝙴𝙲𝙾𝙽𝙳𝚂.`);
         }, ms - 30000);
       }
 
-      setTimeout(async () => {
-        await m.client.groupSettingUpdate(chatJid, isUnlock ? "announcement" : "not_announcement");
-        await m.send(`𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻 :\n𝚂𝚃𝙰𝚃𝙴_𝚁𝙴𝚅𝙴𝚁𝚂𝙸𝙾𝙽_𝙸𝙽𝙸𝚃𝙸𝙰𝚃𝙴𝙳\n𝚂𝚃𝙰𝚃𝚄𝚂 : 𝙴𝙽𝙳_𝙾𝙵_𝙲𝚈𝙲𝙻𝙴\n\n✓ [ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 ] : Reversion complete.`);
+      pendingTasks[chatJid] = setTimeout(async () => {
+        await m.client.groupSettingUpdate(chatJid, isUnlockAction ? "not_announcement" : "announcement");
+        await m.send(
+          `𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻 :\n𝚂𝚃𝙰𝚃𝙴_𝚁𝙴𝚅𝙴𝚁𝚂𝙸𝙾𝙽_𝙸𝙽𝙸𝚃𝙸𝙰𝚃𝙴𝙳\n𝚂𝚃𝙰𝚃𝚄𝚂 : 𝙴𝙽𝙳_𝙾𝙵_𝙲𝚈𝙲𝙻𝙴\n\n✓ [ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 ] : ${isUnlockAction ? "𝚄𝙽𝙻𝙾𝙲𝙺" : "𝙻𝙾𝙲𝙺"} complete.`
+        );
+        delete pendingTasks[chatJid];
       }, ms);
+
+    } else {
+      
+      await m.client.groupSettingUpdate(chatJid, isUnlockAction ? "not_announcement" : "announcement");
+      return await m.send(`✓ **[ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 ]**: Group ${isUnlockAction ? "𝚄𝙽𝙻𝙾𝙲𝙺𝙴𝙳" : "𝙻𝙾𝙲𝙺𝙴𝙳"} immediately.`);
     }
-    
-    await m.client.groupSettingUpdate(chatJid, isUnlock ? "not_announcement" : "announcement");
-    return await m.send(
-      `╔══════════════════════╗\n` +
-      `║                      ║\n` +
-      `  ◈  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝚃𝙸𝙼𝙴𝚁  ◈  \n` +
-      `║                      ║\n` +
-      `╚══════════════════════╝\n` +
-      ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ${statusDisplay}\n` +
-      ` [ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 ]: ${durationText}\n` +
-      ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeStart}\n` +
-      ` [ 𝙰𝚄𝚃𝙾-𝚁𝙴𝚅𝙴𝚁𝚃 ]: ${timeEnd}\n` +
-      ` ______________________\n\n` +
-      ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝙴𝙽𝙵𝙾𝚁𝙲𝙴𝙼𝙴𝙽𝚃 𝙲𝙸𝚁𝙲𝙻𝙴 𝙰𝙲𝚃𝙸𝚅𝙴\n` +
-      ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`
-    );
+    return;
+  }
+
+  if (msg === "codex cancel") {
+    if (pendingTasks[chatJid]) {
+      clearTimeout(pendingTasks[chatJid]);
+      delete pendingTasks[chatJid];
+      return await m.send(`⚠️ [ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 ]: Scheduled task aborted.`);
+    }
+    return await m.send(`_No active tasks found._`);
   }
 
   if (msg.startsWith("codex smd")) {
@@ -2623,7 +2635,8 @@ kord({
       `╚════════════════════╝\n` +
       `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
       ` » codex mute [time]\n` +
-      ` » codex unmute [time]\n\n` +
+      ` » codex unmute [time]\n` +
+      ` » codex cancel\n\n` +
       `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
       ` » codex status\n` +
       ` » codex ai system time\n` +
@@ -2639,5 +2652,4 @@ kord({
   }
 });
 
-
-                                             
+      
