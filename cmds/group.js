@@ -1,4 +1,4 @@
-/* 
+yh/* 
  * Copyright © 2025 Mirage
  * This file is part of Kord and is licensed under the GNU GPLv3.
  * And I hope you know what you're doing here.
@@ -2435,6 +2435,11 @@ cmd: "kickr",
 
 
 
+
+
+
+        
+
 kord({
   on: "all",
   fromMe: true
@@ -2443,121 +2448,138 @@ kord({
   const msg = text.trim().toLowerCase();
   const chatJid = m.chat;
 
+  
   if (msg === "codex" || msg === "codex!") {
-    return await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting For Your Orders, Sir._");
+    return await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting For your orders Sir._");
   }
 
   if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute")) {
-    
-    // Flexible Extraction: Scans the whole sentence for the time (e.g., 10m, 3hr)
-    const flexibleMatch = text.match(/(\d+)(s|m|hr|h|d|w)/i);
+    const flexibleMatch = text.match(/(\d+)\s*(s|sec|m|min|minute|h|hr|hour|d|day|w|week)s?/i);
 
     try {
-      // PRIORITY 1: UNMUTE / UNLOCK (Handles Priority to avoid 'mute' overlap)
+      // PRIORITY 1: UNLOCK / UNMUTE
       if (msg.includes("unmute") || msg.includes("unlock")) {
-        // Clear existing timers in memory
-        if (global.activeTimers.has(chatJid)) { 
-            clearTimeout(global.activeTimers.get(chatJid)); 
+        if (global.activeTimers.get(chatJid)) { 
+            global.activeTimers.get(chatJid).forEach(t => clearTimeout(t)); 
             global.activeTimers.delete(chatJid); 
         }
         
-        // Immediate Server Action: Open Group
         await m.client.groupSettingUpdate(chatJid, "not_announcement");
-        
-        // Clear Database storage
-        let currentData = await getData("mute_timers") || {};
-        delete currentData[chatJid];
-        await storeData("mute_timers", currentData);
-        
-        // Manual Unmute (No time provided)
         if (!flexibleMatch) return await m.send("`[STATUS]:` _That's sorted. Group unlocked._");
 
-        // Scheduled Relock Logic (e.g., "unlock for 10m")
         const amount = parseInt(flexibleMatch[1]);
         const unit = flexibleMatch[2].toLowerCase();
         let ms;
-        switch(unit) {
-            case 's': ms = amount * 1000; break;
-            case 'm': ms = amount * 60000; break;
-            case 'h': case 'hr': ms = amount * 3600000; break;
-            case 'd': ms = amount * 86400000; break;
-            case 'w': ms = amount * 604800000; break;
-        }
-        
-        // Response with Box Timer
-        await m.send(`_That's sorted. Group opened for ${amount}${unit}._\n\n` +
-                     `┌───────\n│ ⫶. CODEX TIMER\n├───────\n│ STATUS: UNMUTED\n│ RELOCK IN: ${amount}${unit}\n└───────`);
+        if (unit.startsWith('s')) ms = amount * 1000;
+        else if (unit.startsWith('m')) ms = amount * 60000;
+        else if (unit.startsWith('h')) ms = amount * 3600000;
+        else if (unit.startsWith('d')) ms = amount * 86400000;
+        else if (unit.startsWith('w')) ms = amount * 604800000;
 
-        // Set the timer to lock the group again
-        global.activeTimers.set(chatJid, setTimeout(async () => {
-            try {
-                await m.client.groupSettingUpdate(chatJid, "announcement");
-                await m.client.sendMessage(chatJid, { text: "✓ Group Muted (Scheduled Relock)" });
-                global.activeTimers.delete(chatJid);
-            } catch (e) {}
+        await m.send(`_That's sorted. Group opened for ${amount} ${unit}._\n\n` +
+                     `╔════════════════════╗\n` +
+                     `  ◈ 𝙲𝙾𝙳𝙴𝚇 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝚃𝙸𝙼𝙴𝚁 ◈\n` +
+                     `╚════════════════════╝\n` +
+                     `  [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: 🔓 𝚄𝙽𝙻𝙾𝙲𝙺𝙴𝙳\n` +
+                     `  [ 𝚁𝙴𝙻𝙾𝙲𝙺 ]: ${amount} ${unit}\n` +
+                     `  [ 𝙰𝙲𝚃𝙸𝚅𝙴 ]: 𝚃𝚁𝚄𝙴\n` +
+                     `  ────────────────────\n` +
+                     `  » 𝚂𝚈𝚂𝚃𝙴𝙼_𝙾𝚅𝙴𝚁𝚁𝙸𝙳𝙴_𝙰𝙲𝚃𝙸𝚅𝙴`);
+
+        let timers = [];
+        if (ms > 35000) {
+            timers.push(setTimeout(async () => {
+                await m.client.sendMessage(chatJid, { text: "⚠️ `[SYSTEM_ALERT]:` _30 seconds remaining. Group will be muted shortly._" });
+            }, ms - 30000));
+        }
+
+        timers.push(setTimeout(async () => {
+            await m.client.groupSettingUpdate(chatJid, "announcement");
+            await m.client.sendMessage(chatJid, { text: "✓ `[STATUS]:` Group Muted (Relock Complete)" });
+            global.activeTimers.delete(chatJid);
         }, ms));
+
+        global.activeTimers.set(chatJid, timers);
         return;
       }
 
+      // PRIORITY 2: MUTE / LOCK
       if (msg.includes("mute") || msg.includes("lock")) {
-        // Immediate Server Action: Close Group
         await m.client.groupSettingUpdate(chatJid, "announcement");
-        
-        // Manual Mute (No time provided)
         if (!flexibleMatch) return await m.send("`[STATUS]:` _That's sorted. Group locked manually._");
 
-        // Timed Mute Logic (e.g., "mute 1hr")
         const amount = parseInt(flexibleMatch[1]);
         const unit = flexibleMatch[2].toLowerCase();
         let ms;
-        switch(unit) {
-          case 's': ms = amount * 1000; break;
-          case 'm': ms = amount * 60000; break;
-          case 'h': case 'hr': ms = amount * 3600000; break;
-          case 'd': ms = amount * 86400000; break;
-          case 'w': ms = amount * 604800000; break;
+        if (unit.startsWith('s')) ms = amount * 1000;
+        else if (unit.startsWith('m')) ms = amount * 60000;
+        else if (unit.startsWith('h')) ms = amount * 3600000;
+        else if (unit.startsWith('d')) ms = amount * 86400000;
+        else if (unit.startsWith('w')) ms = amount * 604800000;
+
+        await m.send(`_That's sorted. Group muted for ${amount} ${unit}._\n\n` +
+                     `╔════════════════════╗\n` +
+                     `  ◈ 𝙲𝙾𝙳𝙴𝚇 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝚃𝙸𝙼𝙴𝚁 ◈\n` +
+                     `╚════════════════════╝\n` +
+                     `  [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: 🔒 𝙼𝚄𝚃𝙴𝙳\n` +
+                     `  [ 𝚃𝙸𝙼𝙴𝚁 ]: ${amount} ${unit}\n` +
+                     `  [ 𝙰𝙲𝚃𝙸𝚅𝙴 ]: 𝚃𝚁𝚄𝙴\n` +
+                     `  ────────────────────\n` +
+                     `  » 𝚂𝙴𝙲𝚄𝚁𝙴_𝙲𝙷𝙰𝙽𝙽𝙴𝙻_𝙴𝙽𝙵𝙾𝚁𝙲𝙴𝙳`);
+
+        if (global.activeTimers.get(chatJid)) {
+            global.activeTimers.get(chatJid).forEach(t => clearTimeout(t));
         }
 
-        // Save to storage for persistence
-        let muteData = await getData("mute_timers") || {};
-        muteData[chatJid] = { unmuteTime: Date.now() + ms, setBy: m.sender };
-        await storeData("mute_timers", muteData);
+        let timers = [];
+        if (ms > 35000) {
+            timers.push(setTimeout(async () => {
+                await m.client.sendMessage(chatJid, { text: "⚠️ `[SYSTEM_ALERT]:` _30 seconds remaining. Group will be unmuted shortly._" });
+            }, ms - 30000));
+        }
 
-        // Response with Box Timer
-        await m.send(`_That's sorted. Group muted for ${amount}${unit}._\n\n` +
-                     `┌───────\n│ ⫶. CODEX TIMER\n├───────\n│ STATUS: MUTED\n│ DURATION: ${amount}${unit}\n└───────`);
-
-        // Clear any lingering timers for this chat
-        if (global.activeTimers.has(chatJid)) clearTimeout(global.activeTimers.get(chatJid));
-        
-        // Set the timer to unlock the group later
-        global.activeTimers.set(chatJid, setTimeout(async () => {
-          try {
-            await m.client.groupSettingUpdate(chatJid, "not_announcement");
-            await m.client.sendMessage(chatJid, { text: "✓ Group Unmuted" });
-            global.activeTimers.delete(chatJid);
-          } catch (e) {}
+        timers.push(setTimeout(async () => {
+          await m.client.groupSettingUpdate(chatJid, "not_announcement");
+          await m.client.sendMessage(chatJid, { text: "✓ `[STATUS]:` Group Unmuted" });
+          global.activeTimers.delete(chatJid);
         }, ms));
+
+        global.activeTimers.set(chatJid, timers);
         return;
       }
     } catch (err) {
-      return await m.send("`[ERROR]:` _Execution failed. Check Bot Admin status._");
+      return await m.send("`[ERROR]:` _Action failed._");
     }
   }
 
   if (msg.startsWith("codex smd")) {
     const smdMatch = text.match(/(\d+)(s|m)/i);
-    if (!smdMatch) return await m.send("`[SYNTAX_ERR]:` _Usage: codex smd 10s [message]_");
+    if (!smdMatch) return await m.send("`[SYNTAX_ERR]`");
     const delay = smdMatch[2].toLowerCase() === 's' ? parseInt(smdMatch[1]) * 1000 : parseInt(smdMatch[1]) * 60000;
     const content = text.replace(/codex smd\s+\d+[sm]/i, "").trim();
-    const sent = await m.send("`[DEPLOYING]:` _Self-destruct sequence active._\n\n" + content + `\n\n_Destruction in ${smdMatch[1]}${smdMatch[2]}..._`);
+    const sent = await m.send("`[DEPLOYING]:` _Self-destruct active._\n\n" + content + `\n\n_Destruction in ${smdMatch[1]}${smdMatch[2]}..._`);
     setTimeout(async () => { try { await sent.delete() } catch (e) {} }, delay);
     return;
   }
+ 
+if (msg === "codex group info") {
+    const meta = await getMeta(m.chat)
+    if (!meta) return await m.send("Unable to fetch group info.")
+
+    const members = meta.participants.length
+    const admins = meta.participants.filter(p => p.admin).length
+
+    return await m.send(
+      `Group Information\n\n` +
+      `• Name: ${meta.subject}\n` +
+      `• Members: ${members}\n` +
+      `• Admins: ${admins}`
+    )
+  }
 
   if (msg === "codex help") {
-    const uptime = process.uptime()
-    const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60)
+    const uptime = process.uptime();
+    const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60);
     return await m.send(
       `╔════════════════════╗\n` +
       `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
@@ -2567,20 +2589,20 @@ kord({
       ` • 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖\n` +
       `────────────────────\n` +
       `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
-      ` » codex mute [t]\n` +
-      ` » codex unmute [t]\n` +
+      ` » codex mute [time]\n` +
+      ` » codex unmute [time]\n` +
       ` » codex lock / unlock\n\n` +
       `   『 𝚃𝙰𝙲𝚃𝙸𝙲𝙰𝙻_𝚄𝙽𝙸𝚃 』\n` +
-      ` » codex smd [t] [msg]\n\n` +
+      ` » codex smd [time] [msg]\n\n` +
       `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
       ` » codex ping\n` +
       ` » codex status\n` +
-      `────────────────────\n` +
-      `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟸.𝟻.𝟻 ]\n` +
+     ` » codex group info\n` + `────────────────────\n` +
+      `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟸.𝟼.𝟶 ]\n` +
       `   [ 𝚂𝙴𝙲𝚄𝚁𝙴_𝙲𝙾𝙽𝙽𝙴𝙲𝚃𝙸𝙾𝙽 ]`
-    )
+    );
   }
 });
 
 
-      
+          
