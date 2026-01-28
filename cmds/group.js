@@ -2434,6 +2434,8 @@ cmd: "kickr",
 
 
 
+
+
 kord({
   on: "all",
   fromMe: true
@@ -2443,14 +2445,14 @@ kord({
   const chatJid = m.chat;
 
   if (msg === "codex" || msg === "codex!") {
-    return await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting For your orders Sir._");
+    return await m.send("`[SYSTEM_MSG]:` _CODEX AI protocols initialized. Awaiting your orders Sir._");
   }
 
   if (msg === "codex ping") {
     const start = Date.now();
     const sent = await m.send("`[PINGING]:` _Testing connection latency..._");
     const end = Date.now();
-    return await sent.edit(`*🚀 𝙲𝙾𝙳𝙴𝚇 𝚂𝙿𝙴𝙴𝙳: ${end - start}𝚖𝚜*`);
+    return await sent.edit(`*🚀 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳: ${end - start}𝚖𝚜*`);
   }
 
   if (msg === "codex status") {
@@ -2459,11 +2461,11 @@ kord({
       `╔════════════════════╗\n` +
       `   🛰️ 𝚂𝚈𝚂𝚃𝙴𝙼 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂\n` +
       `╚════════════════════╝\n` +
-      ` • 𝙰𝙲𝚃𝙸𝚅𝙴_𝚃𝙸𝙼𝙴𝚁: ${hasTimer ? "𝚃𝚁𝚄𝙴" : "𝙵𝙰𝙻𝚂𝙴"}\n` +
+      ` • 𝙲𝙾𝚁𝙴_𝚂𝚃𝙰𝚃𝚄𝚂: ${hasTimer ? "𝚃𝙸𝙼𝙴𝚁_𝙰𝙲𝚃𝙸𝚅𝙴" : "𝙸𝙳𝙻𝙴"}\n` +
       ` • 𝚆𝙰𝚁𝙽𝙸𝙽𝙶_𝚂𝚈𝚂𝚃𝙴𝙼: 𝙰𝙲𝚃𝙸𝚅𝙴\n` +
       ` • 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙻𝙴𝚅𝙴𝙻: 𝙷𝙸𝙶𝙷\n` +
       `────────────────────\n` +
-      ` » 𝙰𝙻𝙻 𝚂𝚈𝚂𝚃𝙴𝙼𝚂 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻`
+      ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻`
     );
   }
 
@@ -2475,7 +2477,7 @@ kord({
       if (!flexibleMatch) {
          const action = (msg.includes("unmute") || msg.includes("unlock")) ? "not_announcement" : "announcement";
          await m.client.groupSettingUpdate(chatJid, action);
-         return await m.send(`\`[STATUS]:\` _Group ${action === "announcement" ? "Locked" : "Unlocked"} manually._`);
+         return await m.send(`\`[STATUS]:\` _Group ${action === "announcement" ? "Locked" : "Unlocked"} by CODEX AI._`);
       }
 
       const amount = parseInt(flexibleMatch[1]);
@@ -2493,45 +2495,58 @@ kord({
 
       let timers = [];
 
+      // --- MODE A: SCHEDULER (Wait then Act) ---
       if (isScheduled) {
         const action = (msg.includes("unlock") || msg.includes("unmute")) ? "not_announcement" : "announcement";
         const actionText = action === "announcement" ? "LOCK" : "UNLOCK";
 
-        await m.send(`_Request Received._\n\n┌───────\n│ ⫶. CODEX SCHEDULER\n├───────\n│ ACTION: ${actionText}\n│ DELAY: ${amount} ${unit}\n│ STATUS: PENDING\n└───────`);
+        // NEW TECH-DESIGNED SCHEDULER BOX
+        await m.send(`_Initializing Delayed Protocol..._\n\n` +
+                     `◢◤ 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝚁 ◥◣\n` +
+                     `────────────────────\n` +
+                     ` ❯ 𝚃𝙰𝚁𝙶𝙴𝚃: ${actionText}\n` +
+                     ` ❯ 𝙳𝙴𝙻𝙰𝚈: ${amount} ${unit}\n` +
+                     ` ❯ 𝚃𝙷𝚁𝙴𝙰𝙳: 𝚂𝙴𝙲𝚄𝚁𝙴\n` +
+                     ` ❯ 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙿𝙴𝙽𝙳𝙸𝙽𝙶...\n` +
+                     `────────────────────\n` +
+                     `◥◣  𝚂𝚈𝚂𝚃𝙴𝙼 𝚂𝚃𝙰𝙽𝙳𝙸𝙽𝙶 𝙱𝚈  ◢◤`);
 
         if (ms > 35000) {
           timers.push(setTimeout(async () => {
-            await m.client.sendMessage(chatJid, { text: `⚠️ [SYSTEM]: 30s remaining before scheduled ${actionText}.` });
+            await m.client.sendMessage(chatJid, { text: `⚠️ \`[CODEX_AI_ALERT]\`: _T-Minus 30s before scheduled ${actionText}._` });
           }, ms - 30000));
         }
 
         timers.push(setTimeout(async () => {
           await m.client.groupSettingUpdate(chatJid, action);
-          await m.client.sendMessage(chatJid, { text: `✓ [SYSTEM]: Group has been ${actionText}ED as scheduled.` });
+          await m.client.sendMessage(chatJid, { text: `✓ \`[SYSTEM_SUCCESS]\`: Group ${actionText}ED by Scheduler.` });
           global.activeTimers.delete(chatJid);
         }, ms));
 
-      } else {
+      } 
+      // --- MODE B: SECURITY TIMER (Act Now then Revert) ---
+      else {
         const isUnlock = msg.includes("unmute") || msg.includes("unlock");
         await m.client.groupSettingUpdate(chatJid, isUnlock ? "not_announcement" : "announcement");
         
-        await m.send(`_Action deployed for ${amount} ${unit}._\n\n` +
+        await m.send(`_Deploying Security Layer..._\n\n` +
                      `╔════════════════════╗\n` +
                      `  ◈ 𝙲𝙾𝙳𝙴𝚇 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝚃𝙸𝙼𝙴𝚁 ◈\n` +
                      `╚════════════════════╝\n` +
                      `  [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ${isUnlock ? "🔓 𝚄𝙽𝙻𝙾𝙲𝙺𝙴𝙳" : "🔒 𝙼𝚄𝚃𝙴𝙳"}\n` +
                      `  [ 𝚃𝙸𝙼𝙴𝚁 ]: ${amount} ${unit}\n` +
-                     `  ────────────────────`);
+                     `  ────────────────────\n` +
+                     `  » 𝙴𝙽𝙵𝙾𝚁𝙲𝙴𝙼𝙴𝙽𝚃_𝙰𝙲𝚃𝙸𝚅𝙴`);
         
         if (ms > 35000) {
           timers.push(setTimeout(async () => {
-            await m.client.sendMessage(chatJid, { text: `⚠️ [SYSTEM]: 30 seconds remaining. Reverting shortly.` });
+            await m.client.sendMessage(chatJid, { text: `⚠️ \`[CODEX_AI_WARNING]\`: _30s remaining. Reverting group state shortly._` });
           }, ms - 30000));
         }
 
         timers.push(setTimeout(async () => {
           await m.client.groupSettingUpdate(chatJid, isUnlock ? "announcement" : "not_announcement");
-          await m.client.sendMessage(chatJid, { text: `✓ [STATUS]: Timer expired. Group ${isUnlock ? "Muted" : "Unmuted"}.` });
+          await m.client.sendMessage(chatJid, { text: `✓ \`[STATUS]\`: Timer expired. Security protocol restored.` });
           global.activeTimers.delete(chatJid);
         }, ms));
       }
@@ -2550,6 +2565,7 @@ kord({
     return;
   }
 
+  // --- 4. GROUP INFO ---
   if (msg === "codex group info") {
     try {
       const meta = await m.client.groupMetadata(chatJid);
@@ -2564,10 +2580,10 @@ kord({
     const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60);
     return await m.send(
       `╔════════════════════╗\n` +
-      `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
+      `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
       `╚════════════════════╝\n` +
       `   『 𝚂𝚈𝚂𝚃𝙴𝙼_𝙾𝚅𝙴𝚁𝚅𝙸𝙴𝚆 』\n` +
-      ` • 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n` +
+      ` • 𝙰𝙸_𝚂𝚃𝙰𝚃𝚄𝚂: 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n` +
       ` • 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖\n` +
       `────────────────────\n` +
       `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
@@ -2582,10 +2598,10 @@ kord({
       ` » codex smd [time] [msg]\n` +
       `────────────────────\n` +
       `   𝙲𝙾𝙳𝙴𝚇 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
-      `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟹.𝟸.𝟸 ]`
+      `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟹.𝟸.𝟻 ]`
     );
   }
 });
 
 
-          
+      
