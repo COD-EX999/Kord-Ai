@@ -2432,14 +2432,6 @@ cmd: "kickr",
 })
 
 
-
-
-
-
-
-
-        
-
 kord({
   on: "all",
   fromMe: true
@@ -2503,7 +2495,6 @@ kord({
         return;
       }
 
-      // PRIORITY 2: MUTE / LOCK
       if (msg.includes("mute") || msg.includes("lock")) {
         await m.client.groupSettingUpdate(chatJid, "announcement");
         if (!flexibleMatch) return await m.send("`[STATUS]:` _That's sorted. Group locked manually._");
