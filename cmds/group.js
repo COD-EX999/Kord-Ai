@@ -2434,13 +2434,8 @@ cmd: "kickr",
 
 
 
-
-
-// Global storage for active countdown intervals
-let activeTimers = {};
-
 kord({
-  on: "all",
+  on: "all", 
   fromMe: true
 }, async (m, text) => {
   if (!text) return
@@ -2448,7 +2443,7 @@ kord({
   const msg = text.trim().toLowerCase()
   const chatID = m.chat
 
-  // --- 1. SYSTEM TRIGGERS ---
+  
   if (msg === "codex" || msg === "codex!") {
     return await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting For Your Command, Sir._")
   }
@@ -2460,16 +2455,11 @@ kord({
     return await sent.edit(`Pong! ${ping}ms`)
   }
 
-  // --- 2. SECURITY PROTOCOLS (Mute/Unmute/Lock/Unlock) ---
   if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute")) {
-    // Direct Admin Check Logic
     const groupMetadata = await m.client.groupMetadata(chatID)
     const botId = m.client.user.id.includes(':') ? m.client.user.id.split(':')[0] + '@s.whatsapp.net' : m.client.user.id
     const isBotAdmin = groupMetadata.participants.find(p => p.id === botId)?.admin
-    
     if (!isBotAdmin) return await m.send("`[ERROR]:` Access Denied. Elevated privileges (Admin) required.")
-
-    // Precision Time Scanner (Finds 10m, 1h, etc.)
     const words = text.split(" ");
     const timeInput = words.find(w => /[0-9]+[mh]/.test(w.toLowerCase()));
 
@@ -2481,8 +2471,6 @@ kord({
       let endTime = startTime + durationMs
 
       if (activeTimers[chatID]) clearInterval(activeTimers[chatID]);
-
-      // Immediate Mute/Lock
       if (msg.includes("mute") || msg.includes("lock")) {
         await m.client.groupSettingUpdate(chatID, 'announcement')
         await m.send("`[STATUS]:` _Security enforced. Group locked._")
@@ -2490,7 +2478,6 @@ kord({
         await m.send(`` + "`[STATUS]:` _Timer initialized for " + timeValue + unit + "._")
       }
 
-      // Animated Timer UI
       let timerMsg = await m.send(`┌───────\n│ ⫶. CODEX TIMER\n├───────\n│ [INITIALIZING...]\n└───────`)
 
       activeTimers[chatID] = setInterval(async () => {
@@ -2504,7 +2491,6 @@ kord({
           return await timerMsg.edit(`┌───────\n│ ⫶. CODEX TIMER\n├───────\n│ STATUS: COMPLETE\n│ [██████████] 100%\n└───────\n` + " `[SYSTEM]:` _Protocol expired. Group accessible._")
         }
 
-        // Progress Bar Calculation
         const totalBars = 10;
         let progress = Math.min((now - startTime) / durationMs, 1);
         let filledBars = Math.round(progress * totalBars);
@@ -2519,7 +2505,7 @@ kord({
       
       return;
     } else {
-        // Instant Override Logic
+      
         if (msg.includes("unmute") || msg.includes("unlock")) {
             if (activeTimers[chatID]) clearInterval(activeTimers[chatID]);
             delete activeTimers[chatID];
@@ -2533,7 +2519,6 @@ kord({
     }
   }
 
-  // --- 3. TACTICAL OPS (SMD) ---
   if (msg.startsWith("codex smd")) {
     const words = text.split(" ");
     const timeInput = words.find(w => /[0-9]+[sm]/.test(w.toLowerCase()));
@@ -2548,7 +2533,6 @@ kord({
     return
   }
 
-  // --- 4. SYSTEM DIAGNOSTICS ---
   if (msg === "codex status") {
     const uptime = process.uptime()
     const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60)
@@ -2566,7 +2550,6 @@ kord({
     )
   }
 
-  // --- 5. TECH INTERFACE V2.5.5 ---
   if (msg === "codex help") {
     const uptime = process.uptime()
     const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60)
