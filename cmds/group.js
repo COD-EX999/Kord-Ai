@@ -2460,29 +2460,103 @@ kord({
       ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`
     );
   }
-
-  if (msg.startsWith("codex what's the time") || msg.startsWith("codex what is the time")) {
-    let input = msg.split("in ").pop().replace(/[?]/g, "").trim().toLowerCase();
-    const zoneMap = { "ghana": "Africa/Accra", "uk": "Europe/London", "usa": "America/New_York", "uae": "Asia/Dubai", "nigeria": "Africa/Lagos" };
-    try {
-      let foundZone = zoneMap[input] || null;
-      if (!foundZone) {
-        const continents = ["Africa", "America", "Asia", "Europe", "Australia", "Pacific"];
-        const formattedLoc = input.charAt(0).toUpperCase() + input.slice(1);
-        for (const continent of continents) {
-          try {
-            let testZone = `${continent}/${formattedLoc.replace(/ /g, "_")}`;
-            new Intl.DateTimeFormat('en-GB', { timeZone: testZone }).format(new Date());
-            foundZone = testZone; break;
-          } catch (e) { continue; }
-        }
-      }
-      if (!foundZone) throw new Error();
-      const remoteTime = new Date().toLocaleTimeString('en-GB', { timeZone: foundZone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-      return await m.send(`╔══════════════════════╗\n║                      ║\n   🌍 𝙲𝙾𝙳𝙴𝚇 𝙶𝙻𝙾𝙱𝙰𝙻 𝙸𝙽𝚃𝙴𝙻 \n║                      ║\n╚══════════════════════╝\n • 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽: ${input.toUpperCase()}\n • 𝙻𝙾𝙲𝙰𝙻_𝚃𝙸𝙼𝙴: ${remoteTime}\n ______________________\n\n » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`);
-    } catch (e) { return await m.send("`[𝙴𝚁𝚁𝙾𝚁]:` _Location signal not found._"); }
+  
+  if (msg === "codex status") {
+    const uptime = process.uptime();
+    const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60), s = Math.floor(uptime % 60);
+    const hasTimer = global.activeTimers.has(chatJid) ? "𝙰𝙲𝚃𝙸𝚅𝙴 ⚡" : "𝙸𝙳𝙻𝙴 💤";
+    return await m.send(`╔════════════════════════╗\n  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 : 𝚂𝚃𝙰𝚃𝚄𝚂  ◇  \n╚════════════════════════╝\n\n • 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙻𝙾𝙾𝙿: ${hasTimer}\n • 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖 ${s}𝚜\n • 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽: 𝙻𝙰𝙶𝙾𝚂_𝙽𝙶\n ________________________\n\n » 𝙲𝙾𝙳𝙴𝚇_𝙰𝙸_𝚂𝚈𝚂𝚃𝙴𝙼_𝙾𝙽𝙻𝙸𝙽𝙴`);
   }
+  
+  if (msg === "codex cancel" || msg === "codex stop") {
+    if (global.activeTimers.has(chatJid)) {
+      global.activeTimers.get(chatJid).forEach(t => clearTimeout(t));
+      global.activeTimers.delete(chatJid);
+      return await m.send(`╔════════════════════════╗\n  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 : 𝙰𝙱𝙾𝚁𝚃_𝚃𝙰𝚂𝙺  ◇  \n╚════════════════════════╝\n\n • 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙰𝙻𝙻_𝚃𝙸𝙼𝙴𝚁𝚂_𝙺𝙸𝙻𝙻𝙴𝙳\n • 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙻𝙾𝙾𝙿: 𝙸𝙳𝙻𝙴\n ________________________\n\n » 𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻_𝙳𝙴𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳`);
+    } else {
+      return await m.send("`[SYSTEM_MSG]:` _No active timers found in this sector._");
+    }
+  }
+  
+if (msg.includes("good morning") || msg.includes("good afternoon") || msg.includes("good night")) {
+    let targetTime = new Date().toLocaleTimeString('en-GB', lagosOptions);
+    let greeting = msg.includes("morning") ? "🌅 𝙶𝙾𝙾𝙳 𝙼𝙾𝚁𝙽𝙸𝙽𝙶, 𝚂𝙸𝚁! " : msg.includes("afternoon") ? "☀️ 𝙶𝙾𝙾𝙳 𝙰𝙵𝚃𝙴𝚁𝙽𝙾𝙾𝙽, 𝚂𝙸𝚁! " : "🌙 𝙶𝙾𝙾𝙳 𝙽𝙸𝙶𝙷𝚃, 𝚂𝙸𝚁! ";
 
+    return await m.send(
+      `╔══════════════════════╗\n  ${greeting}\n╚══════════════════════╝\n\n [ 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽 ]: 𝙻𝙰𝙶𝙾𝚂, 𝙽𝙸𝙶𝙴𝚁𝙸𝙰\n [ 𝚂𝚈𝚂𝚃𝙴𝙼_𝚃𝙸𝙼𝙴 ]: ${targetTime}\n ______________________\n\n » 𝙲𝙾𝙳𝙴𝚇_𝙰𝙸_𝚃𝙸𝙼𝙴_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻`
+    );
+}
+  if (msg.includes("what's the time in") || msg.includes("ai time in") || msg === "codex ai system time") {
+    let location = "𝙻𝙰𝙶𝙾𝚂, 𝙽𝙸𝙶𝙴𝚁𝙸𝙰";
+    let timeZone = "Africa/Lagos";
+    
+    if (msg.includes(" in ")) {
+      const countryInput = msg.split(" in ")[1].replace(/[?!]/g, "").trim().toLowerCase();
+      const tzMap = {
+        "ghana": "Africa/Accra", "usa": "America/New_York", "uk": "Europe/London", "london": "Europe/London",
+        "canada": "America/Toronto", "germany": "Europe/Berlin", "france": "Europe/Paris", "china": "Asia/Shanghai",
+        "india": "Asia/Kolkata", "japan": "Asia/Tokyo", "russia": "Europe/Moscow", "brazil": "America/Sao_Paulo",
+        "south africa": "Africa/Johannesburg", "egypt": "Africa/Cairo", "dubai": "Asia/Dubai", "spain": "Europe/Madrid"
+      };
+      
+      if (tzMap[countryInput]) {
+        timeZone = tzMap[countryInput];
+        location = countryInput.toUpperCase();
+      } else {
+        location = countryInput.toUpperCase();
+        timeZone = "UTC";
+      }
+    }
+
+    const localTime = new Date().toLocaleTimeString('en-GB', { 
+      timeZone: timeZone, 
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
+    });
+
+    return await m.send(
+      `╔══════════════════════════════╗\n` +
+      `║              ||              ║\n` +
+      `  🌍 𝙲𝙾𝙳𝙴𝚇 𝙶𝙻𝙾𝙱𝙰𝙻 𝙸𝙽𝚃𝙴𝙻 \n` +
+      `║              ||              ║\n` +
+      `╚══════════════════════════════╝\n\n` +
+      ` • 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽: ${location}\n` +
+      ` • 𝙻𝙾𝙲𝙰𝙻_𝚃𝙸𝙼𝙴: ${localTime}\n` +
+      ` ______________________________\n\n` +
+      ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`
+    );
+  }
+         
+if (msg.includes("after") && (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute"))) {
+    const flexibleMatch = text.match(/(\d+)\s*(s|sec|m|min|minute|h|hr|hour|d|day|w|week)s?/i);
+    if (flexibleMatch) {
+      const amount = parseInt(flexibleMatch[1]);
+      const unit = flexibleMatch[2].toLowerCase();
+      const isUnlock = msg.includes("unmute") || msg.includes("unlock");
+      
+      let ms;
+      if (unit.startsWith('s')) ms = amount * 1000;
+      else if (unit.startsWith('m')) ms = amount * 60000;
+      else if (unit.startsWith('h')) ms = amount * 3600000;
+      else if (unit.startsWith('d')) ms = amount * 86400000;
+      else if (unit.startsWith('w')) ms = amount * 604800000;
+
+      const now = Date.now();
+      const timeStart = new Date(now).toLocaleTimeString('en-GB', lagosOptions);
+      const timeExec = new Date(now + ms).toLocaleTimeString('en-GB', lagosOptions);
+
+      await m.send(`╔════════════════════════╗\n║           ||           ║\n  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝚃𝙸𝙼𝙴𝚁  ◇  \n║           ||           ║\n╚════════════════════════╝\n\n [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ${isUnlock ? "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝚄𝙽𝙻𝙾𝙲𝙺" : "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝙻𝙾𝙲𝙺"}\n [ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 ]: ${amount} ${unit}\n [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeStart}\n [ 𝙴𝚇𝙴𝙲𝚄𝚃𝙸𝙾𝙽 ]: ${timeExec}\n ________________________\n\n » 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝙳_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻_𝙰𝙲𝚃𝙸𝚅𝙴`);
+
+      if (global.activeTimers.get(chatJid)) { global.activeTimers.get(chatJid).forEach(t => clearTimeout(t)); }
+      let timers = [setTimeout(async () => {
+          await m.client.groupSettingUpdate(chatJid, isUnlock ? "not_announcement" : "announcement");
+          await m.client.sendMessage(chatJid, { text: `✓ \`[STATUS]:\` Scheduled ${isUnlock ? "Unlock" : "Lock"} complete.` });
+          global.activeTimers.delete(chatJid);
+      }, ms)];
+      global.activeTimers.set(chatJid, timers);
+      return;
+    }
+}
+  
   if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute")) {
     const flexibleMatch = text.match(/(\d+)\s*(s|sec|m|min|minute|h|hr|hour|d|day|w|week)s?/i);
     const now = Date.now();
