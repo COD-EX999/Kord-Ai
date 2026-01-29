@@ -2447,7 +2447,7 @@ kord({
     minute: '2-digit', 
     second: '2-digit', 
     hour12: true 
-  };
+  }
 
   if (msg === "codex") {
     const emojis = ["💫", "🪐", "🪄", "🥏", "🚀", "🔮"];
@@ -2464,10 +2464,9 @@ kord({
       `────────────────────\n` +
       ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
       ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻 [𝙲𝙾𝙳𝙴𝚇 𝙰𝙸]`
-    );
+    )
   }
 
-  
 if (msg === "ping" || msg === "codex ping") {
     try {
         const start = Date.now();
@@ -2496,13 +2495,12 @@ if (msg === "ping" || msg === "codex ping") {
             ` ________________________\n\n` +
             ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙿𝚃𝙸𝙼𝙸𝚉𝙴𝙳\n` +
             ` 𝙰𝙻𝙻 𝚂𝚈𝚂𝚃𝙴𝙼𝚂 𝙵𝚄𝙽𝙲𝚃𝙸𝙾𝙽𝙰𝙻`
-        );
+        )
     } catch (e) {
         console.log("Ping Error:", e);
     }
 }
 
-  
   if (msg === "codex ai system time") {
     const lagosTime = new Date().toLocaleTimeString('en-GB', lagosOptions);
     return await m.send(
@@ -2516,7 +2514,7 @@ if (msg === "ping" || msg === "codex ping") {
       ` ______________________\n\n` +
       ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
       ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
-    );
+    )
   }
 
   if (msg.startsWith("codex what's the time in") || msg.startsWith("codex what is the time in")) {
@@ -2535,6 +2533,7 @@ if (msg === "ping" || msg === "codex ping") {
           } catch (e) { continue; }
         }
       }
+     
       if (!foundZone) throw new Error();
       const remoteTime = new Date().toLocaleTimeString('en-GB', { timeZone: foundZone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
       return await m.send(
@@ -2548,13 +2547,9 @@ if (msg === "ping" || msg === "codex ping") {
         ` ______________________\n\n` +
         ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
         ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
-      );
+      )
     } catch (e) { return await m.send("`[𝙴𝚁𝚁𝙾𝚁]:` _Location signal not found._"); }
   }
-
-  
-const msg = text.toLowerCase();
-const chatJid = m.chat;
 
 if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute")) {
 
@@ -2610,7 +2605,7 @@ if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || ms
                 ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝙴𝙽𝙵𝙾𝚁𝙲𝙴𝙼𝙴𝙽𝚃 𝙲𝙸𝚁𝙲𝙻𝙴 𝙰𝙲𝚃𝙸𝚅𝙴\n` +
                 ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
                 ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
-            );
+              }
 
             if (ms > 35000) {
                 timers.push(setTimeout(async () => {
@@ -2644,7 +2639,7 @@ if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || ms
                 ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝙴𝙽𝙵𝙾𝚁𝙲𝙴𝙼𝙴𝙽𝚃 𝙲𝙸𝚁𝙲𝙻𝙴 𝙰𝙲𝚃𝙸𝚅𝙴\n` +
                 ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
                 ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
-            );
+              }
             
             if (ms > 35000) {
                 timers.push(setTimeout(async () => {
@@ -2663,7 +2658,7 @@ if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || ms
     } catch (err) { 
         console.log(err);
     }
-}
+})
 
   if (msg === "codex status") {
     return await m.send(
@@ -2679,7 +2674,7 @@ if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || ms
       ` » 𝙰𝙻𝙻 𝚂𝚈𝚂𝚃𝙴𝙼𝚂 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n` +
       ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
       ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
-    );
+    )
   }
 
   if (msg === "codex group info") {
@@ -2697,7 +2692,7 @@ if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || ms
         ` ______________________\n\n` +
         ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
         ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
-      );
+      )
     } catch (e) { return await m.send("`[𝙴𝚁𝚁𝙾𝚁]:` _Command restricted to Group Chats._"); }
   }
 
@@ -2739,7 +2734,7 @@ if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || ms
       `────────────────────\n` +
       ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
       ` 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
-    );
+    )
   }
 });
 
