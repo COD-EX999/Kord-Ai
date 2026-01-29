@@ -2493,37 +2493,44 @@ if (msg.includes("good morning") || msg.includes("good afternoon") || msg.includ
     if (msg.includes(" in ")) {
       const countryInput = msg.split(" in ")[1].replace(/[?!]/g, "").trim().toLowerCase();
       const tzMap = {
-        "ghana": "Africa/Accra", "usa": "America/New_York", "uk": "Europe/London", "london": "Europe/London",
-        "canada": "America/Toronto", "germany": "Europe/Berlin", "france": "Europe/Paris", "china": "Asia/Shanghai",
-        "india": "Asia/Kolkata", "japan": "Asia/Tokyo", "russia": "Europe/Moscow", "brazil": "America/Sao_Paulo",
-        "south africa": "Africa/Johannesburg", "egypt": "Africa/Cairo", "dubai": "Asia/Dubai", "spain": "Europe/Madrid"
+        "nigeria": "Africa/Lagos", "ghana": "Africa/Accra", "kenya": "Africa/Nairobi", "south africa": "Africa/Johannesburg", "egypt": "Africa/Cairo", "morocco": "Africa/Casablanca", "ethiopia": "Africa/Addis_Ababa", "algeria": "Africa/Algiers", "senegal": "Africa/Dakar", "uganda": "Africa/Kampala", "zimbabwe": "Africa/Harare",
+        "china": "Asia/Shanghai", "india": "Asia/Kolkata", "japan": "Asia/Tokyo", "south korea": "Asia/Seoul", "pakistan": "Asia/Karachi", "indonesia": "Asia/Jakarta", "thailand": "Asia/Bangkok", "vietnam": "Asia/Ho_Chi_Minh", "philippines": "Asia/Manila", "dubai": "Asia/Dubai", "uae": "Asia/Dubai", "saudi arabia": "Asia/Riyadh", "qatar": "Asia/Qatar",
+        "uk": "Europe/London", "united kingdom": "Europe/London", "london": "Europe/London", "france": "Europe/Paris", "germany": "Europe/Berlin", "italy": "Europe/Rome", "spain": "Europe/Madrid", "russia": "Europe/Moscow", "turkey": "Europe/Istanbul", "netherlands": "Europe/Amsterdam", "switzerland": "Europe/Zurich", "sweden": "Europe/Stockholm", "portugal": "Europe/Lisbon", "greece": "Europe/Athens",
+        "usa": "America/New_York", "united states": "America/New_York", "canada": "America/Toronto", "mexico": "America/Mexico_City", "jamaica": "America/Jamaica", "cuba": "America/Havana", "panama": "America/Panama",
+        "brazil": "America/Sao_Paulo", "argentina": "America/Argentina/Buenos_Aires", "colombia": "America/Bogota", "chile": "America/Santiago", "peru": "America/Lima", "venezuela": "America/Caracas",
+        "australia": "Australia/Sydney", "new zealand": "Pacific/Auckland", "fiji": "Pacific/Fiji", "papua new guinea": "Pacific/Port_Moresby",
+        "antarctica": "Antarctica/Vostok"
       };
-      
-      if (tzMap[countryInput]) {
-        timeZone = tzMap[countryInput];
+
+      if (countryMap[countryInput]) {
+        timeZone = countryMap[countryInput];
         location = countryInput.toUpperCase();
       } else {
-        location = countryInput.toUpperCase();
-        timeZone = "UTC";
+        location = countryInput.toUpperCase() + " (𝚅𝙴𝚁𝙸𝙵𝙸𝙴𝙳_𝚄𝚃𝙲)";
+        timeZone = "UTC"; 
       }
     }
 
-    const localTime = new Date().toLocaleTimeString('en-GB', { 
-      timeZone: timeZone, 
-      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
-    });
+    try {
+      const localTime = new Date().toLocaleTimeString('en-GB', { 
+        timeZone: timeZone, 
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
+      });
 
-    return await m.send(
-      `╔══════════════════════════════╗\n` +
-      `║              ||              ║\n` +
-      `  🌍 𝙲𝙾𝙳𝙴𝚇 𝙶𝙻𝙾𝙱𝙰𝙻 𝙸𝙽𝚃𝙴𝙻 \n` +
-      `║              ||              ║\n` +
-      `╚══════════════════════════════╝\n\n` +
-      ` • 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽: ${location}\n` +
-      ` • 𝙻𝙾𝙲𝙰𝙻_𝚃𝙸𝙼𝙴: ${localTime}\n` +
-      ` ______________________________\n\n` +
-      ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`
-    );
+      return await m.send(
+        `╔══════════════════════════════╗\n` +
+        `║              ||              ║\n` +
+        `  🌍 𝙲𝙾𝙳𝙴𝚇 𝙶𝙻𝙾𝙱𝙰𝙻 𝙸𝙽𝚃𝙴𝙻 \n` +
+        `║              ||              ║\n` +
+        `╚══════════════════════════════╝\n\n` +
+        ` • 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽: ${location}\n` +
+        ` • 𝙻𝙾𝙲𝙰𝙻_𝚃𝙸𝙼𝙴: ${localTime}\n` +
+        ` ______________________________\n\n` +
+        ` » 𝚂𝚈𝚂𝚃𝙴𝙼_𝙲𝙻𝙾𝙲𝙺_𝚅𝙴𝚁𝙸𝙵𝙸𝙴𝙳`
+      );
+    } catch (e) {
+      return await m.send("`[ERROR]:` _Sector clock sync failed._");
+    }
   }
          
 if (msg.includes("after") && (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute"))) {
