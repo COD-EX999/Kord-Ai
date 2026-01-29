@@ -2432,20 +2432,14 @@ cmd: "kickr",
 })
 
 
+  
 kord({
   on: "all",
   fromMe: true
 }, async (m, text) => {
-  if (!text) return;
-  const msg = text.trim().toLowerCase();
-  const chatJid = m.chat;
-  const lagosOptions = { 
-    timeZone: 'Africa/Lagos', 
-    hour: '2-digit', 
-    minute: '2-digit', 
-    second: '2-digit', 
-    hour12: true 
-  };
+  if (!text) return
+
+  const msg = text.trim().toLowerCase()
 
   if (msg === "codex") {
     const emojis = ["💫", "🪐", "🪄", "🥏", "🚀", "🔮"];
@@ -2486,6 +2480,7 @@ kord({
     return await sent.edit(`🚀 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳 🔮: ${Date.now() - start}𝚖𝚜**`);
   }
 
+  // --- 3. GROUP INFO ---
   if (msg === "codex group info") {
     try {
       const metadata = await m.client.groupMetadata(chatJid);
@@ -2551,6 +2546,33 @@ kord({
     }
   }
 
+  if (msg === "codex help") {
+    return await m.send(
+      `╔════════════════════════╗\n` +
+      `║           ||           ║\n` +
+      `  ◇   𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴  ◇  \n` +
+      `║           ||           ║\n` +
+      `╚════════════════════════╝\n\n` +
+      `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
+      ` » codex mute [time]\n` +
+      ` » codex unmute [time]\n` +
+      ` » codex after [time] lock\n` +
+      ` » codex after [time] unlock\n` +
+      ` » codex cancel\n\n` +
+      `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
+      ` » codex status\n` +
+      ` » codex diagnostics\n` +
+      ` » codex ping\n\n` +
+      `   『 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 』\n` +
+      ` » codex group info\n` +
+      ` » codex ai system time\n` +
+      ` » codex what is the time in [place]\n\n` +
+      ` ________________________\n\n` +
+      ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
+      ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
+    );
+  }
+
   if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute")) {
     const flexibleMatch = text.match(/(\d+)\s*(s|sec|m|min|h|hr)s?/i);
     const isUnlock = msg.includes("unmute") || msg.includes("unlock");
@@ -2608,32 +2630,7 @@ kord({
     global.activeTimers.set(chatJid, timers);
     return;
   }
-)
+});
 
-  if (msg === "codex help") {
-    return await m.send(
-      `╔════════════════════════╗\n` +
-      `║           ||           ║\n` +
-      `  ◇   𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 : 𝙼𝙰𝙽𝚄𝙰𝙻   ◇  \n` +
-      `║           ||           ║\n` +
-      `╚════════════════════════╝\n\n` +
-      `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
-      ` » codex mute [time]\n` +
-      ` » codex unmute [time]\n` +
-      ` » codex after [time] lock\n` +
-      ` » codex after [time] unlock\n` +
-      ` » codex cancel\n\n` +
-      `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
-      ` » codex status\n` +
-      ` » codex diagnostics\n` +
-      ` » codex ping\n\n` +
-      `   『 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 』\n` +
-      ` » codex group info\n` +
-      ` » codex ai system time\n` +
-      ` » codex what is the time in [place]\n` +
-      ` » codex smd [time] [message]\n\n` +
-      ` ________________________\n\n` +
-      ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴\n` +
-      ` 𝚟𝚎𝚛𝚜𝚒𝚘𝚗: 𝟹.𝟿.𝟻`
-      }
-})
+
+          
