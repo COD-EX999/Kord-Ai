@@ -2493,47 +2493,40 @@ if (msg.includes("good morning") || msg.includes("good afternoon") || msg.includ
     if (msg.includes(" in ")) {
       const countryInput = msg.split(" in ")[1].replace(/[?!]/g, "").trim().toLowerCase();
       const tzMap = {
-        "nigeria": "Africa/Lagos", "ghana": "Africa/Accra", "kenya": "Africa/Nairobi", "south africa": "Africa/Johannesburg", "egypt": "Africa/Cairo", "morocco": "Africa/Casablanca", "ethiopia": "Africa/Addis_Ababa", "algeria": "Africa/Algiers", "senegal": "Africa/Dakar", "uganda": "Africa/Kampala", "zimbabwe": "Africa/Harare",
-        "china": "Asia/Shanghai", "india": "Asia/Kolkata", "japan": "Asia/Tokyo", "south korea": "Asia/Seoul", "pakistan": "Asia/Karachi", "indonesia": "Asia/Jakarta", "thailand": "Asia/Bangkok", "vietnam": "Asia/Ho_Chi_Minh", "philippines": "Asia/Manila", "dubai": "Asia/Dubai", "uae": "Asia/Dubai", "saudi arabia": "Asia/Riyadh", "qatar": "Asia/Qatar",
-        "uk": "Europe/London", "united kingdom": "Europe/London", "london": "Europe/London", "france": "Europe/Paris", "germany": "Europe/Berlin", "italy": "Europe/Rome", "spain": "Europe/Madrid", "russia": "Europe/Moscow", "turkey": "Europe/Istanbul", "netherlands": "Europe/Amsterdam", "switzerland": "Europe/Zurich", "sweden": "Europe/Stockholm", "portugal": "Europe/Lisbon", "greece": "Europe/Athens",
-        "usa": "America/New_York", "united states": "America/New_York", "canada": "America/Toronto", "mexico": "America/Mexico_City", "jamaica": "America/Jamaica", "cuba": "America/Havana", "panama": "America/Panama",
-        "brazil": "America/Sao_Paulo", "argentina": "America/Argentina/Buenos_Aires", "colombia": "America/Bogota", "chile": "America/Santiago", "peru": "America/Lima", "venezuela": "America/Caracas",
-        "australia": "Australia/Sydney", "new zealand": "Pacific/Auckland", "fiji": "Pacific/Fiji", "papua new guinea": "Pacific/Port_Moresby",
-        "antarctica": "Antarctica/Vostok"
+        "ghana": "Africa/Accra", "usa": "America/New_York", "uk": "Europe/London", "london": "Europe/London",
+        "canada": "America/Toronto", "germany": "Europe/Berlin", "france": "Europe/Paris", "china": "Asia/Shanghai",
+        "india": "Asia/Kolkata", "japan": "Asia/Tokyo", "russia": "Europe/Moscow", "brazil": "America/Sao_Paulo",
+        "south africa": "Africa/Johannesburg", "egypt": "Africa/Cairo", "dubai": "Asia/Dubai", "spain": "Europe/Madrid"
       };
-
-      if (countryMap[countryInput]) {
-        timeZone = countryMap[countryInput];
+      
+      if (tzMap[countryInput]) {
+        timeZone = tzMap[countryInput];
         location = countryInput.toUpperCase();
       } else {
-        location = countryInput.toUpperCase() + " (𝚅𝙴𝚁𝙸𝙵𝙸𝙴𝙳_𝚄𝚃𝙲)";
-        timeZone = "UTC"; 
+        location = countryInput.toUpperCase();
+        timeZone = "UTC";
       }
     }
 
-    try {
-      const localTime = new Date().toLocaleTimeString('en-GB', { 
-        timeZone: timeZone, 
-        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
-      });
+    const localTime = new Date().toLocaleTimeString('en-GB', { 
+      timeZone: timeZone, 
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
+    });
 
-      return await m.send(
-        `╔══════════════════════════════╗\n` +
-        `║              ||              ║\n` +
-        `  🌍 𝙲𝙾𝙳𝙴𝚇 𝙶𝙻𝙾𝙱𝙰𝙻 𝙸𝙽𝚃𝙴𝙻 \n` +
-        `║              ||              ║\n` +
-        `╚══════════════════════════════╝\n\n` +
-        ` • 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽: ${location}\n` +
-        ` • 𝙻𝙾𝙲𝙰𝙻_𝚃𝙸𝙼𝙴: ${localTime}\n` +
-        ` ______________________________\n\n` +
-        ` » 𝚂𝚈𝚂𝚃𝙴𝙼_𝙲𝙻𝙾𝙲𝙺_𝚅𝙴𝚁𝙸𝙵𝙸𝙴𝙳`
-      );
-    } catch (e) {
-      return await m.send("`[ERROR]:` _Sector clock sync failed._");
-    }
+    return await m.send(
+      `╔══════════════════════════════╗\n` +
+      `║              ||              ║\n` +
+      `  🌍 𝙲𝙾𝙳𝙴𝚇 𝙶𝙻𝙾𝙱𝙰𝙻 𝙸𝙽𝚃𝙴𝙻 \n` +
+      `║              ||              ║\n` +
+      `╚══════════════════════════════╝\n\n` +
+      ` • 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽: ${location}\n` +
+      ` • 𝙻𝙾𝙲𝙰𝙻_𝚃𝙸𝙼𝙴: ${localTime}\n` +
+      ` ______________________________\n\n` +
+      ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`
+    );
   }
   
-if (global.mutedUsers.has(sender)) {
+    if (global.mutedUsers.has(sender)) {
     const userData = global.mutedUsers.get(sender);
     try {
       await m.client.sendMessage(chatJid, { delete: m.key }); // Ghost Deletion
@@ -2551,46 +2544,52 @@ if (global.mutedUsers.has(sender)) {
     } catch (e) {
       console.log("Ghost purge failed - Bot needs Admin permissions");
     }
-}
+  }
 
-if (m.fromMe && (msg.includes("mute this user") || msg.includes("unmute this user"))) {
+  if (m.fromMe && (msg.includes("mute this user") || msg.includes("unmute this user"))) {
+    
     const target = m.quoted ? m.quoted.sender : (m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : null);
+    
     if (!target) return await m.send("`[ERROR]:` _Target not detected. Please reply to the user's message or tag them._");
 
-    const lagosOptions = { timeZone: 'Africa/Lagos', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
     const isUnmuteAction = msg.includes("unmute");
     const isPending = msg.includes("after");
+    const timeMatch = text.match(/(\d+)\s*(s|sec|m|min|minute|h|hr|hour|d|day)s?/i);
+    const displayDuration = timeMatch ? timeMatch[0].toLowerCase() : "𝙸𝙽𝙳𝙴𝙵𝙸𝙽𝙸𝚃𝙴";
     
-    const timeMatch = text.match(/(\d+)(s|m|hr|h|d|w)/i);
-    
-    let milliseconds = 0;
-    let timeDisplay = "𝙸𝙽𝙳𝙴𝙵𝙸𝙽𝙸𝚃𝙴";
-
+    let ms = 0;
     if (timeMatch) {
       const amount = parseInt(timeMatch[1]);
       const unit = timeMatch[2].toLowerCase();
-      
-      switch(unit) {
-        case 's': milliseconds = amount * 1000; timeDisplay = `${amount} second${amount > 1 ? 's' : ''}`; break;
-        case 'm': milliseconds = amount * 60 * 1000; timeDisplay = `${amount} minute${amount > 1 ? 's' : ''}`; break;
-        case 'h':
-        case 'hr': milliseconds = amount * 60 * 60 * 1000; timeDisplay = `${amount} hour${amount > 1 ? 's' : ''}`; break;
-        case 'd': milliseconds = amount * 24 * 60 * 60 * 1000; timeDisplay = `${amount} day${amount > 1 ? 's' : ''}`; break;
-        case 'w': milliseconds = amount * 7 * 24 * 60 * 60 * 1000; timeDisplay = `${amount} week${amount > 1 ? 's' : ''}`; break;
-      }
+      ms = unit.startsWith('s') ? amount * 1000 : unit.startsWith('m') ? amount * 60000 : unit.startsWith('h') ? amount * 3600000 : amount * 86400000;
     }
 
     const targetTag = `@${target.split('@')[0]}`;
     const now = Date.now();
     const timeActivated = new Date(now).toLocaleTimeString('en-GB', lagosOptions);
-    const timeExec = new Date(now + milliseconds).toLocaleTimeString('en-GB', lagosOptions);
+    const timeExec = new Date(now + ms).toLocaleTimeString('en-GB', lagosOptions);
 
-    if (isPending && milliseconds > 0) {
-      const pendingBox = `╔════════════════════════╗\n║           ||           ║\n  ◇  𝙲𝙾𝙳𝙴𝚇 𝚄𝚂𝙴𝚁 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝚁  ◇  \n║           ||           ║\n╚════════════════════════╝\n\n [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ${isUnmuteAction ? "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝙰𝙲𝙲𝙴𝚂𝚂" : "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝚁𝙴𝚂𝚃𝚁𝙸𝙲𝚃𝙸𝙾𝙽"}\n [ 𝙳𝙴𝙻𝙰𝚈 ]: ${timeDisplay}\n [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n [ 𝙴𝚇𝙴𝙲𝚄𝚃𝙸𝙾𝙽 ]: ${timeExec}\n ________________________\n\n » 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝙳_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻_𝙰𝙲𝚃𝙸𝚅𝙴`;
+    if (isPending && ms > 0) {
+      const pendingBox = 
+        `╔════════════════════════╗\n` +
+        `║           ||           ║\n` +
+        `  ◇  𝙲𝙾𝙳𝙴𝚇 𝚄𝚂𝙴𝚁 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝚁  ◇  \n` +
+        `║           ||           ║\n` +
+        `╚════════════════════════╝\n\n` +
+        ` [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n` +
+        ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ${isUnmuteAction ? "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝙰𝙲𝙲𝙴𝚂𝚂" : "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝚁𝙴𝚂𝚃𝚁𝙸𝙲𝚃𝙸𝙾𝙽"}\n` +
+        ` [ 𝙳𝙴𝙻𝙰𝚈 ]: ${displayDuration}\n` +
+        ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n` +
+        ` [ 𝙴𝚇𝙴𝙲𝚄𝚃𝙸𝙾𝙽 ]: ${timeExec}\n` +
+        ` ________________________\n\n` +
+        ` » 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝙳_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻_𝙰𝙲𝚃𝙸𝚅𝙴`;
+
       await m.send(pendingBox, { mentions: [target] });
 
-      if (milliseconds > 30000) {
-        setTimeout(async () => { await m.send(`⚠️ **[𝟹𝟶𝚜 𝚆𝙰𝚁𝙽𝙸𝙽𝙶]**: ${targetTag}, your protocol change will execute in 30 seconds.`, { mentions: [target] }); }, milliseconds - 30000);
+      if (ms > 30000) {
+        setTimeout(async () => {
+          await m.send(`⚠️ **[𝟹𝟶𝚜 𝚆𝙰𝚁𝙽𝙸𝙽𝙶]**: ${targetTag}, your protocol change will execute in 30 seconds.`, { mentions: [target] });
+        }, ms - 30000);
       }
 
       setTimeout(async () => {
@@ -2601,32 +2600,59 @@ if (m.fromMe && (msg.includes("mute this user") || msg.includes("unmute this use
            global.mutedUsers.set(target, { strikes: 0, expiry: Date.now() });
            await m.send(`🚫 [RESTRICTION ENFORCED]: ${targetTag} is now muted.`, { mentions: [target] });
         }
-      }, milliseconds);
+      }, ms);
       return;
     }
 
     if (!isUnmuteAction) {
-      global.mutedUsers.set(target, { strikes: 0, expiry: Date.now() + milliseconds });
-      const muteBox = `╔════════════════════════╗\n║           ||           ║\n  ◇  𝙲𝙾𝙳𝙴𝚇 𝚄𝚂𝙴𝚁 𝚁𝙴𝚂𝚃𝚁𝙸𝙲𝚃𝙸𝙾𝙽  ◇  \n║           ||           ║\n╚════════════════════════╝\n\n [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: 🚫 𝙼𝚄𝚃𝙴𝙳\n [ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 ]: ${timeDisplay}\n [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n [ 𝚁𝙴𝚅𝙴𝚁𝚃_𝙰𝚃 ]: ${milliseconds > 0 ? timeExec : "𝙽/𝙰"}\n ________________________\n\n » 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙻𝙾𝙲𝙺_𝙰𝙲𝚃𝙸𝚅𝙴`;
+      global.mutedUsers.set(target, { strikes: 0, expiry: Date.now() + ms });
+      const muteBox = 
+        `╔════════════════════════╗\n` +
+        `║           ||           ║\n` +
+        `  ◇  𝙲𝙾𝙳𝙴𝚇 𝚄𝚂𝙴𝚁 𝚁𝙴𝚂𝚃𝚁𝙸𝙲𝚃𝙸𝙾𝙽  ◇  \n` +
+        `║           ||           ║\n` +
+        `╚════════════════════════╝\n\n` +
+        ` [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n` +
+        ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: 🚫 𝙼𝚄𝚃𝙴𝙳\n` +
+        ` [ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 ]: ${displayDuration}\n` +
+        ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n` +
+        ` [ 𝚁𝙴𝚅𝙴𝚁𝚃_𝙰𝚃 ]: ${ms > 0 ? timeExec : "𝙽/𝙰"}\n` +
+        ` ________________________\n\n` +
+        ` » 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙻𝙾𝙲𝙺_𝙰𝙲𝚃𝙸𝚅𝙴`;
+
       await m.send(muteBox, { mentions: [target] });
 
-      if (milliseconds > 30000) {
-        setTimeout(async () => { await m.send(`🕒 **[𝟹𝟶𝚜 𝚆𝙰𝚁𝙽𝙸𝙽𝙶]**: ${targetTag}, your restriction expires in 30 seconds.`, { mentions: [target] }); }, milliseconds - 30000);
+      if (ms > 30000) {
+        setTimeout(async () => {
+          await m.send(`🕒 **[𝟹𝟶𝚜 𝚆𝙰𝚁𝙽𝙸𝙽𝙶]**: ${targetTag}, your restriction expires in 30 seconds.`, { mentions: [target] });
+        }, ms - 30000);
       }
 
-      if (milliseconds > 0) {
+      if (ms > 0) {
         setTimeout(async () => {
           global.mutedUsers.delete(target);
           await m.send(`✓ [AUTO-REVERT]: ${targetTag} - Restriction lifted.`, { mentions: [target] });
-        }, milliseconds);
+        }, ms);
       }
     } else {
       global.mutedUsers.delete(target);
-      const unmuteBox = `╔════════════════════════╗\n║           ||           ║\n  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙲𝙲𝙴𝚂𝚂 𝚁𝙴𝚂𝚃𝙾𝚁𝙴𝙳  ◇  \n║           ||           ║\n╚════════════════════════╝\n\n [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ✅ 𝙰𝙲𝙲𝙴𝚂𝚂_𝙶𝚁𝙰𝙽𝚃𝙴𝙳\n [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n [ 𝚁𝙴𝙰𝚂𝙾𝙽 ]: 𝙼𝙰𝙽𝚄𝙰𝙻_𝙾𝚅𝙴𝚁𝚁𝙸𝙳𝙴\n ________________________\n\n » 𝚄𝚂𝙴𝚁_𝙰𝙲𝙲𝙴𝚂𝚂_𝚁𝙴𝙸𝙽𝚂𝚃𝙰𝚃𝙴𝙳`;
+      const unmuteBox = 
+        `╔════════════════════════╗\n` +
+        `║           ||           ║\n` +
+        `  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙲𝙲𝙴𝚂𝚂 𝚁𝙴𝚂𝚃𝙾𝚁𝙴𝙳  ◇  \n` +
+        `║           ||           ║\n` +
+        `╚════════════════════════╝\n\n` +
+        ` [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n` +
+        ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ✅ 𝙰𝙲𝙲𝙴𝚂𝚂_𝙶𝚁𝙰𝙽𝚃𝙴𝙳\n` +
+        ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n` +
+        ` [ 𝚁𝙴𝙰𝚂𝙾𝙽 ]: 𝙼𝙰𝙽𝚄𝙰𝙻_𝙾𝚅𝙴𝚁𝚁𝙸𝙳𝙴\n` +
+        ` ________________________\n\n` +
+        ` » 𝚄𝚂𝙴𝚁_𝙰𝙲𝙲𝙴𝚂𝚂_𝚁𝙴𝙸𝙽𝚂𝚃𝙰𝚃𝙴𝙳`;
+
       return await m.send(unmuteBox, { mentions: [target] });
     }
-}
-
+  }
+  
 if (msg.includes("after") && (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute"))) {
     const flexibleMatch = text.match(/(\d+)\s*(s|sec|m|min|minute|h|hr|hour|d|day|w|week)s?/i);
     if (flexibleMatch) {
@@ -2786,15 +2812,7 @@ if (msg.includes("after") && (msg.includes("mute") || msg.includes("lock") || ms
     return;
   }
 
-  if (msg === "codex ping") {
-    const start = Date.now();
-    const uptime = process.uptime();
-    const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60), s = Math.floor(uptime % 60);
-    const sent = await m.send("`[𝙿𝙸𝙽𝙶𝙸𝙽𝙶]...` ");
-    return await sent.edit(`🚀 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳 🔮: ${Date.now() - start}𝚖𝚜\n⏳ 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖 ${s}𝚜`);
-  }
-
-  if (msg === "codex help") {
+if (msg === "codex help") {
     const uptime = process.uptime();
     const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60);
     return await m.send(
