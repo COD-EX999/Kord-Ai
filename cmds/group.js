@@ -2525,134 +2525,7 @@ if (msg.includes("good morning") || msg.includes("good afternoon") || msg.includ
       ` » 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴`
     );
   }
-  
-    if (global.mutedUsers.has(sender)) {
-    const userData = global.mutedUsers.get(sender);
-    try {
-      await m.client.sendMessage(chatJid, { delete: m.key }); // Ghost Deletion
-      userData.strikes = (userData.strikes || 0) + 1;
-      global.mutedUsers.set(sender, userData);
-
-      if (userData.strikes >= 5) {
-        await m.send(`🚨 [𝚃𝙴𝚁𝙼𝙸𝙽𝙰𝚃𝙸𝙾𝙽]: @${sender.split('@')[0]} exceeded 5 violations. Removing from sector...`, { mentions: [sender] });
-        await m.client.groupParticipantsUpdate(chatJid, [sender], "remove");
-        global.mutedUsers.delete(sender);
-        return;
-      }
-
-      return await m.send(`⚠️ [𝚂𝙷𝙸𝙴𝙻𝙳_𝙰𝙲𝚃𝙸𝚅𝙴]: @${sender.split('@')[0]}, your message was purged. \n[𝚅𝙸𝙾𝙻𝙰𝚃𝙸𝙾𝙽𝚂]: ${userData.strikes}/5`, { mentions: [sender] });
-    } catch (e) {
-      console.log("Ghost purge failed - Bot needs Admin permissions");
-    }
-  }
-
-  if (m.fromMe && (msg.includes("mute this user") || msg.includes("unmute this user"))) {
-    
-    const target = m.quoted ? m.quoted.sender : (m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : null);
-    
-    if (!target) return await m.send("`[ERROR]:` _Target not detected. Please reply to the user's message or tag them._");
-
-    const isUnmuteAction = msg.includes("unmute");
-    const isPending = msg.includes("after");
-    const timeMatch = text.match(/(\d+)\s*(s|sec|m|min|minute|h|hr|hour|d|day)s?/i);
-    const displayDuration = timeMatch ? timeMatch[0].toLowerCase() : "𝙸𝙽𝙳𝙴𝙵𝙸𝙽𝙸𝚃𝙴";
-    
-    let ms = 0;
-    if (timeMatch) {
-      const amount = parseInt(timeMatch[1]);
-      const unit = timeMatch[2].toLowerCase();
-      ms = unit.startsWith('s') ? amount * 1000 : unit.startsWith('m') ? amount * 60000 : unit.startsWith('h') ? amount * 3600000 : amount * 86400000;
-    }
-
-    const targetTag = `@${target.split('@')[0]}`;
-    const now = Date.now();
-    const timeActivated = new Date(now).toLocaleTimeString('en-GB', lagosOptions);
-    const timeExec = new Date(now + ms).toLocaleTimeString('en-GB', lagosOptions);
-
-    if (isPending && ms > 0) {
-      const pendingBox = 
-        `╔════════════════════════╗\n` +
-        `║           ||           ║\n` +
-        `  ◇  𝙲𝙾𝙳𝙴𝚇 𝚄𝚂𝙴𝚁 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝚁  ◇  \n` +
-        `║           ||           ║\n` +
-        `╚════════════════════════╝\n\n` +
-        ` [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n` +
-        ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ${isUnmuteAction ? "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝙰𝙲𝙲𝙴𝚂𝚂" : "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝚁𝙴𝚂𝚃𝚁𝙸𝙲𝚃𝙸𝙾𝙽"}\n` +
-        ` [ 𝙳𝙴𝙻𝙰𝚈 ]: ${displayDuration}\n` +
-        ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n` +
-        ` [ 𝙴𝚇𝙴𝙲𝚄𝚃𝙸𝙾𝙽 ]: ${timeExec}\n` +
-        ` ________________________\n\n` +
-        ` » 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝙳_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻_𝙰𝙲𝚃𝙸𝚅𝙴`;
-
-      await m.send(pendingBox, { mentions: [target] });
-
-      if (ms > 30000) {
-        setTimeout(async () => {
-          await m.send(`⚠️ **[𝟹𝟶𝚜 𝚆𝙰𝚁𝙽𝙸𝙽𝙶]**: ${targetTag}, your protocol change will execute in 30 seconds.`, { mentions: [target] });
-        }, ms - 30000);
-      }
-
-      setTimeout(async () => {
-        if (isUnmuteAction) {
-           global.mutedUsers.delete(target);
-           await m.send(`✅ [ACCESS GRANTED]: ${targetTag} access restored.`, { mentions: [target] });
-        } else {
-           global.mutedUsers.set(target, { strikes: 0, expiry: Date.now() });
-           await m.send(`🚫 [RESTRICTION ENFORCED]: ${targetTag} is now muted.`, { mentions: [target] });
-        }
-      }, ms);
-      return;
-    }
-
-    if (!isUnmuteAction) {
-      global.mutedUsers.set(target, { strikes: 0, expiry: Date.now() + ms });
-      const muteBox = 
-        `╔════════════════════════╗\n` +
-        `║           ||           ║\n` +
-        `  ◇  𝙲𝙾𝙳𝙴𝚇 𝚄𝚂𝙴𝚁 𝚁𝙴𝚂𝚃𝚁𝙸𝙲𝚃𝙸𝙾𝙽  ◇  \n` +
-        `║           ||           ║\n` +
-        `╚════════════════════════╝\n\n` +
-        ` [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n` +
-        ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: 🚫 𝙼𝚄𝚃𝙴𝙳\n` +
-        ` [ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 ]: ${displayDuration}\n` +
-        ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n` +
-        ` [ 𝚁𝙴𝚅𝙴𝚁𝚃_𝙰𝚃 ]: ${ms > 0 ? timeExec : "𝙽/𝙰"}\n` +
-        ` ________________________\n\n` +
-        ` » 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙻𝙾𝙲𝙺_𝙰𝙲𝚃𝙸𝚅𝙴`;
-
-      await m.send(muteBox, { mentions: [target] });
-
-      if (ms > 30000) {
-        setTimeout(async () => {
-          await m.send(`🕒 **[𝟹𝟶𝚜 𝚆𝙰𝚁𝙽𝙸𝙽𝙶]**: ${targetTag}, your restriction expires in 30 seconds.`, { mentions: [target] });
-        }, ms - 30000);
-      }
-
-      if (ms > 0) {
-        setTimeout(async () => {
-          global.mutedUsers.delete(target);
-          await m.send(`✓ [AUTO-REVERT]: ${targetTag} - Restriction lifted.`, { mentions: [target] });
-        }, ms);
-      }
-    } else {
-      global.mutedUsers.delete(target);
-      const unmuteBox = 
-        `╔════════════════════════╗\n` +
-        `║           ||           ║\n` +
-        `  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙲𝙲𝙴𝚂𝚂 𝚁𝙴𝚂𝚃𝙾𝚁𝙴𝙳  ◇  \n` +
-        `║           ||           ║\n` +
-        `╚════════════════════════╝\n\n` +
-        ` [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n` +
-        ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ✅ 𝙰𝙲𝙲𝙴𝚂𝚂_𝙶𝚁𝙰𝙽𝚃𝙴𝙳\n` +
-        ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n` +
-        ` [ 𝚁𝙴𝙰𝚂𝙾𝙽 ]: 𝙼𝙰𝙽𝚄𝙰𝙻_𝙾𝚅𝙴𝚁𝚁𝙸𝙳𝙴\n` +
-        ` ________________________\n\n` +
-        ` » 𝚄𝚂𝙴𝚁_𝙰𝙲𝙲𝙴𝚂𝚂_𝚁𝙴𝙸𝙽𝚂𝚃𝙰𝚃𝙴𝙳`;
-
-      return await m.send(unmuteBox, { mentions: [target] });
-    }
-  }
-  
+         
 if (msg.includes("after") && (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute"))) {
     const flexibleMatch = text.match(/(\d+)\s*(s|sec|m|min|minute|h|hr|hour|d|day|w|week)s?/i);
     if (flexibleMatch) {
@@ -2812,7 +2685,15 @@ if (msg.includes("after") && (msg.includes("mute") || msg.includes("lock") || ms
     return;
   }
 
-if (msg === "codex help") {
+  if (msg === "codex ping") {
+    const start = Date.now();
+    const uptime = process.uptime();
+    const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60), s = Math.floor(uptime % 60);
+    const sent = await m.send("`[𝙿𝙸𝙽𝙶𝙸𝙽𝙶]...` ");
+    return await sent.edit(`🚀 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳 🔮: ${Date.now() - start}𝚖𝚜\n⏳ 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖 ${s}𝚜`);
+  }
+
+  if (msg === "codex help") {
     const uptime = process.uptime();
     const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60);
     return await m.send(
@@ -2824,22 +2705,16 @@ if (msg === "codex help") {
       ` • 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖\n` +
       `────────────────────\n` +
       `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
-      ` » codex mute / unmute [time]\n` +
-      ` » codex lock / unlock\n` +
-      ` » codex mute this user [time]\n` +
-      ` » codex unmute this user\n` +
-      ` » mute/unmute this user after [time]\n\n` +
+      ` » codex mute [time]\n` +
+      ` » codex unmute [time]\n` +
+      ` » codex lock / unlock\n\n` +
       `   『 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 』\n` +
       ` » codex ai system time\n` +
       ` » codex what's the time in [place]\n\n` +
       `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
-      ` » codex ping / status\n` +
+      ` » codex ping\n` +
+      ` » codex status\n` +
       ` » codex smd [time] [msg]\n` +
-      `────────────────────\n` +
-      `   『 𝚂𝙷𝙸𝙴𝙻𝙳_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻 』\n` +
-      ` • 𝚃𝙰𝚁𝙶𝙴𝚃: 𝚁𝚎𝚙𝚕𝚢 𝚘𝚛 @𝚃𝚊𝚐\n` +
-      ` • 𝚂𝚃𝚁𝙸𝙺𝙴𝚂: 𝟻 𝚅𝚒𝚘𝚕𝚊𝚝𝚒𝚘𝚗𝚜 = 𝙺𝚒𝚌𝚔\n` +
-      ` • 𝙰𝚄𝚃𝙾_𝙿𝙸𝙽𝙶: 𝟹𝟶𝚜 𝚆𝚊𝚛𝚗𝚒𝚗𝚐 𝙰𝚌𝚝𝚒𝚟𝚎\n` +
       `────────────────────\n` +
       `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟹.𝟿.𝟻 ]`
     );
