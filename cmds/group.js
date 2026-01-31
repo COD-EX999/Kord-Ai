@@ -2716,37 +2716,33 @@ if (msg.includes("good morning") || msg.includes("good afternoon") || msg.includ
     }
     
   }
+
   
   if (msg === "codex help") {
     const uptime = process.uptime();
     const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60);
     return await m.send(
-      ╔════════════════════╗\n` +
-      `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
+      `╔════════════════════╗\n` +
+      `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
       `╚════════════════════╝\n` +
       `   『 𝚂𝚈𝚂𝚃𝙴𝙼_𝙾𝚅𝙴𝚁𝚅𝙸𝙴𝚆 』\n` +
       ` • 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n` +
       ` • 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖\n` +
       `────────────────────\n` +
       `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
-      ` » codex mute / unmute [time]\n` +
-      ` » codex lock / unlock\n` +
-      ` » codex mute this user [time]\n` +
-      ` » codex unmute this user\n` +
-      ` » mute / unmute this user after [time]\n\n` +
+      ` » codex mute [time]\n` +
+      ` » codex unmute [time]\n` +
+      ` » codex lock / unlock\n\n` +
       `   『 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 』\n` +
       ` » codex ai system time\n` +
       ` » codex what's the time in [place]\n\n` +
       `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
-      ` » codex ping / status\n` +
+      ` » codex ping\n` +
+      ` » codex status\n` +
       ` » codex smd [time] [msg]\n` +
-      `────────────────────\n` +
-      `   『 𝚂𝙷𝙸𝙴𝙻𝙳_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻 』\n` +
-      ` • 𝚃𝙰𝚁𝙶𝙴𝚃: 𝚁𝚎𝚙𝚕𝚢 𝚘𝚛 @𝚃𝚊𝚐\n` +
-      ` • 𝚂𝚃𝚁𝙸𝙺𝙴𝚂: 𝟻 𝚅𝚒𝚘𝚕𝚊𝚝𝚒𝚘𝚗𝚜 = 𝙺𝚒𝚌𝚔\n` +
-      ` • 𝙰𝚄𝚃𝙾_𝙿𝙸𝙽𝙶: 𝟹𝟶𝚜 𝚆𝚊𝚛𝚗𝚒𝚗𝚐 𝙰𝚌𝚝𝚒𝚟𝚎\n` +
       `────────────────────\n` +
       `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟹.𝟿.𝟻 ]`
     );
   }
 });
+     
