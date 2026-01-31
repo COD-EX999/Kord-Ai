@@ -2714,7 +2714,7 @@ if (msg.includes("good morning") || msg.includes("good afternoon") || msg.includ
       const unmuteBox = `╔════════════════════════╗\n║           ||           ║\n  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙲𝙲𝙴𝚂𝚂 𝚁𝙴𝚂𝚃𝙾𝚁𝙴𝙳  ◇  \n║           ||           ║\n╚════════════════════════╝\n\n [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ✅ 𝙰𝙲𝙲𝙴𝚂𝚂_𝙶𝚁𝙰𝙽𝚃𝙴𝙳\n [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n [ 𝚁𝙴𝙰𝚂𝙾𝙽 ]: 𝙼𝙰𝙽𝚄𝙰𝙻_𝙾𝚅𝙴𝚁𝚁𝙸𝙳𝙴\n ________________________\n\n » 𝚄𝚂𝙴𝚁_𝙰𝙲𝙲𝙴𝚂𝚂_𝚁𝙴𝙸𝙽𝚂𝚃𝙰𝚃𝙴𝙳`;
       return await m.send(unmuteBox, { mentions: [target] });
     }
-    return;
+    
   }
   
   if (msg === "codex help") {
@@ -2733,7 +2733,7 @@ if (msg.includes("good morning") || msg.includes("good afternoon") || msg.includ
       ` » codex lock / unlock\n` +
       ` » codex mute this user [time]\n` +
       ` » codex unmute this user\n` +
-      ` » mute/unmute this user after [time]\n\n` +
+      ` » mute / unmute this user after [time]\n\n` +
       `   『 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 』\n` +
       ` » codex ai system time\n` +
       ` » codex what's the time in [place]\n\n` +
