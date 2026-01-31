@@ -2526,140 +2526,89 @@ if (msg.includes("good morning") || msg.includes("good afternoon") || msg.includ
     );
   }
          
-if (msg.includes("after") && (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute"))) {
-    const flexibleMatch = text.match(/(\d+)\s*(s|sec|m|min|minute|h|hr|hour|d|day|w|week)s?/i);
-    if (flexibleMatch) {
-      const amount = parseInt(flexibleMatch[1]);
-      const unit = flexibleMatch[2].toLowerCase();
-      const isUnlock = msg.includes("unmute") || msg.includes("unlock");
-      
-      let ms;
-      if (unit.startsWith('s')) ms = amount * 1000;
-      else if (unit.startsWith('m')) ms = amount * 60000;
-      else if (unit.startsWith('h')) ms = amount * 3600000;
-      else if (unit.startsWith('d')) ms = amount * 86400000;
-      else if (unit.startsWith('w')) ms = amount * 604800000;
+  if (msg.includes("lock") || msg.includes("unlock") || msg.includes("mute") || msg.includes("unmute")) {
+    const isUnlock = msg.includes("unlock") || msg.includes("unmute");
+    const isPending = msg.includes("after");
+    const timeMatch = text.match(/(\d+)(s|m|hr|h|d|w)/i);
+    
+    let ms = 0;
+    let timeDisplay = "𝙸𝙽𝙳𝙴𝙵𝙸𝙽𝙸𝚃𝙴";
 
-      const now = Date.now();
-      const timeStart = new Date(now).toLocaleTimeString('en-GB', lagosOptions);
-      const timeExec = new Date(now + ms).toLocaleTimeString('en-GB', lagosOptions);
+    if (timeMatch) {
+      const amount = parseInt(timeMatch[1]);
+      const unit = timeMatch[2].toLowerCase();
+      switch(unit) {
+        case 's': ms = amount * 1000; timeDisplay = `${amount} second${amount > 1 ? 's' : ''}`; break;
+        case 'm': ms = amount * 60000; timeDisplay = `${amount} minute${amount > 1 ? 's' : ''}`; break;
+        case 'h':
+        case 'hr': ms = amount * 3600000; timeDisplay = `${amount} hour${amount > 1 ? 's' : ''}`; break;
+        case 'd': ms = amount * 86400000; timeDisplay = `${amount} day${amount > 1 ? 's' : ''}`; break;
+        case 'w': ms = amount * 604800000; timeDisplay = `${amount} week${amount > 1 ? 's' : ''}`; break;
+      }
+    }
 
-      await m.send(`╔════════════════════════╗\n║           ||           ║\n  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝚃𝙸𝙼𝙴𝚁  ◇  \n║           ||           ║\n╚════════════════════════╝\n\n [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ${isUnlock ? "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝚄𝙽𝙻𝙾𝙲𝙺" : "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝙻𝙾𝙲𝙺"}\n [ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 ]: ${amount} ${unit}\n [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeStart}\n [ 𝙴𝚇𝙴𝙲𝚄𝚃𝙸𝙾𝙽 ]: ${timeExec}\n ________________________\n\n » 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝙳_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻_𝙰𝙲𝚃𝙸𝚅𝙴`);
+    const now = Date.now();
+    const timeActivated = new Date(now).toLocaleTimeString('en-GB', lagosOptions);
+    const timeExec = new Date(now + ms).toLocaleTimeString('en-GB', lagosOptions);
 
-      if (global.activeTimers.get(chatJid)) { global.activeTimers.get(chatJid).forEach(t => clearTimeout(t)); }
-      let timers = [setTimeout(async () => {
-          await m.client.groupSettingUpdate(chatJid, isUnlock ? "not_announcement" : "announcement");
-          await m.client.sendMessage(chatJid, { text: `✓ \`[STATUS]:\` Scheduled ${isUnlock ? "Unlock" : "Lock"} complete.` });
-          global.activeTimers.delete(chatJid);
-      }, ms)];
-      global.activeTimers.set(chatJid, timers);
+    if (isPending && ms > 0) {
+      const pendingGroupBox = 
+        `╔════════════════════════╗\n` +
+        `║           ||           ║\n` +
+        `  ◇  𝙲𝙾𝙳𝙴𝚇 𝙶𝚁𝙾𝚄𝙿 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝚁  ◇  \n` +
+        `║           ||           ║\n` +
+        `╚════════════════════════╝\n\n` +
+        ` [ 𝙰𝙲𝚃𝙸𝙾𝙽 ]: ${isUnlock ? "🔓 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝙳_𝚄𝙽𝙻𝙾𝙲𝙺" : "🔒 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝙳_𝙻𝙾𝙲𝙺"}\n` +
+        ` [ 𝙳𝙴𝙻𝙰𝚈 ]: ${timeDisplay}\n` +
+        ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n` +
+        ` [ 𝙴𝚇𝙴𝙲𝚄𝚃𝙸𝙾𝙽 ]: ${timeExec}\n` +
+        ` ________________________\n\n` +
+        ` » 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝚀𝚄𝙴𝚄𝙴_𝙰𝙲𝚃𝙸𝚅𝙴`;
+
+      await m.send(pendingGroupBox);
+
+      if (ms > 30000) {
+        setTimeout(async () => {
+          await m.send(`🕒 **[𝟹𝟶𝚜 𝚆𝙰𝚁𝙽𝙸𝙽𝙶]**: Group ${isUnlock ? "Unlock" : "Lock"} protocol will execute in 30 seconds.`);
+        }, ms - 30000);
+      }
+
+      setTimeout(async () => {
+        await m.client.groupSettingUpdate(chatJid, isUnlock ? "not_announcement" : "announcement");
+        await m.send(`✅ [𝚂𝚈𝚂𝚃𝙴𝙼_𝚄𝙿𝙳𝙰𝚃𝙴]: Group is now ${isUnlock ? "𝚄𝙽𝙻𝙾𝙲𝙺𝙴𝙳" : "𝙻𝙾𝙲𝙺𝙴𝙳"}.`);
+      }, ms);
       return;
     }
-}
-  
-  if (msg.includes("mute") || msg.includes("lock") || msg.includes("unlock") || msg.includes("unmute")) {
-    const flexibleMatch = text.match(/(\d+)\s*(s|sec|m|min|minute|h|hr|hour|d|day|w|week)s?/i);
-    const now = Date.now();
-    const timeStart = new Date(now).toLocaleTimeString('en-GB', lagosOptions);
 
-    try {
-      if (msg.includes("unmute") || msg.includes("unlock")) {
-        if (global.activeTimers.get(chatJid)) { 
-            global.activeTimers.get(chatJid).forEach(t => clearTimeout(t)); 
-            global.activeTimers.delete(chatJid); 
+    if (!isPending) {
+      await m.client.groupSettingUpdate(chatJid, isUnlock ? "not_announcement" : "announcement");
+      
+      const immediateGroupBox = 
+        `╔════════════════════════╗\n` +
+        `║           ||           ║\n` +
+        `  ◇  𝙲𝙾𝙳𝙴𝚇 𝙶𝚁𝙾𝚄𝙿 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈  ◇  \n` +
+        `║           ||           ║\n` +
+        `╚════════════════════════╝\n\n` +
+        ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ${isUnlock ? "🔓 𝚄𝙽𝙻𝙾𝙲𝙺𝙴𝙳" : "🔒 𝙻𝙾𝙲𝙺𝙴𝙳"}\n` +
+        ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n` +
+        ` [ 𝙾𝙿𝙴𝚁𝙰𝚃𝙾𝚁 ]: @${sender.split('@')[0]}\n` +
+        ` ________________________\n\n` +
+        ` » 𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻_𝙴𝚇𝙴𝙲𝚄𝚃𝙴𝙳`;
+
+      await m.send(immediateGroupBox, { mentions: [sender] });
+
+      if (!isUnlock && ms > 0) {
+        if (ms > 30000) {
+          setTimeout(async () => {
+            await m.send(`🕒 **[𝟹𝟶𝚜 𝚆𝙰𝚁𝙽𝙸𝙽𝙶]**: Auto-unlocking group in 30 seconds.`);
+          }, ms - 30000);
         }
-        await m.client.groupSettingUpdate(chatJid, "not_announcement");
-        if (!flexibleMatch) return await m.send("`[STATUS]:` _That's sorted. Group unlocked._");
-
-        const amount = parseInt(flexibleMatch[1]);
-        const unit = flexibleMatch[2].toLowerCase();
-        let ms;
-        if (unit.startsWith('s')) ms = amount * 1000;
-        else if (unit.startsWith('m')) ms = amount * 60000;
-        else if (unit.startsWith('h')) ms = amount * 3600000;
-        else if (unit.startsWith('d')) ms = amount * 86400000;
-        else if (unit.startsWith('w')) ms = amount * 604800000;
-
-        const timeEnd = new Date(now + ms).toLocaleTimeString('en-GB', lagosOptions);
-
-        await m.send(`╔════════════════════════╗\n` +
-                     `║           ||           ║\n` +
-                     `  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝚃𝙸𝙼𝙴𝚁  ◇  \n` +
-                     `║           ||           ║\n` +
-                     `╚════════════════════════╝\n\n` +
-                     ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: 🔓 𝚄𝙽𝙻𝙾𝙲𝙺𝙴𝙳\n` +
-                     ` [ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 ]: ${amount} ${unit}\n` +
-                     ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeStart}\n` +
-                     ` [ 𝙰𝚄𝚃𝙾-𝚁𝙴𝚅𝙴𝚁𝚃 ]: ${timeEnd}\n` +
-                     ` ________________________\n\n` +
-                     ` » 𝚂𝚈𝚂𝚃𝙴𝙼_𝙾𝚅𝙴𝚁𝚁𝙸𝙳𝙴_𝙰𝙲𝚃𝙸𝚅𝙴`);
-
-        let timers = [];
-        if (ms > 35000) {
-            timers.push(setTimeout(async () => {
-                await m.client.sendMessage(chatJid, { text: "⚠️ `[SYSTEM_ALERT]:` _30 seconds remaining. Group will be muted shortly._" });
-            }, ms - 30000));
-        }
-
-        timers.push(setTimeout(async () => {
-            await m.client.groupSettingUpdate(chatJid, "announcement");
-            await m.client.sendMessage(chatJid, { text: "✓ `[STATUS]:` Group Muted (Relock Complete)" });
-            global.activeTimers.delete(chatJid);
-        }, ms));
-
-        global.activeTimers.set(chatJid, timers);
-        return;
-      }
-
-      if (msg.includes("mute") || msg.includes("lock")) {
-        await m.client.groupSettingUpdate(chatJid, "announcement");
-        if (!flexibleMatch) return await m.send("`[STATUS]:` _That's sorted. Group locked manually._");
-
-        const amount = parseInt(flexibleMatch[1]);
-        const unit = flexibleMatch[2].toLowerCase();
-        let ms;
-        if (unit.startsWith('s')) ms = amount * 1000;
-        else if (unit.startsWith('m')) ms = amount * 60000;
-        else if (unit.startsWith('h')) ms = amount * 3600000;
-        else if (unit.startsWith('d')) ms = amount * 86400000;
-        else if (unit.startsWith('w')) ms = amount * 604800000;
-
-        const timeEnd = new Date(now + ms).toLocaleTimeString('en-GB', lagosOptions);
-
-        await m.send(`╔════════════════════════╗\n` +
-                     `║           ||           ║\n` +
-                     `  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝚃𝙸𝙼𝙴𝚁  ◇  \n` +
-                     `║           ||           ║\n` +
-                     `╚════════════════════════╝\n\n` +
-                     ` [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: 🔒 𝙼𝚄𝚃𝙴𝙳\n` +
-                     ` [ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 ]: ${amount} ${unit}\n` +
-                     ` [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeStart}\n` +
-                     ` [ 𝙰𝚄𝚃𝙾-𝚁𝙴𝚅𝙴𝚁𝚃 ]: ${timeEnd}\n` +
-                     ` ________________________\n\n` +
-                     ` » 𝚂𝙴𝙲𝚄𝚁𝙴_𝙲𝙷𝙰𝙽𝙽𝙴𝙻_𝙴𝙽𝙵𝙾𝚁𝙲𝙴𝙳`);
-
-        if (global.activeTimers.get(chatJid)) {
-            global.activeTimers.get(chatJid).forEach(t => clearTimeout(t));
-        }
-
-        let timers = [];
-        if (ms > 35000) {
-            timers.push(setTimeout(async () => {
-                await m.client.sendMessage(chatJid, { text: "⚠️ `[SYSTEM_ALERT]:` _30 seconds remaining. Group will be unmuted shortly._" });
-            }, ms - 30000));
-        }
-
-        timers.push(setTimeout(async () => {
+        setTimeout(async () => {
           await m.client.groupSettingUpdate(chatJid, "not_announcement");
-          await m.client.sendMessage(chatJid, { text: "✓ `[STATUS]:` Group Unmuted" });
-          global.activeTimers.delete(chatJid);
-        }, ms));
-
-        global.activeTimers.set(chatJid, timers);
-        return;
+          await m.send(`✓ [𝙰𝚄𝚃𝙾-𝚁𝙴𝚅𝙴𝚁𝚃]: Group unlocked after ${timeDisplay}.`);
+        }, ms);
       }
-    } catch (err) {
-      return await m.send("`[ERROR]:` _Action failed._");
+      return;
     }
   }
 
@@ -2693,28 +2642,109 @@ if (msg.includes("after") && (msg.includes("mute") || msg.includes("lock") || ms
     return await sent.edit(`🚀 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳 🔮: ${Date.now() - start}𝚖𝚜\n⏳ 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖 ${s}𝚜`);
   }
 
+  if (global.mutedUsers && global.mutedUsers.has(sender)) {
+    const userData = global.mutedUsers.get(sender);
+    try {
+      await m.client.sendMessage(chatJid, { delete: m.key }); 
+      userData.strikes = (userData.strikes || 0) + 1;
+      global.mutedUsers.set(sender, userData);
+
+      if (userData.strikes >= 5) {
+        await m.send(`🚨 [𝚃𝙴𝚁𝙼𝙸𝙽𝙰𝚃𝙸𝙾𝙽]: @${sender.split('@')[0]} exceeded 5 violations. Removing from sector...`, { mentions: [sender] });
+        await m.client.groupParticipantsUpdate(chatJid, [sender], "remove");
+        global.mutedUsers.delete(sender);
+        return;
+      }
+      return await m.send(`⚠️ [𝚂𝙷𝙸𝙴𝙻𝙳_𝙰𝙲𝚃𝙸𝚅𝙴]: @${sender.split('@')[0]}, your message was purged. \n[𝚅𝙸𝙾𝙻𝙰𝚃𝙸𝙾𝙽𝚂]: ${userData.strikes}/5`, { mentions: [sender] });
+    } catch (e) { console.log("Shield error"); }
+  }
+
+  if (msg.includes("mute this user") || msg.includes("unmute this user")) {
+    const target = m.quoted ? m.quoted.sender : (m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : null);
+    if (!target) return await m.send("`[ERROR]:` _Target not detected. Reply or tag a user._");
+
+    if (target === m.client.user.id.split(':')[0] + '@s.whatsapp.net' || target.includes("+2347019135989")) {
+        return await m.send(`╔════════════════════════╗\n  ◇  𝙰𝙲𝙲𝙴𝚂𝚂_𝙳𝙴𝙽𝙸𝙴𝙳  ◇  \n╚════════════════════════╝\n\n • 𝙴𝚁𝚁𝙾𝚁: 𝚃𝙰𝚁𝙶𝙴𝚃_𝙸𝚂_𝙸𝙼𝙼𝚄𝙽𝙴\n • 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽_𝙰𝙱𝙾𝚁𝚃𝙴𝙳\n ________________________\n\n » 𝙲𝙾𝙳𝙴𝚇_𝙰𝙸_𝚂𝙰𝙵𝙴𝙶𝚄𝙰𝚁𝙳`);
+    }
+
+    const isUnmuteAction = msg.includes("unmute");
+    const isPending = msg.includes("after");
+    const timeMatch = text.match(/(\d+)(s|m|hr|h|d|w)/i);
+    
+    let ms = 0;
+    let timeDisplay = "𝙸𝙽𝙳𝙴𝙵𝙸𝙽𝙸𝚃𝙴";
+
+    if (timeMatch) {
+      const amount = parseInt(timeMatch[1]);
+      const unit = timeMatch[2].toLowerCase();
+      switch(unit) {
+        case 's': ms = amount * 1000; timeDisplay = `${amount}s`; break;
+        case 'm': ms = amount * 60000; timeDisplay = `${amount}m`; break;
+        case 'h': case 'hr': ms = amount * 3600000; timeDisplay = `${amount}h`; break;
+        case 'd': ms = amount * 86400000; timeDisplay = `${amount}d`; break;
+        case 'w': ms = amount * 604800000; timeDisplay = `${amount}w`; break;
+      }
+    }
+
+    const targetTag = `@${target.split('@')[0]}`;
+    const timeActivated = new Date().toLocaleTimeString('en-GB', lagosOptions);
+    const timeExec = new Date(Date.now() + ms).toLocaleTimeString('en-GB', lagosOptions);
+
+    if (isPending && ms > 0) {
+      const pendingBox = `╔════════════════════════╗\n║           ||           ║\n  ◇  𝙲𝙾𝙳𝙴𝚇 𝚄𝚂𝙴𝚁 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝚁  ◇  \n║           ||           ║\n╚════════════════════════╝\n\n [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ${isUnmuteAction ? "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝙰𝙲𝙲𝙴𝚂𝚂" : "⏳ 𝙿𝙴𝙽𝙳𝙸𝙽𝙶_𝚁𝙴𝚂𝚃𝚁𝙸𝙲𝚃𝙸𝙾𝙽"}\n [ 𝙳𝙴𝙻𝙰𝚈 ]: ${timeDisplay}\n [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n [ 𝙴𝚇𝙴𝙲𝚄𝚃𝙸𝙾𝙽 ]: ${timeExec}\n ________________________\n\n » 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝙳_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻_𝙰𝙲𝚃𝙸𝚅𝙴`;
+      await m.send(pendingBox, { mentions: [target] });
+      if (ms > 30000) setTimeout(() => m.send(`⚠️ **[𝟹𝟶𝚜 𝚆𝙰𝚁𝙽𝙸𝙽𝙶]**: ${targetTag}, protocol change in 30s.`, { mentions: [target] }), ms - 30000);
+      setTimeout(async () => {
+        if (isUnmuteAction) { global.mutedUsers.delete(target); await m.send(`✅ [ACCESS GRANTED]: ${targetTag} restored.`, { mentions: [target] }); }
+        else { global.mutedUsers.set(target, { strikes: 0 }); await m.send(`🚫 [RESTRICTION ENFORCED]: ${targetTag} muted.`, { mentions: [target] }); }
+      }, ms);
+      return;
+    }
+
+    if (!isUnmuteAction) {
+      global.mutedUsers.set(target, { strikes: 0 });
+      const muteBox = `╔════════════════════════╗\n║           ||           ║\n  ◇  𝙲𝙾𝙳𝙴𝚇 𝚄𝚂𝙴𝚁 𝚁𝙴𝚂𝚃𝚁𝙸𝙲𝚃𝙸𝙾𝙽  ◇  \n║           ||           ║\n╚════════════════════════╝\n\n [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: 🚫 𝙼𝚄𝚃𝙴𝙳\n [ 𝙳𝚄𝚁𝙰𝚃𝙸𝙾𝙽 ]: ${timeDisplay}\n [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n [ 𝚁𝙴𝚅𝙴𝚁𝚃_𝙰𝚃 ]: ${ms > 0 ? timeExec : "𝙽/𝙰"}\n ________________________\n\n » 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙻𝙾𝙲𝙺_𝙰𝙲𝚃𝙸𝚅𝙴`;
+      await m.send(muteBox, { mentions: [target] });
+      if (ms > 30000) setTimeout(() => m.send(`🕒 **[𝟹𝟶𝚜 𝚆𝙰𝚁𝙽𝙸𝙽𝙶]**: ${targetTag}, restriction lifting in 30s.`, { mentions: [target] }), ms - 30000);
+      if (ms > 0) setTimeout(() => { global.mutedUsers.delete(target); m.send(`✓ [AUTO-REVERT]: ${targetTag} access restored.`, { mentions: [target] }); }, ms);
+    }
+
+    else {
+      global.mutedUsers.delete(target);
+      const unmuteBox = `╔════════════════════════╗\n║           ||           ║\n  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙲𝙲𝙴𝚂𝚂 𝚁𝙴𝚂𝚃𝙾𝚁𝙴𝙳  ◇  \n║           ||           ║\n╚════════════════════════╝\n\n [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ✅ 𝙰𝙲𝙲𝙴𝚂𝚂_𝙶𝚁𝙰𝙽𝚃𝙴𝙳\n [ 𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳 ]: ${timeActivated}\n [ 𝚁𝙴𝙰𝚂𝙾𝙽 ]: 𝙼𝙰𝙽𝚄𝙰𝙻_𝙾𝚅𝙴𝚁𝚁𝙸𝙳𝙴\n ________________________\n\n » 𝚄𝚂𝙴𝚁_𝙰𝙲𝙲𝙴𝚂𝚂_𝚁𝙴𝙸𝙽𝚂𝚃𝙰𝚃𝙴𝙳`;
+      return await m.send(unmuteBox, { mentions: [target] });
+    }
+    return;
+  }
+  
   if (msg === "codex help") {
     const uptime = process.uptime();
     const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60);
     return await m.send(
-      `╔════════════════════╗\n` +
-      `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
+      ╔════════════════════╗\n` +
+      `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
       `╚════════════════════╝\n` +
       `   『 𝚂𝚈𝚂𝚃𝙴𝙼_𝙾𝚅𝙴𝚁𝚅𝙸𝙴𝚆 』\n` +
       ` • 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n` +
       ` • 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖\n` +
       `────────────────────\n` +
       `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
-      ` » codex mute [time]\n` +
-      ` » codex unmute [time]\n` +
-      ` » codex lock / unlock\n\n` +
+      ` » codex mute / unmute [time]\n` +
+      ` » codex lock / unlock\n` +
+      ` » codex mute this user [time]\n` +
+      ` » codex unmute this user\n` +
+      ` » mute/unmute this user after [time]\n\n` +
       `   『 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 』\n` +
       ` » codex ai system time\n` +
       ` » codex what's the time in [place]\n\n` +
       `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
-      ` » codex ping\n` +
-      ` » codex status\n` +
+      ` » codex ping / status\n` +
       ` » codex smd [time] [msg]\n` +
+      `────────────────────\n` +
+      `   『 𝚂𝙷𝙸𝙴𝙻𝙳_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻 』\n` +
+      ` • 𝚃𝙰𝚁𝙶𝙴𝚃: 𝚁𝚎𝚙𝚕𝚢 𝚘𝚛 @𝚃𝚊𝚐\n` +
+      ` • 𝚂𝚃𝚁𝙸𝙺𝙴𝚂: 𝟻 𝚅𝚒𝚘𝚕𝚊𝚝𝚒𝚘𝚗𝚜 = 𝙺𝚒𝚌𝚔\n` +
+      ` • 𝙰𝚄𝚃𝙾_𝙿𝙸𝙽𝙶: 𝟹𝟶𝚜 𝚆𝚊𝚛𝚗𝚒𝚗𝚐 𝙰𝚌𝚝𝚒𝚟𝚎\n` +
       `────────────────────\n` +
       `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟹.𝟿.𝟻 ]`
     );
