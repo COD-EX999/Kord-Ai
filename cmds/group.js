@@ -2431,8 +2431,6 @@ cmd: "kickr",
   }
 })
 
-
-
 kord({
   on: "all",
   fromMe: true
@@ -2596,8 +2594,6 @@ if (msg.startsWith("codex smd")) {
 });
 
 
-
-
 Kord({
   on: "all",
   fromMe: false, 
@@ -2627,8 +2623,6 @@ Kord({
 });
 
 
-
-
 Kord({
   on: "all",
   fromMe: false, 
@@ -2655,8 +2649,6 @@ Kord({
     console.error("AI Command Error:", e);
   }
 });
-
-
 
 
 kord({
@@ -2695,8 +2687,6 @@ kord({
     console.log("Ghost Shield Error:", e);
   }
 });
-
-
 
 
 kord({
@@ -2820,7 +2810,6 @@ kord({
 });
 
 
-
 Kord({
   on: "all",
   fromMe: false, 
@@ -2925,7 +2914,6 @@ Kord({
 });
 
 
-
 kord({
   on: "all",
   fromMe: true,
@@ -2978,7 +2966,6 @@ kord({
     console.log("codex status error", e);
   }
 })
-
 
 
 kord({
@@ -3063,7 +3050,6 @@ kord({
       `╚════════════════════════╝`, { mentions: [target] });
   }
 });
-
 
 
 Kord({
@@ -3178,6 +3164,7 @@ Kord({
   }
 });
 
+
 Kord({
   on: "all",
   fromMe: false, 
@@ -3207,7 +3194,6 @@ Kord({
 });
 
 
-
 kord({
   on: "all",
   fromMe: true,
@@ -3221,7 +3207,6 @@ kord({
     return await m.send("_All System Active And Waiting For Your Executions Sir!_")
   }
 })
-
 
 
 Kord({
