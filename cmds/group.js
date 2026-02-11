@@ -2430,3 +2430,830 @@ cmd: "kickr",
     return await m.sendErr(e)
   }
 })
+
+
+
+kord({
+  on: "all",
+  fromMe: true
+}, async (m, text) => {
+  if (!text) return;
+  const msg = text.trim().toLowerCase();
+  const chatJid = m.chat;
+  const lagosOptions = { timeZone: 'Africa/Lagos', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+
+  if (msg === "codex" || msg === "codex!") {
+    return await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting For your orders Sir._");
+  }
+ 
+  if (msg === "codex ai system time") {
+    const lagosTime = new Date().toLocaleTimeString('en-GB', lagosOptions);
+    return await m.send(
+      `╔════  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚈𝚂𝚃𝙴𝙼 𝚃𝙸𝙼𝙴  ════╗\n` +
+      `║\n` +
+      `║ 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽: 𝙻𝙰𝙶𝙾𝚂, 𝙽𝙸𝙶𝙴𝚁𝙸𝙰\n` +
+      `║ 𝙲𝚄𝚁𝚁𝙴𝙽𝚃_𝚃𝙸𝙼𝙴: ${lagosTime}\n` +
+      `║ 𝚂𝚃𝙰𝚃𝚄𝚂: 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴 ⚡\n` +
+      `║\n` +
+      `╚═══════════════════════════╝`
+    );
+  }
+
+  if (msg === "codex status") {
+    const uptime = process.uptime();
+    const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60), s = Math.floor(uptime % 60);
+    const hasTimer = global.activeTimers.has(chatJid) ? "𝙰𝙲𝚃𝙸𝚅𝙴 ⚡" : "𝙸𝙳𝙻𝙴 💤";
+    
+    return await m.send(
+      `╔════  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝚃𝙰𝚃𝚄𝚂  ════╗\n` +
+      `║\n` +
+      `║ 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙻𝙾𝙾𝙿: ${hasTimer}\n` +
+      `║ 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖 ${s}𝚜\n` +
+      `║ 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽: 𝙻𝙰𝙶𝙾𝚂_𝙽𝙶\n` +
+      `║ 𝚂𝚃𝙰𝚃𝚄𝚂: 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴 ⚡\n` +
+      `║\n` +
+      `╚══════════════════════╝`
+    );
+  }
+
+  if (msg === "codex cancel" || msg === "codex stop") {
+    if (global.activeTimers.has(chatJid)) {
+      global.activeTimers.get(chatJid).forEach(t => clearTimeout(t));
+      global.activeTimers.delete(chatJid);
+      return await m.send(`╔════════════════════════╗\n  ◇  𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 : 𝙰𝙱𝙾𝚁𝚃_𝚃𝙰𝚂𝙺  ◇  \n╚════════════════════════╝\n\n • 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙰𝙻𝙻_𝚃𝙸𝙼𝙴𝚁𝚂_𝙺𝙸𝙻𝙻𝙴𝙳\n • 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙻𝙾𝙾𝙿: 𝙸𝙳𝙻𝙴\n ________________________\n\n » 𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻_𝙳𝙴𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳`);
+    } else {
+      return await m.send("`[SYSTEM_MSG]:` _No active timers found in this sector._");
+    }
+  }
+  
+if (msg.includes("codex good morning") || msg.includes("codex good afternoon") || msg.includes("codex good night")) {
+    let targetTime = new Date().toLocaleTimeString('en-GB', lagosOptions);
+    let greeting = msg.includes("morning") ? "𝙶𝙾𝙾𝙳 𝙼𝙾𝚁𝙽𝙸𝙽𝙶, 𝚂𝙸𝚁! 🌅" : msg.includes("afternoon") ? "𝙶𝙾𝙾𝙳 𝙰𝙵𝚃𝙴𝚁𝙽𝙾𝙾𝙽, 𝚂𝙸𝚁! ☀️" : "𝙶𝙾𝙾𝙳 𝙽𝙸𝙶𝙷𝚃, 𝚂𝙸𝚁! 🌙";
+
+    return await m.send(
+      `╔════  𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴 𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻  ════╗\n` +
+      `║\n` +
+      `║ ${greeting}\n` +
+      `║ [ 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽 ]: 𝙻𝙰𝙶𝙾𝚂, 𝙽𝙸𝙶𝙴𝚁𝙸𝙰\n` +
+      `║ [ 𝚃𝙸𝙼𝙴 ]: ${targetTime}\n` +
+      `║ [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: 𝙾𝙽𝙻𝙸𝙽𝙴 ⚡\n` +
+      `║\n` +
+      `╚══════════════════════════╝`
+    );
+}
+
+if (msg.includes("codex what's the time in") || msg.includes("codex ai time in") || msg === "codex ai system time") {
+    let location = "𝙻𝙰𝙶𝙾𝚂, 𝙽𝙸𝙶𝙴𝚁𝙸𝙰";
+    let timeZone = "Africa/Lagos";
+    
+    if (msg.includes(" in ")) {
+      const countryInput = msg.split(" in ")[1].replace(/[?!]/g, "").trim().toLowerCase();
+      const tzMap = {
+        "ghana": "Africa/Accra", "usa": "America/New_York", "uk": "Europe/London", "london": "Europe/London",
+        "canada": "America/Toronto", "germany": "Europe/Berlin", "france": "Europe/Paris", "china": "Asia/Shanghai",
+        "india": "Asia/Kolkata", "japan": "Asia/Tokyo", "russia": "Europe/Moscow", "brazil": "America/Sao_Paulo",
+        "south africa": "Africa/Johannesburg", "egypt": "Africa/Cairo", "dubai": "Asia/Dubai", "spain": "Europe/Madrid"
+      };
+      
+      if (tzMap[countryInput]) {
+        timeZone = tzMap[countryInput];
+        location = countryInput.toUpperCase();
+      } else {
+        location = countryInput.toUpperCase();
+        timeZone = "UTC";
+      }
+    }
+
+    const localTime = new Date().toLocaleTimeString('en-GB', { 
+      timeZone: timeZone, 
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
+    });
+
+    return await m.send(
+      `╔════  𝙲𝙾𝙳𝙴𝚇 𝙶𝙻𝙾𝙱𝙰𝙻🌍 𝙸𝙽𝚃𝙴𝙻  ════╗\n` +
+      `║\n` +
+      `║ 𝙻𝙾𝙲𝙰𝚃𝙸𝙾𝙽: ${location}\n` +
+      `║ 𝙻𝙾𝙲𝙰𝙻_𝚃𝙸𝙼𝙴: ${localTime}\n` +
+      `║ 𝚂𝚃𝙰𝚃𝚄𝚂: 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙽𝙻𝙸𝙽𝙴 ⚡\n` +
+      `║\n` +
+      `╚══════════════════════════╝`
+    );
+}
+
+if (msg.startsWith("codex smd")) {
+    const smdMatch = text.match(/(\d+)(s|m)/i);
+    if (!smdMatch) return await m.send("`[SYNTAX_ERR]`");
+    const delay = smdMatch[2].toLowerCase() === 's' ? parseInt(smdMatch[1]) * 1000 : parseInt(smdMatch[1]) * 60000;
+    const content = text.replace(/codex smd\s+\d+[sm]/i, "").trim();
+    
+    const sent = await m.send(
+      `╔════  𝙲𝙾𝙳𝙴𝚇 𝚂𝙼𝙳 𝚃𝙰𝚂𝙺  ════╗\n` +
+      `║\n` +
+      `║ 𝙼𝚂𝙶: ${content}\n` +
+      `║ 𝙳𝙴𝙻𝙸𝚅𝙴𝚁𝚈: ${smdMatch[1]}${smdMatch[2]}\n` +
+      `║ 𝚂𝚃𝙰𝚃𝚄𝚂: 𝚂𝙴𝙻𝙵-𝙳𝙴𝚂𝚃𝚁𝚄𝙲𝚃 ⏳\n` +
+      `║\n` +
+      `╚══════════════════════╝`
+    );
+
+    setTimeout(async () => { 
+      try { await sent.delete() } catch (e) {} 
+    }, delay);
+    return;
+  }
+
+  if (msg === "codex help") {
+    const uptime = process.uptime();
+    const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60);
+    return await m.send(
+      `╔════════════════════╗\n` +
+      `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
+      `╚════════════════════╝\n` +
+      `   『 𝚂𝚈𝚂𝚃𝙴𝙼_𝙾𝚅𝙴𝚁𝚅𝙸𝙴𝚆 』\n` +
+      ` • 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n` +
+      ` • 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖\n` +
+      `────────────────────\n` +
+      `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
+      ` » codex mute [time]\n` +
+      ` » codex unmute [time]\n` +
+     ` » codex unmute this user [time]\n` +
+      ` » codex schedule daily mute/unmute\n` +
+    ` » codex mute this user [time]\n` +
+      ` » codex lock / unlock\n\n` +
+      ` » codex warn this user\n\n` +
+      ` » codex clear this user warn\n\n` +
+      `   『 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 』\n` +
+      ` » codex ai system time\n` +
+      ` » codex what's the time in [place]\n\n` +
+      `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
+      ` » codex ping\n` +
+      ` » codex status\n` +
+      ` » codex smd [time] [msg]\n` +
+      `────────────────────\n` +
+      `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟹.𝟿.𝟻 ]`
+    );
+  }
+});
+
+Kord({
+  on: "all",
+  fromMe: false, 
+  gc: true
+}, async (m) => {
+  try {
+    const input = (m.body || "").toLowerCase().trim();
+    
+    if (input === "codex ping") {
+        const start = Date.now();
+        
+        const { key } = await m.client.sendMessage(m.chat, { 
+            text: "🚀 *𝙿𝙸𝙽𝙶𝙸𝙽𝙶...*" 
+        });
+        
+        const end = Date.now();
+        const speed = end - start;
+
+        await m.client.sendMessage(m.chat, { 
+            text: `*𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳 🚀: ${speed}𝙼𝚂*`, 
+            edit: key 
+        });
+    }
+  } catch (e) { 
+    console.log(e); 
+  }
+});
+
+Kord({
+  on: "all",
+  fromMe: false, 
+  gc: true
+}, async (m) => {
+  try {
+    const input = (m.body || "").toLowerCase().trim();
+
+    if (input === "codex ai") {
+        
+        let { key } = await m.client.sendMessage(m.chat, { 
+            text: "⏳ *𝙿𝚁𝙾𝙲𝙴𝚂𝚂𝙸𝙽𝙶...*" 
+        });
+
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        return await m.client.sendMessage(m.chat, { 
+            text: "✅ *𝚈𝙴𝚂 ?, 𝙰𝙼 𝙻𝙸𝚂𝚃𝙴𝙽𝙸𝙽𝙶 𝚃𝙾 𝚈𝙾𝚄 𝚂𝙸𝚁*", 
+            edit: key 
+        });
+    }
+
+  } catch (e) {
+    console.error("AI Command Error:", e);
+  }
+});
+
+kord({
+  on: "text",
+  fromMe: false,
+  gc: true
+}, async (m) => {
+  try {
+    let db = await getData("blacklisted") || {};
+    
+    if (!db[m.chat] || !db[m.chat].users.includes(m.sender)) return;
+
+    if (db[m.chat].strikes[m.sender] === undefined || db[m.chat].strikes[m.sender] === null) {
+      db[m.chat].strikes[m.sender] = 5;
+    }
+
+    db[m.chat].strikes[m.sender] -= 1;
+    let currentStrikes = db[m.chat].strikes[m.sender];
+
+    await storeData("blacklisted", db);
+
+    if (currentStrikes > 0) {
+      await m.delete(); 
+      return await m.send(`⚠️ *[𝙶𝙷𝙾𝚂𝚃_𝚂𝙷𝙸𝙴𝙻𝙳_𝙰𝙲𝚃𝙸𝚅𝙰𝚃𝙴𝙳]*\n\n@${m.sender.split('@')[0]}, you are currently restricted. Your message has been deleted.\n\n» *Strikes Remaining:* ${currentStrikes} / 5`, { mentions: [m.sender] });
+    } else {
+      await m.send(`🚫 *[𝚃𝙴𝚁𝙼𝙸𝙽𝙰𝚃𝙸𝙾𝙽_𝙿𝚁𝙾𝚃𝙾𝙲𝙾𝙻]*\n\n@${m.sender.split('@')[0]} has exhausted all 5 strikes. Throwing you off board.`, { mentions: [m.sender] });
+      
+      await m.client.groupParticipantsUpdate(m.chat, [m.sender], "remove");
+
+      db[m.chat].users = db[m.chat].users.filter(u => u !== m.sender);
+      delete db[m.chat].strikes[m.sender];
+      await storeData("blacklisted", db);
+    }
+
+  } catch (e) {
+    console.log("Ghost Shield Error:", e);
+  }
+});
+
+kord({
+  on: "text", 
+  fromMe: false,
+  gc: true
+}, async (m) => {
+  try {
+    const input = (m.body || "").toLowerCase();
+    
+    if (!input.startsWith("codex") || m.key.fromMe) return;
+
+    const isUnmute = input.includes("unmute this user");
+    const isMute = !isUnmute && input.includes("mute this user");
+    const isPending = input.includes("after");
+
+    if (!isMute && !isUnmute) return;
+
+    let target = m.mentionedJid?.[0] || m.quoted?.sender;
+    if (!target) return await m.send("❌ `[ERROR]:` Reply to a message or tag a user sir.");
+
+    const botAd = await isBotAdmin(m);
+    if (!botAd) return await m.send("❌ `[ERROR]:` Bot must be Admin sir.");
+
+    let _b = await getData("blacklisted") || {};
+    if (!_b[m.chat]) _b[m.chat] = { users: [], strikes: {} };
+
+    const isAlreadyMuted = _b[m.chat].users.includes(target);
+
+    if (isMute && isAlreadyMuted && !isPending) {
+      return await m.send(`✘ [𝙴𝚁𝚁𝙾𝚁]: User is already restricted sir.`);
+    }
+
+    if (isUnmute && !isAlreadyMuted) {
+      return await m.send(`✘ [𝙴𝚁𝚁𝙾𝚁]: User has no restrictions to restore sir.`);
+    }
+
+    const lagosOptions = { timeZone: 'Africa/Lagos', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+    const timeStart = new Date().toLocaleTimeString('en-GB', lagosOptions);
+
+    const timeMatch = input.match(/(\d+)(s|m|h|d|w)/i);
+    let ms = 0;
+    let timeDisplay = "𝙸𝙽𝙳𝙴𝙵𝙸𝙽𝙸𝚃𝙴";
+    
+    if (timeMatch) {
+      const amount = parseInt(timeMatch[1]);
+      const multipliers = { 's': 1000, 'm': 60000, 'h': 3600000, 'd': 86400000, 'w': 604800000 };
+      ms = amount * (multipliers[timeMatch[2].toLowerCase()] || 0);
+      timeDisplay = timeMatch[0];
+    }
+
+    const targetTag = `@${target.split('@')[0]}`;
+    const executionTimeMs = Date.now() + ms;
+    const timeEnd = ms > 0 ? new Date(executionTimeMs).toLocaleTimeString('en-GB', lagosOptions) : "𝙸𝙽𝙳𝙴𝙵𝙸𝙽𝙸𝚃𝙴";
+
+    const title = isMute ? "𝚄𝚂𝙴𝚁 𝚂𝙲𝙷𝙴𝙳𝚄𝙻𝙴𝚁" : "𝚄𝚂𝙴𝚁 𝚁𝙴𝚂𝚃𝙾𝚁𝙴𝚁";
+    const statusLabel = isPending ? "𝙿𝙴𝙽𝙳𝙸𝙽𝙶" : "𝙳𝙾𝙽𝙴";
+
+    const codexBox = `╔════  𝙲𝙾𝙳𝙴𝚇 ${title}  ════╗
+║
+║ [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}
+║ [ 𝙰𝙲𝚃𝙸𝙾𝙽 ]: ${isMute ? '𝙼𝚄𝚃𝙴 🚫' : '𝚄𝙽𝙼𝚄𝚃𝙴 🔓'}
+║ [ 𝙳𝙴𝙻𝙰𝚈 ]: ${timeDisplay}
+║ [ 𝙴𝚇𝙴𝙲𝚄𝚃𝙸𝙾𝙽 ]: ${timeEnd}
+║ [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: ${statusLabel} ⚡
+║
+╚══════════════════════════╝`;
+
+    if (isUnmute) {
+      if (isPending && ms > 0) {
+        await m.send(`Request received sir. User will be unmuted later sir.`);
+        await m.send(codexBox, { mentions: [target] });
+        
+        setTimeout(async () => {
+          let db = await getData("blacklisted") || {};
+          db[m.chat].users = db[m.chat].users.filter(u => u !== target);
+          delete db[m.chat].strikes[target];
+          await storeData("blacklisted", db);
+          await m.client.sendMessage(m.chat, { text: `╔════  𝙲𝙾𝙳𝙴𝚇 𝚂𝚈𝚂𝚃𝙴𝙼  ════╗\n║\n║  ✅ [𝙰𝙲𝙲𝙴𝚂𝚂_𝚁𝙴𝚂𝚃𝙾𝚁𝙴𝙳]\n║  ${targetTag} unmuted sir.\n║\n╚══════════════════════╝`, mentions: [target] });
+        }, ms);
+      } else {
+        _b[m.chat].users = _b[m.chat].users.filter(u => u !== target);
+        delete _b[m.chat].strikes[target];
+        await storeData("blacklisted", _b);
+        await m.send(codexBox, { mentions: [target] });
+      }
+      return;
+    }
+
+    if (isMute) {
+      if (isPending && ms > 0) {
+        await m.send(`Request received sir. User will be muted later sir.`);
+        await m.send(codexBox, { mentions: [target] });
+        setTimeout(async () => {
+          let db = await getData("blacklisted") || {};
+          if (!db[m.chat].users.includes(target)) db[m.chat].users.push(target);
+          db[m.chat].strikes[target] = 5;
+          await storeData("blacklisted", db);
+          await m.client.sendMessage(m.chat, { text: `╔════  𝙲𝙾𝙳𝙴𝚇 𝚂𝚈𝚂𝚃𝙴𝙼  ════╗\n║\n║  🚫 [𝚁𝙴𝚂𝚃𝚁𝙸𝙲𝚃𝙸𝙾𝙽_𝙰𝙿𝙿𝙻𝙸𝙴𝙳]\n║  ${targetTag} restricted sir.\n║\n╚══════════════════════╝`, mentions: [target] });
+        }, ms);
+      } else {
+        if (!_b[m.chat].users.includes(target)) _b[m.chat].users.push(target);
+        _b[m.chat].strikes[target] = 5; 
+        await storeData("blacklisted", _b);
+        await m.send(codexBox, { mentions: [target] });
+
+        if (ms > 0) {
+           setTimeout(async () => {
+             let db = await getData("blacklisted") || {};
+             db[m.chat].users = db[m.chat].users.filter(u => u !== target);
+             delete db[m.chat].strikes[target];
+             await storeData("blacklisted", db);
+             await m.client.sendMessage(m.chat, { text: `╔════  𝙲𝙾𝙳𝙴𝚇 𝚂𝚈𝚂𝚃𝙴𝙼  ════╗\n║\n║  ✓ [𝙰𝚄𝚃𝙾-𝚁𝙴𝚅𝙴𝚁𝚃]\n║  ${targetTag} restored sir.\n║\n╚══════════════════════╝`, mentions: [target] });
+           }, ms);
+        }
+      }
+    }
+  } catch (e) {
+    console.log("Codex User Error:", e);
+  }
+});
+
+Kord({
+  on: "all",
+  fromMe: false, 
+  gc: true
+}, async (m) => {
+  try {
+    const input = (m.body || "").toLowerCase().trim();
+    const chatJid = m.chat;
+
+    if (input === 'cancel' && m.quoted) {
+        const active = global.activeTimers[chatJid];
+        if (active && active.key.id === m.quoted.id) {
+            const groupMetadata = await m.client.groupMetadata(chatJid);
+            const isAdmin = groupMetadata.participants.find(p => p.id === m.sender && (p.admin || p.isSuperAdmin));
+            
+            if (!isAdmin) return await m.reply("❌ *𝙾𝙽𝙻𝚈 𝙰𝙳𝙼𝙸𝙽𝚂 𝙲𝙰𝙽 𝙲𝙰𝙽𝙲𝙴𝙻*"); 
+
+            clearInterval(active.interval);
+            const oldKey = active.key;
+            delete global.activeTimers[chatJid];
+
+            return await m.client.sendMessage(chatJid, { 
+                text: `❌ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁 𝙲𝙰𝙽𝙲𝙴𝙻𝙻𝙴𝙳*`, 
+                edit: oldKey 
+            });
+        }
+        return;
+    }
+
+    const isMuteTrigger = input.includes("mute") || input.includes("lock");
+    const isUnmuteTrigger = input.includes("unmute") || input.includes("unlock");
+    
+    if (!input.startsWith("codex") || (!isMuteTrigger && !isUnmuteTrigger)) return;
+    if (!m.isGroup) return await m.reply("*𝙶𝚁𝙾𝚄𝙿𝚂 𝙾𝙽𝙻𝚈 𝚂𝙸𝚁*"); 
+
+    const groupMetadata = await m.client.groupMetadata(chatJid);
+    const isAdmin = groupMetadata.participants.find(p => p.id === m.sender && (p.admin || p.isSuperAdmin));
+    if (!isAdmin) return await m.reply("🚫 *𝙰𝙳𝙼𝙸𝙽 𝚁𝙴𝚀𝚄𝙸𝚁𝙴𝙳*");
+
+    const timeMatch = input.match(/(\d+)(s|m|min|hr|h|d|w)/i);
+    if (!timeMatch) return await m.reply("❓ *𝚄𝚂𝙰𝙶𝙴:* codex mute 10m"); 
+
+    const amount = parseInt(timeMatch[1]);
+    const unit = timeMatch[2].toLowerCase();
+    let totalSeconds = amount;
+    if (unit.startsWith('m')) totalSeconds = amount * 60;
+    else if (unit.startsWith('h')) totalSeconds = amount * 3600;
+    else if (unit.startsWith('d')) totalSeconds = amount * 86400;
+    else if (unit.startsWith('w')) totalSeconds = amount * 604800;
+
+    const botJid = m.client.user.id.split(':')[0] + '@s.whatsapp.net';
+    const isBotAd = groupMetadata.participants.find(p => p.id === botJid && (p.admin || p.isSuperAdmin));
+    if (!isBotAd) return await m.reply("⚠️ *𝙼𝙰𝙺𝙴 𝙼𝙴 𝙰𝙳𝙼𝙸𝙽 𝙵𝙸𝚁𝚂𝚃*");
+
+    if (global.activeTimers[chatJid]) clearInterval(global.activeTimers[chatJid].interval);
+
+    let elapsed = 0;
+    const barWidth = 14;
+    const actionText = isMuteTrigger ? "Locking group" : "Unlocking group";
+
+    let { key } = await m.client.sendMessage(chatJid, { 
+        text: `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁\n├──────────────────┤\n│  ░░░░░░░░░░░░░░\n│  ⏱️  ${totalSeconds}s remaining\n│  📋  ${actionText}\n╰──────────────────╯\n_𝚁𝚎𝚙𝚕𝚢 '𝚌𝚊𝚗𝚌𝚎𝚕' 𝚝𝚘 𝚜𝚝𝚘𝚙_` 
+    });
+
+    const interval = setInterval(async () => {
+        elapsed += 5;
+        let remaining = totalSeconds - elapsed;
+
+        if (remaining <= 0) {
+            clearInterval(interval);
+            delete global.activeTimers[chatJid];
+            
+            try {
+                await m.client.groupSettingUpdate(chatJid, isMuteTrigger ? "announcement" : "not_announcement");
+                return await m.client.sendMessage(chatJid, { 
+                    text: `✅ *𝙰𝙲𝚃𝙸𝙾𝙽 𝙲𝙾𝙼𝙿𝙻𝙴𝚃𝙴𝙳*\n🔒 𝙶𝚛𝚘𝚞𝚙 𝚒𝚜 𝚗𝚘𝚠 ${isMuteTrigger ? '𝚕𝚘𝚌𝚔𝚎𝚍' : '𝚞𝚗𝚕𝚘𝚌𝚔𝚎𝚍'}.`, 
+                    edit: key 
+                });
+            } catch (e) { 
+                return await m.client.sendMessage(chatJid, { text: "❌ Failed to update group settings." });
+            }
+        }
+
+        let filled = Math.floor((elapsed / totalSeconds) * barWidth);
+        let bar = "█".repeat(Math.min(filled, barWidth)) + "░".repeat(Math.max(0, barWidth - filled));
+
+        await m.client.sendMessage(chatJid, { 
+            text: `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁\n├──────────────────┤\n│  ${bar}\n│  ⏱️  ${remaining}s remaining\n│  📋  ${actionText}\n╰──────────────────╯\n_𝚁𝚎𝚙𝚕𝚢 '𝚌𝚊𝚗𝚌𝚎𝚕' 𝚝𝚘 𝚜𝚝𝚘𝚙_`, 
+            edit: key 
+        }).catch(() => {
+            clearInterval(interval);
+            delete global.activeTimers[chatJid];
+        });
+
+    }, 5000); 
+
+    global.activeTimers[chatJid] = { interval, key };
+
+  } catch (e) { 
+      console.error("Codex Timer Error:", e); 
+  }
+});
+
+kord({
+  on: "all",
+  fromMe: true,
+  gc: true
+}, async (m) => {
+  try {
+    const input = (m.body || "").toLowerCase();
+    
+    if (input !== "codex group status") return;
+
+    const chatJid = m.chat;
+    const muteData = await getData("mute_timers") || {};
+    
+    const meta = await m.client.groupMetadata(chatJid);
+    const groupState = meta.announce ? "𝙻𝙾𝙲𝙺𝙴𝙳 🔒" : "𝙾𝙿𝙴𝙽 🔓";
+
+    let timerInfo = "𝙽𝙾𝙽𝙴";
+    
+    if (muteData[chatJid]) {
+      const data = muteData[chatJid];
+      const timeLeft = data.unmuteTime - Date.now();
+      
+      if (timeLeft > 0) {
+        const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+        const mins = Math.floor((timeLeft / (1000 * 60)) % 60);
+        const secs = Math.floor((timeLeft / 1000) % 60);
+        
+        const type = data.type === "timer_unmute" ? " (𝙼𝚄𝚃𝙴)" : " (𝚄𝙽𝙼𝚄𝚃𝙴)";
+        
+        const hourDisplay = hours > 0 ? `${hours}h ` : "";
+        timerInfo = `${hourDisplay}${mins}m ${secs}s${type}`;
+      } else {
+        delete muteData[chatJid];
+        await storeData("mute_timers", muteData);
+      }
+    }
+
+    const adminCount = meta.participants.filter(p => p.admin).length;
+
+    return await m.send(`╔════  𝙲𝙾𝙳𝙴𝚇 𝙶𝚁𝙾𝚄𝙿 𝚂𝚃𝙰𝚃𝚄𝚂  ════╗
+║
+║ 𝚂𝙴𝚃𝚃𝙸𝙽𝙶𝚂: ${groupState}
+║ 𝙰𝙳𝙼𝙸𝙽𝚂: ${adminCount}
+║ 𝚃𝙸𝙼𝙴𝚁: ${timerInfo}
+║ 𝚂𝚃𝙰𝚃𝚄𝚂: 𝚂𝚈𝚂𝚃𝙴𝙼 𝙾𝙺 ⚡
+║
+╚══════════════════════════╝`);
+
+  } catch (e) {
+    console.log("codex status error", e);
+  }
+})
+
+kord({
+  on: "text",
+  fromMe: true, 
+  gc: true
+}, async (m) => {
+  const msg = (m.body || "").toLowerCase();
+  const text = m.body || "";
+ 
+  if (!msg.includes("codex")) return;
+
+  const chatJid = m.chat;
+  let target = m.mentionedJid?.[0] || m.quoted?.sender;
+
+  if (msg.includes("codex warn this user")) {
+    if (!target) return await m.send("❌ `[ERROR]:` Tag or reply to a user sir.");
+
+    let reason = "𝙽𝙾𝚃 𝚂𝙿𝙴𝙲𝙸𝙵𝙸𝙴𝙳"; 
+    if (text.toLowerCase().includes("for ")) {
+      reason = text.split(/for /i)[1].trim();
+    }
+
+    let db = await getData("blacklisted") || {};
+    if (!db[chatJid]) db[chatJid] = { users: [], strikes: {} };
+    if (!db[chatJid].strikes) db[chatJid].strikes = {};
+
+    let s = (db[chatJid].strikes[target] || 0) + 1;
+    db[chatJid].strikes[target] = s;
+    await storeData("blacklisted", db);
+
+    const targetTag = `@${target.split('@')[0]}`;
+    const dots = "▰".repeat(s) + "▱".repeat(5 - s);
+
+    if (s < 5) {
+      return await m.send(
+        `╔════  𝙲𝙾𝙳𝙴𝚇 𝚄𝚂𝙴𝚁 𝚆𝙰𝚁𝙽𝙸𝙽𝙶  ═╗\n` +
+        `║\n` +
+        `║ [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n` +
+        `║ [ 𝚁𝙴𝙰𝚂𝙾𝙽 ]: ${reason.toUpperCase()}\n` +
+        `║ [ 𝙲𝙾𝚄𝙽𝚃 ]: ${s} / 5\n` +
+        `║ [ 𝙻𝙴𝚅𝙴𝙻 ]: ${dots}\n` +
+        `║\n` +
+        `╚═════════════════════════╝`, { mentions: [target] });
+    } else {
+      await m.send(
+        `╔════  𝙲𝙾𝙳𝙴𝚇 𝚂𝚈𝚂𝚃𝙴𝙼 𝙴𝚇𝙿𝙴𝙻  ═╗\n` +
+        `║\n` +
+        `║ [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n` +
+        `║ [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: 🚫 𝙴𝚇𝙿𝙴𝙻𝙻𝙴𝙳\n` +
+        `║ [ 𝚁𝙴𝙰𝚂𝙾𝙽 ]: 𝙼𝙰𝚇_𝚅𝙸𝙾𝙻𝙰𝚃𝙸𝙾𝙽𝚂\n` +
+        `║\n` +
+        `╚═════════════════════════╝`, { mentions: [target] });
+      
+      try {
+        await m.client.groupParticipantsUpdate(chatJid, [target], "remove");
+        delete db[chatJid].strikes[target];
+        await storeData("blacklisted", db);
+      } catch (e) {
+        await m.send("❌ `[ERROR]:` Kick failed sir.");
+      }
+    }
+  }
+
+  if (msg.includes("codex clear this user warning")) {
+    if (!target) return await m.send("❌ `[ERROR]:` Tag or reply to a user sir.");
+
+    let db = await getData("blacklisted") || {};
+    if (db[chatJid] && db[chatJid].strikes && db[chatJid].strikes[target]) {
+      delete db[chatJid].strikes[target];
+      await storeData("blacklisted", db);
+    }
+
+    const targetTag = `@${target.split('@')[0]}`;
+    return await m.send(
+      `╔════  𝙲𝙾𝙳𝙴𝚇 𝚂𝚃𝙰𝚃𝚄𝚂 𝚁𝙴𝚂𝙴𝚃  ═╗\n` +
+      `║\n` +
+      `║ [ 𝚃𝙰𝚁𝙶𝙴𝚃 ]: ${targetTag}\n` +
+      `║ [ 𝙰𝙲𝚃𝙸𝙾𝙽 ]: 𝚆𝙰𝚁𝙽𝚂 𝙲𝙻𝙴𝙰𝚁𝙴𝙳\n` +
+      `║ [ 𝚂𝚃𝙰𝚃𝚄𝚂 ]: 𝙲𝙻𝙴𝙰𝙽 𝚂𝙻𝙰𝚃𝙴 ✅\n` +
+      `║\n` +
+      `╚════════════════════════╝`, { mentions: [target] });
+  }
+});
+
+Kord({
+  on: "all",
+  fromMe: false, 
+  gc: true
+}, async (m) => {
+  try {
+    const input = (m.body || "").toLowerCase().trim();
+    const chatJid = m.chat;
+
+    if (input === 'cancel' && m.quoted) {
+        if (global.activeTimers[chatJid] && global.activeTimers[chatJid].key.id === m.quoted.id) {
+            const groupMetadata = await m.client.groupMetadata(chatJid);
+            const isAdmin = groupMetadata.participants.find(p => p.id === m.sender && (p.admin || p.isSuperAdmin));
+            
+            if (!isAdmin) return await m.reply("❌ *𝙾𝙽𝙻𝚈 𝙰𝙳𝙼𝙸𝙽𝚂 𝙲𝙰𝙽 𝙲𝙰𝙽𝙲𝙴𝙻 𝚃𝙷𝙴 𝚃𝙸𝙼𝙴𝚁 𝚂𝙸𝚁*"); 
+
+            clearInterval(global.activeTimers[chatJid].interval);
+            const oldKey = global.activeTimers[chatJid].key;
+            delete global.activeTimers[chatJid];
+
+            return await m.client.sendMessage(chatJid, { 
+                text: `❌ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁 𝙲𝙰𝙽𝙲𝙴𝙻𝙻𝙴𝙳 𝙱𝚈* @${m.sender.split('@')[0]}`, 
+                edit: oldKey,
+                mentions: [m.sender]
+            });
+        }
+    }
+
+    if (!input.startsWith("codex after") || m.key.fromMe) return;
+    if (!m.isGroup) return await m.reply("*𝚃𝙷𝙸𝚂 𝙲𝙾𝙼𝙼𝙰𝙽𝙳 𝙲𝙰𝙽 𝙾𝙽𝙻𝚈 𝙱𝙴 𝙳𝙾𝙽𝙴 𝙸𝙽 𝙰 𝙶𝚁𝙾𝚄𝙿 𝚂𝙸𝚁*"); 
+    
+    const groupMetadata = await m.client.groupMetadata(chatJid);
+    const isAdmin = groupMetadata.participants.find(p => p.id === m.sender && (p.admin || p.isSuperAdmin));
+    if (!isAdmin) return await m.reply("🚫 *𝙰𝙲𝙲𝙴𝚂𝚂 𝙳𝙴𝙽𝙸𝙴𝙳*");
+
+    const botId = m.client.user.id.split(':')[0] + '@s.whatsapp.net';
+    const isBotAd = groupMetadata.participants.find(p => p.id === botId && (p.admin || p.isSuperAdmin));
+    if (!isBotAd) return await m.reply("⚠️ *𝙸 𝙰𝙼 𝙽𝙾𝚃 𝙰𝙽 𝙰𝙳𝙼𝙸𝙽 𝚂𝙸𝚁*");
+
+    const isMute = input.includes("lock") || input.includes("mute");
+    const isUnmute = input.includes("unlock") || input.includes("unmute");
+    if (!isMute && !isUnmute) return;
+
+    const actionText = isMute ? "Locking group" : "Unlocking group";
+    const timeMatch = input.match(/(\d+)(s|m|hr|h|d|w)/i);
+    if (!timeMatch) return await m.reply("❓ *𝚄𝚂𝙰𝙶𝙴: codex after 10m lock*");
+
+    const amount = parseInt(timeMatch[1]);
+    const unit = timeMatch[2].toLowerCase();
+    let totalSeconds;
+    switch(unit) {
+      case 's': totalSeconds = amount; break;
+      case 'm': totalSeconds = amount * 60; break;
+      case 'h':
+      case 'hr': totalSeconds = amount * 3600; break;
+      case 'd': totalSeconds = amount * 86400; break;
+      case 'w': totalSeconds = amount * 604800; break; 
+    }
+
+    if (global.activeTimers[chatJid]) clearInterval(global.activeTimers[chatJid].interval);
+
+    let elapsed = 0;
+    const barWidth = 14;
+    let warningSent = false; 
+
+    let { key } = await m.client.sendMessage(chatJid, { text: `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁\n├──────────────────┤\n│  ░░░░░░░░░░░░░░\n│  ⏱️  ${totalSeconds}s remaining\n│  📋  ${actionText}\n╰──────────────────╯\n_𝚁𝚎𝚙𝚕𝚢 '𝚌𝚊𝚗𝚌𝚎𝚕' 𝚝𝚘 𝚜𝚝𝚘𝚙_` });
+
+    const interval = setInterval(async () => {
+        elapsed += 5; 
+        let remaining = totalSeconds - elapsed;
+        
+        if (remaining <= 30 && !warningSent && totalSeconds > 40) {
+            warningSent = true;
+            await m.client.sendMessage(chatJid, { text: `🔔 *𝙲𝙾𝙳𝙴𝚇 𝙽𝙾𝚃𝙸𝙲𝙴*: 30s left.` });
+        }
+
+        if (remaining <= 0) {
+            clearInterval(interval);
+            delete global.activeTimers[chatJid];
+            
+            try {
+                await m.client.groupSettingUpdate(chatJid, isMute ? "announcement" : "not_announcement");
+                return await m.client.sendMessage(chatJid, { 
+                    text: `✅ *𝙲𝙾𝙳𝙴𝚇 𝙰𝙲𝚃𝙸𝙾𝙽 𝙲𝙾𝙼𝙿𝙻𝙴𝚃𝙴𝙳*\n🔒 𝙶𝚛𝚘𝚞𝚙 𝚒𝚜 𝚗𝚘𝚠 ${isMute ? '𝚕𝚘𝚌𝚔𝚎𝚍' : '𝚞𝚗𝚕𝚘𝚌𝚔𝚎𝚍'}.`, 
+                    edit: key 
+                });
+            } catch (err) {
+                console.error("Failed to update group settings:", err);
+            }
+            return;
+        }
+
+        let filled = Math.floor((elapsed / totalSeconds) * barWidth);
+        let bar = "█".repeat(Math.min(filled, barWidth)) + "░".repeat(Math.max(0, barWidth - filled));
+
+        await m.client.sendMessage(chatJid, { 
+            text: `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁\n├──────────────────┤\n│  ${bar}\n│  ⏱️  ${remaining}s remaining\n│  📋  ${actionText}\n╰──────────────────╯`, 
+            edit: key 
+        }).catch(() => {
+            clearInterval(interval);
+            delete global.activeTimers[chatJid];
+        });
+
+    }, 5000); 
+
+    global.activeTimers[chatJid] = { interval, key };
+
+  } catch (e) { 
+    console.error("Codex Timer Error:", e); 
+  }
+});
+
+Kord({
+  on: "all",
+  fromMe: false, 
+  gc: true
+}, async (m) => {
+  try {
+    const input = (m.body || "").toLowerCase().trim();
+    
+    const isMute = input === "codex mute" || input === "codex lock";
+    const isUnmute = input === "codex unmute" || input === "codex unlock";
+    
+    if (!isMute && !isUnmute) return;
+    if (!m.isGroup) return await m.reply("*𝚃𝙷𝙸𝚂 𝙸𝚂 𝙵𝙾𝚁 𝙶𝚁𝙾𝚄𝙿𝚂 𝙾𝙽𝙻𝚈 𝚂𝙸𝚁*");
+
+    const groupMetadata = await m.client.groupMetadata(m.chat);
+    const isAdmin = groupMetadata.participants.find(p => p.id === m.sender && (p.admin || p.isSuperAdmin));
+    const botId = m.client.user.id.split(':')[0] + '@s.whatsapp.net';
+    const isBotAd = groupMetadata.participants.find(p => p.id === botId && (p.admin || p.isSuperAdmin));
+
+    if (!isAdmin) return await m.reply("🚫 *𝙰𝙳𝙼𝙸𝙽 𝚁𝙴𝚀𝚄𝙸𝚁𝙴𝙳*");
+    if (!isBotAd) return await m.reply("⚠️ *𝙸 𝙰𝙼 𝙽𝙾𝚃 𝙰𝙳𝙼𝙸𝙽*");
+
+    await m.client.groupSettingUpdate(m.chat, isMute ? "announcement" : "not_announcement");
+    return await m.reply(`✅ *𝙶𝚁𝙾𝚄𝙿 ${isMute ? '𝙻𝙾𝙲𝙺𝙴𝙳' : '𝚄𝙽𝙻𝙾𝙲𝙺𝙴𝙳'} 𝚂𝚄𝙲𝙲𝙴𝚂𝚂𝙵𝚄𝙻𝙻𝚈*`);
+
+  } catch (e) { console.error(e); }
+});
+
+kord({
+  on: "all",
+  fromMe: true,
+}, async (m, text) => {
+  if (text.toUpperCase() == "CODEX!") {
+    let reacts = ["💫", "🥏", "🚀", "🪐", ""]
+    for (let r of reacts) {
+      await m.react(r)
+      await sleep(300)
+    }
+    return await m.send("_All System Active And Waiting For Your Executions Sir!_")
+  }
+})
+
+Kord({
+  on: "all",
+  fromMe: false, 
+  gc: true
+}, async (m) => {
+  try {
+    const input = (m.body || "").toLowerCase().trim();
+    if (input !== "codex hack this group") return;
+
+    const chatJid = m.chat;
+    
+    const terms = [
+      "Initializing Bruteforce...",
+      "Bypassing Firewall...",
+      "Injecting SQL Payload...",
+      "Decrypting SSL Certificates...",
+      "Gaining Root Access...",
+      "Scraping User Data...",
+      "Establishing Backdoor...",
+      "Clearing System Logs..."
+    ];
+
+    let { key } = await m.client.sendMessage(chatJid, { 
+        text: `☣️ *𝙸𝙽𝙸𝚃𝙸𝙰𝚃𝙸𝙽𝙶 𝚂𝚈𝚂𝚃𝙴𝙼 𝙱𝚁𝙴𝙰𝙲𝙷...*` 
+    });
+
+    let step = 0;
+    const maxSteps = terms.length;
+
+    const hackInterval = setInterval(async () => {
+        if (step >= maxSteps) {
+            clearInterval(hackInterval);
+            return await m.client.sendMessage(chatJid, { 
+                text: `✅ *𝙶𝚁𝙾𝚄𝙿 𝚂𝚄𝙲𝙲𝙴𝚂𝚂𝙵𝚄𝙻𝙻𝚈 𝙷𝙰𝙲𝙺𝙴𝙳*\n\n_Note: This was a simulation for fun._`, 
+                edit: key 
+            });
+        }
+
+        let progress = Math.floor(((step + 1) / maxSteps) * 10);
+        let bar = "▓".repeat(progress) + "░".repeat(10 - progress);
+        
+        await m.client.sendMessage(chatJid, { 
+            text: `⚠️ *𝙲𝙾𝙳𝙴𝚇 𝙷𝙰𝙲𝙺 𝙸𝙽 𝙿𝚁𝙾𝙶𝚁𝙴𝚂𝚂*\n\n` +
+                 `[${bar}] ${Math.round(((step + 1) / maxSteps) * 100)}%\n\n` +
+                 `✨ *STATUS:* _${terms[step]}_`, 
+            edit: key 
+        }).catch(() => clearInterval(hackInterval));
+
+        step++;
+    }, 3000); 
+
+  } catch (e) {
+      console.error("Hack Command Error:", e);
+  }
+});
+
+      
