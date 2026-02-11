@@ -2438,62 +2438,60 @@ kord({
     const input = (m.body || "").toLowerCase().trim();
     const msg = (text || "").trim().toLowerCase();
     const chatJid = m.chat;
-
-    if (m.key.fromMe) {
-        if (msg === "codex" || msg === "codex!") {
-            await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting For your orders Sir._");
+    
+    if (msg === "codex" || msg === "codex!") {
+        await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting For your orders Sir._");
+    }
+    
+    if (text && text.toUpperCase() === "CODEX!") {
+        let reacts = ["💫", "🥏", "🚀", "🪐", ""]
+        for (let r of reacts) {
+            await m.react(r)
+            await new Promise(res => setTimeout(res, 300));
         }
-        
-        if (text && text.toUpperCase() === "CODEX!") {
-            let reacts = ["💫", "🥏", "🚀", "🪐", ""]
-            for (let r of reacts) {
-                await m.react(r)
-                await new Promise(res => setTimeout(res, 300));
-            }
-            await m.send("_All System Active And Waiting For Your Executions Sir!_")
-        }
+        await m.send("_All System Active And Waiting For Your Executions Sir!_")
+    }
 
-        if (msg.startsWith("codex smd")) {
-            const smdMatch = text.match(/(\d+)(s|m)/i);
-            if (!smdMatch) {
-                await m.send("`[SYNTAX_ERR]`");
-            } else {
-                const delay = smdMatch[2].toLowerCase() === 's' ? parseInt(smdMatch[1]) * 1000 : parseInt(smdMatch[1]) * 60000;
-                const content = text.replace(/codex smd\s+\d+[sm]/i, "").trim();
-                const sent = await m.send(
-                    `╔════  𝙲𝙾𝙳𝙴𝚇 𝚂𝙼𝙳 𝚃𝙰𝚂𝙺  ════╗\n` +
-                    `║\n` +
-                    `║ 𝙼𝚂𝙶: ${content}\n` +
-                    `║ 𝙳𝙴𝙻𝙸𝚅𝙴𝚁𝚈: ${smdMatch[1]}${smdMatch[2]}\n` +
-                    `║ 𝚂𝚃𝙰𝚃𝚄𝚂: 𝚂𝙴𝙻𝙵-𝙳𝙴𝚂𝚃𝚁𝚄𝙲𝚃 ⏳\n` +
-                    `║\n` +
-                    `╚══════════════════════╝`
-                );
-                setTimeout(async () => { try { await sent.delete() } catch (e) {} }, delay);
-            }
-        }
-
-        if (msg === "codex help") {
-            const uptime = process.uptime();
-            const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60);
-            await m.send(
-                `╔════════════════════╗\n` +
-                `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
-                `╚════════════════════╝\n` +
-                `   『 𝚂𝚈𝚂𝚃𝙴𝙼_𝙾𝚅𝙴𝚁𝚅𝙸𝙴𝚆 』\n` +
-                ` • 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n` +
-                ` • 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖\n` +
-                `────────────────────\n` +
-                `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
-                ` » codex mute/lock\n » codex after [time] lock\n` +
-                `   『 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 』\n` +
-                ` » codex ai\n » codex hack this group\n` +
-                `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
-                ` » codex ping\n » codex smd [time] [msg]\n` +
-                `────────────────────\n` +
-                `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟹.𝟿.𝟻 ]`
+    if (msg.startsWith("codex smd")) {
+        const smdMatch = text.match(/(\d+)(s|m)/i);
+        if (!smdMatch) {
+            await m.send("`[SYNTAX_ERR]`");
+        } else {
+            const delay = smdMatch[2].toLowerCase() === 's' ? parseInt(smdMatch[1]) * 1000 : parseInt(smdMatch[1]) * 60000;
+            const content = text.replace(/codex smd\s+\d+[sm]/i, "").trim();
+            const sent = await m.send(
+                `╔════  𝙲𝙾𝙳𝙴𝚇 𝚂𝙼𝙳 𝚃𝙰𝚂𝙺  ════╗\n` +
+                `║\n` +
+                `║ 𝙼𝚂𝙶: ${content}\n` +
+                `║ 𝙳𝙴𝙻𝙸𝚅𝙴𝚁𝚈: ${smdMatch[1]}${smdMatch[2]}\n` +
+                `║ 𝚂𝚃𝙰𝚃𝚄𝚂: 𝚂𝙴𝙻𝙵-𝙳𝙴𝚂𝚃𝚁𝚄𝙲𝚃 ⏳\n` +
+                `║\n` +
+                `╚══════════════════════╝`
             );
+            setTimeout(async () => { try { await sent.delete() } catch (e) {} }, delay);
         }
+    }
+
+    if (msg === "codex help") {
+        const uptime = process.uptime();
+        const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60);
+        await m.send(
+            `╔════════════════════╗\n` +
+            `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
+            `╚════════════════════╝\n` +
+            `   『 𝚂𝚈𝚂𝚃𝙴𝙼_𝙾𝚅𝙴𝚁𝚅𝙸𝙴𝚆 』\n` +
+            ` • 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n` +
+            ` • 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖\n` +
+            `────────────────────\n` +
+            `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
+            ` » codex mute/lock\n » codex after [time] lock\n` +
+            `   『 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 』\n` +
+            ` » codex ai\n » codex hack this group\n` +
+            `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
+            ` » codex ping\n » codex smd [time] [msg]\n` +
+            `────────────────────\n` +
+            `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟹.𝟿.𝟻 ]`
+        );
     }
 
     if (input === "codex ping") {
@@ -2511,9 +2509,9 @@ kord({
 
     if (input === "codex hack this group") {
         const terms = [
-          "Initializing Bruteforce...", "Bypassing Firewall...", "Injecting SQL Payload...",
-          "Decrypting SSL Certificates...", "Gaining Root Access...", "Scraping User Data...",
-          "Establishing Backdoor...", "Clearing System Logs..."
+          "*Initializing Bruteforce...", "*Bypassing Firewall*...", "*Injecting SQL Payload*...",
+          "*Decrypting SSL Certificates*...", "*Gaining Root Access*...", "*Scraping User Data*...",
+          "*Establishing Backdoor*...", "*Clearing System Logs*..."
         ];
 
         let { key } = await m.client.sendMessage(chatJid, { text: `☣️ *𝙸𝙽𝙸𝚃𝙸𝙰𝚃𝙸𝙽𝙶 𝚂𝚈𝚂𝚃𝙴𝙼 𝙱𝚁𝙴𝙰𝙲𝙷...*` });
@@ -2548,3 +2546,224 @@ kord({
     console.error("Master Codex Error:", e); 
   }
 });
+
+
+Kord({
+  on: "all",
+  fromMe: "all",
+  gc: true
+}, async (m) => {
+  try {
+    const input = (m.body || "").toLowerCase().trim();
+    const chatJid = m.chat;
+
+    if (input === 'cancel' && m.quoted) {
+        if (global.activeTimers[chatJid] && global.activeTimers[chatJid].key.id === m.quoted.id) {
+            const groupMetadata = await m.client.groupMetadata(chatJid);
+            const isAdmin = groupMetadata.participants.find(p => p.id === m.sender && (p.admin || p.isSuperAdmin));
+            
+            if (!isAdmin) return await m.reply("❌ *𝙾𝙽𝙻𝚈 𝙰𝙳𝙼𝙸𝙽𝚂 𝙲𝙰𝙽 𝙲𝙰𝙽𝙲𝙴𝙻 𝚃𝙷𝙴 𝚃𝙸𝙼𝙴𝚁 𝚂𝙸𝚁*"); 
+
+            clearInterval(global.activeTimers[chatJid].interval);
+            const oldKey = global.activeTimers[chatJid].key;
+            delete global.activeTimers[chatJid];
+
+            return await m.client.sendMessage(chatJid, { 
+                text: `❌ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁 𝙲𝙰𝙽𝙲𝙴𝙻𝙻𝙴𝙳 𝙱𝚈* @${m.sender.split('@')[0]}`, 
+                edit: oldKey,
+                mentions: [m.sender]
+            });
+        }
+    }
+
+    if (!input.startsWith("codex after")) return; 
+    if (!m.isGroup) return await m.reply("*𝚃𝙷𝙸𝚂 𝙲𝙾𝙼𝙼𝙰𝙽𝙳 𝙲𝙰𝙽 𝙾𝙽𝙻𝚈 𝙱𝙴 𝙳𝙾𝙽𝙴 𝙸𝙽 𝙰 𝙶𝚁𝙾𝚄𝙿 𝚂𝙸𝚁*"); 
+    
+    const groupMetadata = await m.client.groupMetadata(chatJid);
+    const isAdmin = groupMetadata.participants.find(p => p.id === m.sender && (p.admin || p.isSuperAdmin));
+    if (!isAdmin) return await m.reply("🚫 *𝙰𝙲𝙲𝙴𝚂𝚂 𝙳𝙴𝙽𝙸𝙴𝙳*");
+
+    const botId = m.client.user.id.split(':')[0] + '@s.whatsapp.net';
+    const isBotAd = groupMetadata.participants.find(p => p.id === botId && (p.admin || p.isSuperAdmin));
+    if (!isBotAd) return await m.reply("⚠️ *𝙸 𝙰𝙼 𝙽𝙾𝚃 𝙰𝙽 𝙰𝙳𝙼𝙸𝙽 𝚂𝙸𝚁*");
+
+    const isMute = input.includes("lock") || input.includes("mute");
+    const isUnmute = input.includes("unlock") || input.includes("unmute");
+    if (!isMute && !isUnmute) return;
+
+    const actionText = isMute ? "Locking group" : "Unlocking group";
+    const timeMatch = input.match(/(\d+)(s|m|hr|h|d|w)/i);
+    if (!timeMatch) return await m.reply("❓ *𝚄𝚂𝙰𝙶𝙴: codex after 10m lock*");
+
+    const amount = parseInt(timeMatch[1]);
+    const unit = timeMatch[2].toLowerCase();
+    let totalSeconds;
+    switch(unit) {
+      case 's': totalSeconds = amount; break;
+      case 'm': totalSeconds = amount * 60; break;
+      case 'h':
+      case 'hr': totalSeconds = amount * 3600; break;
+      case 'd': totalSeconds = amount * 86400; break;
+      case 'w': totalSeconds = amount * 604800; break; 
+    }
+
+    if (global.activeTimers[chatJid]) clearInterval(global.activeTimers[chatJid].interval);
+
+    let elapsed = 0;
+    const barWidth = 14;
+    let warningSent = false; 
+
+    let { key } = await m.client.sendMessage(chatJid, { 
+        text: `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁\n├──────────────────┤\n│  ░░░░░░░░░░░░░░\n│  ⏱️  ${totalSeconds}s remaining\n│  📋  ${actionText}\n╰──────────────────╯\n_𝚁𝚎𝚙𝚕𝚢 '𝚌𝚊𝚗𝚌𝚎𝚕' 𝚝𝚘 𝚜𝚝𝚘𝚙_` 
+    });
+
+    const interval = setInterval(async () => {
+        elapsed += 5; 
+        let remaining = totalSeconds - elapsed;
+        
+        if (remaining <= 30 && !warningSent && totalSeconds > 40) {
+            warningSent = true;
+            await m.client.sendMessage(chatJid, { text: `🔔 *𝙲𝙾𝙳𝙴𝚇 𝙽𝙾𝚃𝙸𝙲𝙴*: 30s left.` });
+        }
+
+        if (remaining <= 0) {
+            clearInterval(interval);
+            delete global.activeTimers[chatJid];
+            
+            try {
+                await m.client.groupSettingUpdate(chatJid, isMute ? "announcement" : "not_announcement");
+                return await m.client.sendMessage(chatJid, { 
+                    text: `✅ *𝙲𝙾𝙳𝙴𝚇 𝙰𝙲𝚃𝙸𝙾𝙽 𝙲𝙾𝙼𝙿𝙻𝙴𝚃𝙴𝙳*\n🔒 𝙶𝚛𝚘𝚞𝚙 𝚒𝚜 𝚗𝚘𝚠 ${isMute ? '𝚕𝚘𝚌𝚔𝚎𝚍' : '𝚞𝚗𝚕𝚘𝚌𝚔𝚎𝚍'}.`, 
+                    edit: key 
+                });
+            } catch (err) {
+                console.error("Failed to update group settings:", err);
+            }
+            return;
+        }
+
+        let filled = Math.floor((elapsed / totalSeconds) * barWidth);
+        let bar = "█".repeat(Math.min(filled, barWidth)) + "░".repeat(Math.max(0, barWidth - filled));
+
+        await m.client.sendMessage(chatJid, { 
+            text: `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁\n├──────────────────┤\n│  ${bar}\n│  ⏱️  ${remaining}s remaining\n│  📋  ${actionText}\n╰──────────────────╯\n_𝚁𝚎𝚙𝚕𝚢 '𝚌𝚊𝚗𝚌𝚎𝚕' 𝚝𝚘 𝚜𝚝𝚘𝚙_`, 
+            edit: key 
+        }).catch(() => {
+            clearInterval(interval);
+            delete global.activeTimers[chatJid];
+        });
+
+    }, 5000); 
+
+    global.activeTimers[chatJid] = { interval, key };
+
+  } catch (e) { 
+    console.error("Codex Timer Error:", e); 
+  }
+});
+
+
+Kord({
+  on: "all",
+  fromMe: "all",
+  gc: true
+}, async (m) => {
+  try {
+    const input = (m.body || "").toLowerCase().trim();
+    const chatJid = m.chat;
+
+    if (input === 'cancel' && m.quoted) {
+        const active = global.activeTimers[chatJid];
+        if (active && active.key.id === m.quoted.id) {
+            const groupMetadata = await m.client.groupMetadata(chatJid);
+            const isAdmin = groupMetadata.participants.find(p => p.id === m.sender && (p.admin || p.isSuperAdmin));
+            if (!isAdmin) return await m.reply("❌ *𝙾𝙽𝙻𝚈 𝙰𝙳𝙼𝙸𝙽𝚂 𝙲𝙰𝙽 𝙲𝙰𝙽𝙲𝙴𝙻*"); 
+
+            clearInterval(active.interval);
+            const oldKey = active.key;
+            delete global.activeTimers[chatJid];
+            return await m.client.sendMessage(chatJid, { text: `❌ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁 𝙲𝙰𝙽𝙲𝙴𝙻𝙻𝙴𝙳*`, edit: oldKey });
+        }
+    }
+
+    const isMute = input.includes("mute the group") || input.includes("lock the group");
+    const isUnmute = input.includes("unmute the group") || input.includes("unlock the group");
+
+    if (!input.startsWith("codex") || input.includes("after") || (!isMute && !isUnmute)) return;
+    if (!m.isGroup) return await m.reply("*𝙶𝚁𝙾𝚄𝙿𝚂 𝙾𝙽𝙻𝚈 𝚂𝙸𝚁*"); 
+
+    const groupMetadata = await m.client.groupMetadata(chatJid);
+    const isAdmin = groupMetadata.participants.find(p => p.id === m.sender && (p.admin || p.isSuperAdmin));
+    if (!isAdmin) return await m.reply("🚫 *𝙰𝙳𝙼𝙸𝙽 𝚁𝙴𝚀𝚄𝙸𝚁𝙴𝙳*");
+
+    const botJid = m.client.user.id.split(':')[0] + '@s.whatsapp.net';
+    const isBotAd = groupMetadata.participants.find(p => p.id === botJid && (p.admin || p.isSuperAdmin));
+    if (!isBotAd) return await m.reply("⚠️ *𝙸 𝙰𝙼 𝙽𝙾𝚃 𝙰𝙳𝙼𝙸𝙽*");
+
+    const timeMatch = input.match(/(\d+)(s|m|hr|h|d|w)/i);
+
+    await m.client.groupSettingUpdate(chatJid, isMute ? "announcement" : "not_announcement");
+    await m.reply(`✅ *𝙶𝚁𝙾𝚄𝙿 ${isMute ? '𝙼𝚄𝚃𝙴𝙳' : '𝚄𝙽𝙼𝚄𝚃𝙴𝙳'} 𝚂𝚄𝙲𝙲𝙴𝚂𝚂𝙵𝚄𝙻 𝚂𝙸𝚁*`);
+
+    if (!timeMatch) return;
+
+    const amount = parseInt(timeMatch[1]);
+    const unit = timeMatch[2].toLowerCase();
+    let totalSeconds;
+    switch(unit) {
+      case 's': totalSeconds = amount; break;
+      case 'm': totalSeconds = amount * 60; break;
+      case 'h': case 'hr': totalSeconds = amount * 3600; break;
+      case 'd': totalSeconds = amount * 86400; break;
+      case 'w': totalSeconds = amount * 604800; break; 
+      default: totalSeconds = amount;
+    }
+
+    if (global.activeTimers[chatJid]) clearInterval(global.activeTimers[chatJid].interval);
+
+    let elapsed = 0;
+    let warningSent = false; 
+    const statusText = isMute ? "𝙼𝚄𝚃𝙴𝙳" : "𝚄𝙽𝙼𝚄𝚃𝙴𝙳";
+    const revertText = isMute ? "𝚞𝚗𝚖𝚞𝚝𝚒𝚗𝚐" : "𝚖𝚞𝚝𝚒𝚗𝚐";
+
+    let { key } = await m.client.sendMessage(chatJid, { 
+        text: `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈\n├──────────────────┤\n│  𝚂𝚃𝙰𝚃𝚄𝚂: ${statusText} ✅\n│  ░░░░░░░░░░░░░░\n│  ⏱️  ${totalSeconds}s left\n│  📋  𝙰𝚞𝚝𝚘-${revertText}...\n╰──────────────────╯\n_𝚁𝚎𝚙𝚕𝚢 '𝚌𝚊𝚗𝚌𝚎𝚕' 𝚝𝚘 𝚜𝚝𝚘𝚙_` 
+    });
+
+    const interval = setInterval(async () => {
+        elapsed += 5;
+        let remaining = totalSeconds - elapsed;
+
+        if (remaining <= 30 && !warningSent && totalSeconds > 40) {
+            warningSent = true;
+            await m.client.sendMessage(chatJid, { text: `🔔 *𝙲𝙾𝙳𝙴𝚇 𝙽𝙾𝚃𝙸𝙲𝙴*: 30s left before auto-${revertText}.` });
+        }
+
+        if (remaining <= 0) {
+            clearInterval(interval);
+            delete global.activeTimers[chatJid];
+            try {
+                await m.client.groupSettingUpdate(chatJid, isMute ? "not_announcement" : "announcement");
+                return await m.client.sendMessage(chatJid, { text: `✅ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴 𝙴𝚇𝙿𝙸𝚁𝙴𝙳*\n🔄 𝙶𝚛𝚘𝚞𝚙 𝚑𝚊𝚜 𝚋𝚎𝚎𝚗 ${isMute ? '𝚞𝚗𝚖𝚞𝚝𝚎𝚍' : '𝚖𝚞𝚝𝚎𝚍'} 𝚊𝚞𝚝𝚘𝚖𝚊𝚝𝚒𝚌𝚊𝚕𝚕𝚢.`, edit: key });
+            } catch (e) { console.error(e); }
+            return;
+        }
+
+        let filled = Math.floor((elapsed / totalSeconds) * 14);
+        let bar = "█".repeat(Math.min(filled, 14)) + "░".repeat(Math.max(0, 14 - filled));
+
+        await m.client.sendMessage(chatJid, { 
+            text: `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈\n├──────────────────┤\n│  𝚂𝚃𝙰𝚃𝚄𝚂: ${statusText} ✅\n│  ${bar}\n│  ⏱️  ${remaining}s left\n│  📋  𝙰𝚞𝚝𝚘-${revertText}...\n╰──────────────────╯\n_𝚁𝚎𝚙𝚕𝚢 '𝚌𝚊𝚗𝚌𝚎𝚕' 𝚝𝚘 𝚜𝚝𝚘𝚙_`, 
+            edit: key 
+        }).catch(() => { clearInterval(interval); delete global.activeTimers[chatJid]; });
+    }, 5000); 
+
+    global.activeTimers[chatJid] = { interval, key };
+  } catch (e) { console.error(e); }
+});
+
+
+
+
+
+      
