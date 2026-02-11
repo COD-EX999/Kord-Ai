@@ -2489,16 +2489,7 @@ if (msg.startsWith("codex smd")) {
       `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟹.𝟿.𝟻 ]`
     );
   }
-});
 
-Kord({
-  on: "all",
-  fromMe: false, 
-  gc: true
-}, async (m) => {
-  try {
-    const input = (m.body || "").toLowerCase().trim();
-    
     if (input === "codex ping") {
         const start = Date.now();
         
@@ -2517,16 +2508,6 @@ Kord({
   } catch (e) { 
     console.log(e); 
   }
-});
-
-
-Kord({
-  on: "all",
-  fromMe: false, 
-  gc: true
-}, async (m) => {
-  try {
-    const input = (m.body || "").toLowerCase().trim();
 
     if (input === "codex ai") {
         
@@ -2545,17 +2526,6 @@ Kord({
   } catch (e) {
     console.error("AI Command Error:", e);
   }
-});
-
-
-Kord({
-  on: "all",
-  fromMe: false, 
-  gc: true
-}, async (m) => {
-  try {
-    const input = (m.body || "").toLowerCase().trim();
-    const chatJid = m.chat;
 
     if (input === 'cancel' && m.quoted) {
         const active = global.activeTimers[chatJid];
@@ -2649,17 +2619,6 @@ Kord({
   } catch (e) { 
       console.error("Codex Timer Error:", e); 
   }
-});
-
-
-Kord({
-  on: "all",
-  fromMe: false, 
-  gc: true
-}, async (m) => {
-  try {
-    const input = (m.body || "").toLowerCase().trim();
-    const chatJid = m.chat;
 
     if (input === 'cancel' && m.quoted) {
         if (global.activeTimers[chatJid] && global.activeTimers[chatJid].key.id === m.quoted.id) {
@@ -2763,18 +2722,6 @@ Kord({
     console.error("Codex Timer Error:", e); 
   }
 });
-
-
-Kord({
-  on: "all",
-  fromMe: false, 
-  gc: true
-}, async (m) => {
-  try {
-    const input = (m.body || "").toLowerCase().trim();
-    
-    const isMute = input === "codex mute" || input === "codex lock";
-    const isUnmute = input === "codex unmute" || input === "codex unlock";
     
     if (!isMute && !isUnmute) return;
     if (!m.isGroup) return await m.reply("*𝚃𝙷𝙸𝚂 𝙸𝚂 𝙵𝙾𝚁 𝙶𝚁𝙾𝚄𝙿𝚂 𝙾𝙽𝙻𝚈 𝚂𝙸𝚁*");
@@ -2791,13 +2738,7 @@ Kord({
     return await m.reply(`✅ *𝙶𝚁𝙾𝚄𝙿 ${isMute ? '𝙻𝙾𝙲𝙺𝙴𝙳' : '𝚄𝙽𝙻𝙾𝙲𝙺𝙴𝙳'} 𝚂𝚄𝙲𝙲𝙴𝚂𝚂𝙵𝚄𝙻𝙻𝚈*`);
 
   } catch (e) { console.error(e); }
-});
 
-
-kord({
-  on: "all",
-  fromMe: true,
-}, async (m, text) => {
   if (text.toUpperCase() == "CODEX!") {
     let reacts = ["💫", "🥏", "🚀", "🪐", ""]
     for (let r of reacts) {
@@ -2806,16 +2747,7 @@ kord({
     }
     return await m.send("_All System Active And Waiting For Your Executions Sir!_")
   }
-})
 
-
-Kord({
-  on: "all",
-  fromMe: false, 
-  gc: true
-}, async (m) => {
-  try {
-    const input = (m.body || "").toLowerCase().trim();
     if (input !== "codex hack this group") return;
 
     const chatJid = m.chat;
