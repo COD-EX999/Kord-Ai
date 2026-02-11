@@ -2451,42 +2451,9 @@ Kord({
             delete global.activeTimers[chatJid];
             
             return await m.client.sendMessage(chatJid, { 
-                text: `❌ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁 𝚃𝙴𝚁𝙼𝙸𝙽𝙰𝚃𝙴𝙳*\n_𝚃𝚑𝚎 𝚜𝚞𝚋𝚜𝚎𝚚𝚞𝚎𝚗𝚝 𝚊𝚞𝚝𝚘-𝚊𝚌𝚝𝚒𝚘𝚗 𝚑𝚊𝚜 𝚋𝚎𝚎𝚗 𝚑𝚊𝚕𝚝𝚎𝚍._`, 
+                text: `❌ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁 𝚃𝙴𝚁𝙼𝙸𝙽𝙰𝚃𝙴𝙳*\n_𝚂𝚝𝚊𝚝𝚞𝚜: 𝙰𝚞𝚝𝚘-𝚙𝚛𝚘𝚌𝚎𝚜𝚜 𝚑𝚊𝚜 𝚋𝚎𝚎𝚗 𝚑𝚊𝚕𝚝𝚎𝚍._`, 
                 edit: oldKey 
             });
-        }
-    }
-
-    if (msg === "codex" || msg === "codex!") {
-        await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting For your orders Sir._");
-    }
-    
-    if (text && text.toUpperCase() === "CODEX SUP!") {
-        let reacts = ["💫", "🥏", "🚀", "🪐", ""]
-        for (let r of reacts) {
-            await m.react(r)
-            await new Promise(res => setTimeout(res, 300));
-        }
-        await m.send("_All System Active And Waiting For Your Executions Sir!_")
-    }
-
-    if (msg.startsWith("codex smd")) {
-        const smdMatch = text.match(/(\d+)(s|m)/i);
-        if (!smdMatch) {
-            await m.send("`[SYNTAX_ERR]`");
-        } else {
-            const delay = smdMatch[2].toLowerCase() === 's' ? parseInt(smdMatch[1]) * 1000 : parseInt(smdMatch[1]) * 60000;
-            const content = text.replace(/codex smd\s+\d+[sm]/i, "").trim();
-            const sent = await m.send(
-                `╔════  𝙲𝙾𝙳𝙴𝚇 𝚂𝙼𝙳 𝚃𝙰𝚂𝙺  ════╗\n` +
-                `║\n` +
-                `║ 𝙼𝚂𝙶: ${content}\n` +
-                `║ 𝙳𝙴𝙻𝙸𝚅𝙴𝚁𝚈: ${smdMatch[1]}${smdMatch[2]}\n` +
-                `║ 𝚂𝚃𝙰𝚃𝚄𝚂: 𝚂𝙴𝙻𝙵-𝙳𝙴𝚂𝚃𝚁𝚄𝙲𝚃 ⏳\n` +
-                `║\n` +
-                `╚══════════════════════╝`
-            );
-            setTimeout(async () => { try { await sent.delete() } catch (e) {} }, delay);
         }
     }
 
@@ -2495,6 +2462,7 @@ Kord({
 
     if (input.startsWith("codex") && (isMuteTrigger || isUnmuteTrigger)) {
         if (!m.isGroup) return await m.reply("*𝙶𝚁𝙾𝚄𝙿𝚂 𝙾𝙽𝙻𝚈 𝚂𝙸𝚁*"); 
+        
         const groupMetadata = await m.client.groupMetadata(chatJid);
         const isAdmin = groupMetadata.participants.find(p => p.id === m.sender && (p.admin || p.isSuperAdmin));
         if (!isAdmin) return await m.reply("🚫 *𝙰𝙳𝙼𝙸𝙽 𝚁𝙴𝚀𝚄𝙸𝚁𝙴𝙳*");
@@ -2508,6 +2476,7 @@ Kord({
 
         if (isAfterCmd) {
             if (!timeMatch) return await m.reply("❓ *𝚄𝚂𝙰𝙶𝙴: codex after 10m mute the group*");
+            
             const amount = parseInt(timeMatch[1]);
             const unit = timeMatch[2].toLowerCase();
             let totalSeconds;
@@ -2515,6 +2484,8 @@ Kord({
                 case 's': totalSeconds = amount; break;
                 case 'm': totalSeconds = amount * 60; break;
                 case 'h': case 'hr': totalSeconds = amount * 3600; break;
+                case 'd': totalSeconds = amount * 86400; break;
+                case 'w': totalSeconds = amount * 604800; break; 
                 default: totalSeconds = amount;
             }
 
@@ -2530,27 +2501,31 @@ Kord({
             const interval = setInterval(async () => {
                 elapsed += 5;
                 let remaining = totalSeconds - elapsed;
+
                 if (remaining <= 30 && !warningSent && totalSeconds > 40) {
                     warningSent = true;
                     await m.client.sendMessage(chatJid, { text: `🔔 *𝙲𝙾𝙳𝙴𝚇 𝙽𝙾𝚃𝙸𝙲𝙴*: 30s left before ${actionTarget.toLowerCase()} group.` });
                 }
+
                 if (remaining <= 0) {
                     clearInterval(interval);
                     delete global.activeTimers[chatJid];
                     await m.client.groupSettingUpdate(chatJid, isMuteTrigger ? "announcement" : "not_announcement");
                     return await m.client.sendMessage(chatJid, { text: `✅ *𝙲𝙾𝙳𝙴𝚇 𝙰𝙵𝚃𝙴𝚁 𝙲𝙾𝙼𝙿𝙻𝙴𝚃𝙴𝙳*\n🔒 𝙶𝚛𝚘𝚞𝚙 𝚒𝚜 𝚗𝚘𝚠 ${isMuteTrigger ? '𝚕𝚘𝚌𝚔𝚎𝚍' : '𝚞𝚗𝚕𝚘𝚌𝚔𝚎𝚍'}.`, edit: key });
                 }
+
                 let filled = Math.floor((elapsed / totalSeconds) * 14);
                 let bar = "█".repeat(Math.min(filled, 14)) + "░".repeat(Math.max(0, 14 - filled));
                 await m.client.sendMessage(chatJid, { text: `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝙰𝙵𝚃𝙴𝚁\n├──────────────────┤\n│  ${bar}\n│  ⏱️  ${remaining}s remaining\n│  📋  ${actionTarget} group...\n╰──────────────────╯\n_𝚁𝚎𝚙𝚕𝚢 '𝚌𝚊𝚗𝚌𝚎𝚕' 𝚝𝚘 𝚜𝚝𝚘𝚙_`, edit: key }).catch(() => { clearInterval(interval); delete global.activeTimers[chatJid]; });
             }, 5000);
             global.activeTimers[chatJid] = { interval, key };
 
-        } else {
+        } 
+        else {
             await m.client.groupSettingUpdate(chatJid, isMuteTrigger ? "announcement" : "not_announcement");
             await m.reply(`✅ *𝙶𝚁𝙾𝚄𝙿 ${isMuteTrigger ? '𝙼𝚄𝚃𝙴𝙳' : '𝚄𝙽𝙼𝚄𝚃𝙴𝙳'} 𝚂𝚄𝙲𝙲𝙴𝚂𝚂𝙵𝚄𝙻 𝚂𝙸𝚁*`);
 
-            if (!timeMatch) return; 
+            if (!timeMatch) return; // No time provided? Just stays muted/unmuted.
 
             const amount = parseInt(timeMatch[1]);
             const unit = timeMatch[2].toLowerCase();
@@ -2565,25 +2540,29 @@ Kord({
             if (global.activeTimers[chatJid]) clearInterval(global.activeTimers[chatJid].interval);
             let elapsed = 0;
             let warningSent = false;
+            const statusLabel = isMuteTrigger ? "𝙼𝚄𝚃𝙴𝙳" : "𝚄𝙽𝙼𝚄𝚃𝙴𝙳";
             const revertText = isMuteTrigger ? "𝚞𝚗𝚖𝚞𝚝𝚒𝚗𝚐" : "𝚖𝚞𝚝𝚒𝚗𝚐";
 
             let { key } = await m.client.sendMessage(chatJid, { 
-                text: `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈\n├──────────────────┤\n│  𝚂𝚃𝙰𝚃𝚄𝚂: ${isMuteTrigger ? '𝙼𝚄𝚃𝙴𝙳' : '𝚄𝙽𝙼𝚄𝚃𝙴𝙳'} ✅\n│  ░░░░░░░░░░░░░░\n│  ⏱️  ${totalSeconds}s left\n│  📋  𝙰𝚞𝚝𝚘-${revertText}...\n╰──────────────────╯\n_𝚁𝚎𝚙𝚕𝚢 '𝚌𝚊𝚗𝚌𝚎𝚕' 𝚝𝚘 𝚜𝚝𝚘𝚙_` 
+                text: `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈\n├──────────────────┤\n│  𝚂𝚃𝙰𝚃𝚄𝚂: ${statusLabel} ✅\n│  ░░░░░░░░░░░░░░\n│  ⏱️  ${totalSeconds}s left\n│  📋  𝙰𝚞𝚝𝚘-${revertText}...\n╰──────────────────╯\n_𝚁𝚎𝚙𝚕𝚢 '𝚌𝚊𝚗𝚌𝚎𝚕' 𝚝𝚘 𝚜𝚝𝚘𝚙_` 
             });
 
             const interval = setInterval(async () => {
                 elapsed += 5;
                 let remaining = totalSeconds - elapsed;
+
                 if (remaining <= 30 && !warningSent && totalSeconds > 40) {
                     warningSent = true;
                     await m.client.sendMessage(chatJid, { text: `🔔 *𝙲𝙾𝙳𝙴𝚇 𝙽𝙾𝚃𝙸𝙲𝙴*: 30s left before auto-${revertText}.` });
                 }
+
                 if (remaining <= 0) {
                     clearInterval(interval);
                     delete global.activeTimers[chatJid];
                     await m.client.groupSettingUpdate(chatJid, isMuteTrigger ? "not_announcement" : "announcement");
-                    return await m.client.sendMessage(chatJid, { text: `✅ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴 𝙴𝚇𝙿𝙸𝚁𝙴𝙳*\n🔄 𝙶𝚛𝚘𝚞𝚙 𝚛𝚎𝚟𝚎𝚛𝚝𝚎𝚍 𝚜𝚞𝚌𝚌𝚎𝚜𝚏𝚞𝚕𝚕𝚢.`, edit: key });
+                    return await m.client.sendMessage(chatJid, { text: `✅ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴 𝙴𝚇𝙿𝙸𝚁𝙴𝙳*\n🔄 𝙶𝚛𝚘𝚞𝚙 𝚛𝚎𝚟𝚎𝚛𝚝𝚎𝚍 𝚜𝚞𝚌𝚌𝚎𝚜𝚜𝚏𝚞𝚕𝚕𝚢.`, edit: key });
                 }
+
                 let filled = Math.floor((elapsed / totalSeconds) * 14);
                 let bar = "█".repeat(Math.min(filled, 14)) + "░".repeat(Math.max(0, 14 - filled));
                 await m.client.sendMessage(chatJid, { text: `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈\n├──────────────────┤\n│  ${bar}\n│  ⏱️  ${remaining}s left\n│  📋  𝙰𝚞𝚝𝚘-${revertText}...\n╰──────────────────╯\n_𝚁𝚎𝚙𝚕𝚢 '𝚌𝚊𝚗𝚌𝚎𝚕' 𝚝𝚘 𝚜𝚝𝚘𝚙_`, edit: key }).catch(() => { clearInterval(interval); delete global.activeTimers[chatJid]; });
@@ -2592,45 +2571,4 @@ Kord({
         }
     }
 
-    if (msg === "codex help") {
-        const uptime = process.uptime();
-        const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60);
-        await m.send(`╔════════════════════╗\n   🚀 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n╚════════════════════╝\n   『 𝚂𝚈𝚂𝚃𝙴𝙼_𝙾𝚅𝙴𝚁𝚅𝙸𝙴𝚆 』\n • 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n • 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖\n────────────────────\n   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n » codex mute the group [time]\n » codex after [time] mute the group\n   『 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 』\n » codex ai\n » codex hack this group\n   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n » codex ping\n » codex smd [time] [msg]\n────────────────────\n   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟹.𝟿.𝟻 ]`);
-    }
-
-    if (input === "codex ping") {
-        const start = Date.now();
-        const { key } = await m.client.sendMessage(chatJid, { text: "🚀 *𝙿𝙸𝙽𝙶𝙸𝙽𝙶...*" });
-        const speed = Date.now() - start;
-        await m.client.sendMessage(chatJid, { text: `*𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳 🚀: ${speed}𝙼𝚂*`, edit: key });
-    }
-
-    if (input === "codex ai") {
-        let { key } = await m.client.sendMessage(chatJid, { text: "⏳ *𝙿𝚁𝙾𝙲𝙴𝚂𝚂𝙸𝙽𝙶...*" });
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        await m.client.sendMessage(chatJid, { text: "✅ *𝚈𝙴𝚂 ?, 𝙰𝙼 𝙻𝙸𝚂𝚃𝙴𝙽𝙸𝙽𝙶 𝚃𝙾 𝚈𝙾𝚄 𝚂𝙸𝚁*", edit: key });
-    }
-
-    if (input === "codex hack this group") {
-        const terms = ["*Initializing Bruteforce*...", "*Bypassing Firewall*...", "*Injecting SQL Payload*...", "*Decrypting SSL Certificates*...", "*Gaining Root Access*...", "*Scraping User Data*...", "*Establishing Backdoor*...", "*Clearing System Logs*..."];
-        let { key } = await m.client.sendMessage(chatJid, { text: `☣️ *𝙸𝙽𝙸𝚃𝙸𝙰𝚃𝙸𝙽𝙶 𝚂𝚈𝚂𝚃𝙴𝙼 𝙱𝚁𝙴𝙰𝙲𝙷...*` });
-        let step = 0;
-        const hackInterval = setInterval(async () => {
-            if (step >= terms.length) {
-                clearInterval(hackInterval);
-                return await m.client.sendMessage(chatJid, { text: `✅ *𝙶𝚁𝙾𝚄𝙿 𝚂𝚄𝙲𝙲𝙴𝚂𝚂𝙵𝚄𝙻𝙻𝚈 𝙷𝙰𝙲𝙺𝙴𝙳*\n\n_Note: This was a simulation for fun._`, edit: key });
-            }
-            let progress = Math.floor(((step + 1) / terms.length) * 10);
-            let bar = "▓".repeat(progress) + "░".repeat(10 - progress);
-            await m.client.sendMessage(chatJid, { text: `⚠️ *𝙲𝙾𝙳𝙴𝚇 𝙷𝙰𝙲𝙺 𝙸𝙽 𝙿𝚁𝙾𝙶𝚁𝙴𝚂𝚂*\n\n[${bar}] ${Math.round(((step + 1) / terms.length) * 100)}%\n\n✨ *STATUS:* _${terms[step]}_`, edit: key }).catch(() => clearInterval(hackInterval));
-            step++;
-        }, 3000);
-    }
-
-  } catch (e) { console.error("Master Codex Error:", e); }
-});
-
-
-                                                                    
-
-              
+    
