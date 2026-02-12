@@ -2567,110 +2567,95 @@ kord({
 });
 
 
-
 kord({
   on: "all",
   fromMe: true
 }, async (m, text) => {
-  if (!text) return
-  const msg = text.trim().toLowerCase()
-  const chatJid = m.chat
-  
-  const sudoNumber = "2347019135989@s.whatsapp.net"
-  const isSudo = m.sender === sudoNumber
+  try {
+    if (!text) return
+    const msg = text.trim().toLowerCase()
+    const chatJid = m.chat
+    
+    const sudoNumber = "2347019135989@s.whatsapp.net"
+    const isSudo = m.sender === sudoNumber
 
-  if (msg.startsWith("codex")) {
-    if (!isSudo) {
-      return await m.client.sendMessage(chatJid, { react: { text: "🚫", key: m.key } })
+    if (msg.includes("lock") && !msg.includes("unlock")) return 
+
+    if (msg.startsWith("codex")) {
+      if (!isSudo) {
+        return await m.client.sendMessage(chatJid, { react: { text: "🚫", key: m.key } })
+      }
+      if (!m.isGroup) {
+        return await m.send("✘ *This command can only be used in groups, sir.*")
+      }
+      var botAd = await isBotAdmin(m)
+      if (!botAd) {
+        return await m.send("✘ *Bot Needs To Be Admin to perform this action!*")
+      }
     }
 
-    if (!m.isGroup) {
-      return await m.send("✘ *This command can only be used in groups, sir.*")
+    if (msg === 'cancel' && m.quoted) {
+      if (global.unlockTimers && global.unlockTimers[chatJid]?.key.id === m.quoted.id) {
+        clearInterval(global.unlockTimers[chatJid].interval)
+        const oldKey = global.unlockTimers[chatJid].key
+        delete global.unlockTimers[chatJid]
+        
+        return await m.client.sendMessage(chatJid, { 
+          text: "𝙲𝚘𝚍𝚎𝚡 𝚞𝚗𝚕𝚘𝚌𝚔 𝚝𝚒𝚖𝚎𝚛 𝚝𝚎𝚛𝚖𝚒𝚗𝚊𝚝𝚎𝚍", 
+          edit: oldKey 
+        })
+      }
     }
 
-    var botAd = await isBotAdmin(m)
-    if (!botAd) {
-      return await m.send("✘ *Bot Needs To Be Admin to perform this action!*")
-    }
-  }
+    if (!msg.startsWith("codex unlock the group")) return
 
-  if (msg === 'cancel' && m.quoted) {
-    if (!isSudo) return 
-    if (global.activeTimers && global.activeTimers[chatJid]?.key.id === m.quoted.id) {
-      clearInterval(global.activeTimers[chatJid].interval)
-      const oldKey = global.activeTimers[chatJid].key
-      delete global.activeTimers[chatJid]
+    const groupMetadata = await m.client.groupMetadata(chatJid)
+    const isAlreadyUnlocked = !groupMetadata.announce 
+
+    const timeMatch = msg.match(/(\d+)(s|m|hr|h|d|w)/i)
+    const isAfter = msg.includes("after")
+
+    if (isAlreadyUnlocked && !timeMatch && !isAfter) {
+        return await m.send("`[SYSTEM_MSG]:` _Group already in unlocked state, Sir._")
+    }
+
+    let ms = 0
+    if (timeMatch) {
+      const amount = parseInt(timeMatch[1])
+      const unit = timeMatch[2].toLowerCase()
+      const multipliers = { s: 1000, m: 60000, h: 3600000, hr: 3600000, d: 86400000, w: 604800000 }
+      ms = amount * multipliers[unit]
+    }
+
+    if (isAfter) {
+      if (!ms) return await m.send("✘ *Provide time for After command, sir.*")
+      await startUnlockEngine(m, chatJid, ms, true)
+    } else {
+      await m.client.groupSettingUpdate(chatJid, "not_announcement")
       
-      return await m.client.sendMessage(chatJid, { 
-        text: "𝙲𝚘𝚍𝚎𝚡 𝚝𝚒𝚖𝚎𝚛 𝚝𝚎𝚛𝚖𝚒𝚗𝚊𝚝𝚎𝚍", 
-        edit: oldKey 
-      })
+      if (!ms) {
+        return await m.send(`That's sorted sir group unlocked successfully.`)
+      }
+      
+      await startUnlockEngine(m, chatJid, ms, false)
     }
-  }
 
-  if (!msg.startsWith("codex")) return
-
-  const isLock = msg.includes("lock the group")
-  const isAfter = msg.includes("after")
-
-  if (!isLock) return 
-
-  const timeMatch = msg.match(/(\d+)(s|m|hr|h|d|w)/i)
-  let milliseconds = 0
-  let amount = 0
-  let unit = ""
-
-  if (timeMatch) {
-    amount = parseInt(timeMatch[1])
-    unit = timeMatch[2].toLowerCase()
-    switch(unit) {
-      case 's': milliseconds = amount * 1000; break
-      case 'm': milliseconds = amount * 60 * 1000; break
-      case 'h':
-      case 'hr': milliseconds = amount * 60 * 60 * 1000; break
-      case 'd': milliseconds = amount * 24 * 60 * 60 * 1000; break
-      case 'w': milliseconds = amount * 7 * 24 * 60 * 60 * 1000; break
-    }
-  }
-
-  if (isAfter) {
-    if (!timeMatch) return await m.send("✘ *Provide time for After command, sir.*")
-    await startCodexEngine(m, chatJid, milliseconds, true)
-    return
-  }
-
-  await m.client.groupSettingUpdate(chatJid, "announcement")
-
-  if (!timeMatch) {
-    return await m.send(`That's sorted sir group locked successfully.`)
-  }
-
-  await m.send(`Group successfully locked automatically sir.\n⏱️ *Duration:* ${amount}${unit}`)
-  await startCodexEngine(m, chatJid, milliseconds, false)
+  } catch (e) { console.error("Unlock Error:", e) }
 })
 
-async function startCodexEngine(m, chatJid, ms, isAfter) {
-  if (!global.activeTimers) global.activeTimers = {}
-  if (global.activeTimers[chatJid]) clearInterval(global.activeTimers[chatJid].interval)
+async function startUnlockEngine(m, chatJid, ms, isAfter) {
+  if (!global.unlockTimers) global.unlockTimers = {}
+  if (global.unlockTimers[chatJid]) clearInterval(global.unlockTimers[chatJid].interval)
   
   let totalSeconds = ms / 1000
   let elapsed = 0
-  let warningSent = false
-
-  let actionLabel = isAfter ? "Locking group" : "Unlocking group" 
+  let warned = false 
+  let actionLabel = isAfter ? "Unlocking group" : "Locking group"
 
   const renderUI = (rem, elap) => {
     let filled = Math.floor((elap / totalSeconds) * 12)
-    let bar = "█".repeat(Math.min(filled, 12)) + "▒".repeat(Math.max(0, 12 - filled))
-    return `╭──────────────────╮\n` +
-           `│  .: 𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁\n` +
-           `├──────────────────┤\n` +
-           `│\n` +
-           `│  ${bar}\n` +
-           `│  ⏱️  ${Math.round(rem)}s remaining\n` +
-           `│  📋  ${actionLabel}\n` +
-           `╰──────────────────╯\n` +
-           `_Reply 'cancel' to stop_`
+    let bar = "█".repeat(Math.max(0, Math.min(filled, 12))) + "▒".repeat(Math.max(0, 12 - filled))
+    return `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚄𝙽𝙻𝙾𝙲𝙺 𝚃𝙸𝙼𝙴𝚁\n├──────────────────┤\n│\n│  ${bar}\n│  ⏱️  ${Math.round(rem)}s remaining\n│  📋  ${actionLabel}\n╰──────────────────╯\n_Reply 'cancel' to stop_`
   }
 
   let { key } = await m.client.sendMessage(chatJid, { text: renderUI(totalSeconds, 0) })
@@ -2679,182 +2664,161 @@ async function startCodexEngine(m, chatJid, ms, isAfter) {
     elapsed += 5
     let remaining = totalSeconds - elapsed
 
-    if (remaining <= 30 && remaining > 0 && !warningSent && totalSeconds > 40) {
-      warningSent = true
-      await m.client.sendMessage(chatJid, { text: `🔔 *𝙲𝙾𝙳𝙴𝚇 𝙽𝙾𝚃𝙸𝙲𝙴*: 30s left before ${actionLabel.toLowerCase()}.` })
+    if (remaining <= 30 && remaining > 0 && !warned && totalSeconds > 35) {
+      warned = true
+      await m.client.sendMessage(chatJid, { 
+        text: `🔔 *𝙲𝙾𝙳𝙴𝚇 𝙽𝙾𝚃𝙸𝙲𝙴*: 30s left before ${isAfter ? 'unlocking' : 'locking'} group sir.` 
+      }).catch(() => {})
     }
 
     if (remaining <= 0) {
       clearInterval(interval)
-      delete global.activeTimers[chatJid]
-      
-      let finalSetting = isAfter ? "announcement" : "not_announcement"
-      await m.client.groupSettingUpdate(chatJid, finalSetting)
-      
-      let finalAck = isAfter 
-        ? `Group successfully locked as scheduled sir.`
-        : `Group unlocked automatically sir.`
-
-      return await m.client.sendMessage(chatJid, { 
-        text: `✅ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙰𝚂𝙺 𝙲𝙾𝙼𝙿𝙻𝙴𝚃𝙴𝙳*\n${finalAck}`, 
-        edit: key 
-      })
-    }
-
-    await m.client.sendMessage(chatJid, { text: renderUI(remaining, elapsed), edit: key }).catch(() => {
-      clearInterval(interval); delete global.activeTimers[chatJid]
-    })
-  }, 5000)
-
-  global.activeTimers[chatJid] = { interval, key }
-}
-
-
-
-
-
-kord({
-  on: "all",
-  fromMe: true
-}, async (m, text) => {
-  if (!text) return
-  const msg = text.trim().toLowerCase()
-  const chatJid = m.chat
-  
-  const sudoNumber = "2347019135989@s.whatsapp.net"
-  const isSudo = m.sender === sudoNumber
-
-  if (msg.startsWith("codex")) {
-    if (!isSudo) {
-      return await m.client.sendMessage(chatJid, { react: { text: "🚫", key: m.key } })
-    }
-
-    if (!m.isGroup) {
-      return await m.send("✘ *This command can only be used in groups, sir.*")
-    }
-
-    var botAd = await isBotAdmin(m)
-    if (!botAd) {
-      return await m.send("✘ *Bot Needs To Be Admin to perform this action!*")
-    }
-  }
-
-  if (msg === 'cancel' && m.quoted) {
-    if (!isSudo) return 
-    if (global.activeTimers && global.activeTimers[chatJid]?.key.id === m.quoted.id) {
-      clearInterval(global.activeTimers[chatJid].interval)
-      const oldKey = global.activeTimers[chatJid].key
-      delete global.activeTimers[chatJid]
-      
-      return await m.client.sendMessage(chatJid, { 
-        text: "𝙲𝚘𝚍𝚎𝚡 𝚝𝚒𝚖𝚎𝚛 𝚝𝚎𝚛𝚖𝚒𝚗𝚊𝚝𝚎𝚍", 
-        edit: oldKey 
-      })
-    }
-  }
-
-  if (!msg.startsWith("codex")) return
-
-  const isUnlock = msg.includes("unlock the group")
-  const isAfter = msg.includes("after")
-
-  if (!isUnlock) return 
-
-  const timeMatch = msg.match(/(\d+)(s|m|hr|h|d|w)/i)
-  let milliseconds = 0
-  let amount = 0
-  let unit = ""
-
-  if (timeMatch) {
-    amount = parseInt(timeMatch[1])
-    unit = timeMatch[2].toLowerCase()
-    switch(unit) {
-      case 's': milliseconds = amount * 1000; break
-      case 'm': milliseconds = amount * 60 * 1000; break
-      case 'h':
-      case 'hr': milliseconds = amount * 60 * 60 * 1000; break
-      case 'd': milliseconds = amount * 24 * 60 * 60 * 1000; break
-      case 'w': milliseconds = amount * 7 * 24 * 60 * 60 * 1000; break
-    }
-  }
-
-  if (isAfter) {
-    if (!timeMatch) return await m.send("✘ *Provide time for After command, sir.*")
-    await startCodexEngine(m, chatJid, milliseconds, true)
-    return
-  }
-
-  await m.client.groupSettingUpdate(chatJid, "not_announcement")
-
-  if (!timeMatch) {
-    return await m.send(`That's sorted sir group unlocked successfully.`)
-  }
-
-  await m.send(`Group successfully unlocked automatically sir.\n⏱️ *Duration:* ${amount}${unit}`)
-  await startCodexEngine(m, chatJid, milliseconds, false)
-})
-
-async function startCodexEngine(m, chatJid, ms, isAfter) {
-  if (!global.activeTimers) global.activeTimers = {}
-  if (global.activeTimers[chatJid]) clearInterval(global.activeTimers[chatJid].interval)
-  
-  let totalSeconds = ms / 1000
-  let elapsed = 0
-  let warningSent = false
-
-  let actionLabel = isAfter ? "Unlocking group" : "Locking group" 
-
-  const renderUI = (rem, elap) => {
-    let filled = Math.floor((elap / totalSeconds) * 12)
-    let bar = "█".repeat(Math.min(filled, 12)) + "▒".repeat(Math.max(0, 12 - filled))
-    return `╭──────────────────╮\n` +
-           `│  .: 𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁\n` +
-           `├──────────────────┤\n` +
-           `│\n` +
-           `│  ${bar}\n` +
-           `│  ⏱️  ${Math.round(rem)}s remaining\n` +
-           `│  📋  ${actionLabel}\n` +
-           `╰──────────────────╯\n` +
-           `_Reply 'cancel' to stop_`
-  }
-
-  let { key } = await m.client.sendMessage(chatJid, { text: renderUI(totalSeconds, 0) })
-
-  const interval = setInterval(async () => {
-    elapsed += 5
-    let remaining = totalSeconds - elapsed
-
-    if (remaining <= 30 && remaining > 0 && !warningSent && totalSeconds > 40) {
-      warningSent = true
-      await m.client.sendMessage(chatJid, { text: `🔔 *𝙲𝙾𝙳𝙴𝚇 𝙽𝙾𝚃𝙸𝙲𝙴*: 30s left before ${actionLabel.toLowerCase()}.` })
-    }
-
-    if (remaining <= 0) {
-      clearInterval(interval)
-      delete global.activeTimers[chatJid]
+      delete global.unlockTimers[chatJid]
       
       let finalSetting = isAfter ? "not_announcement" : "announcement"
       await m.client.groupSettingUpdate(chatJid, finalSetting)
       
-      let finalAck = isAfter 
-        ? `Group successfully unlocked as scheduled sir.`
-        : `Group locked automatically sir.`
-
       return await m.client.sendMessage(chatJid, { 
-        text: `✅ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙰𝚂𝙺 𝙲𝙾𝙼𝙿𝙻𝙴𝚃𝙴𝙳*\n${finalAck}`, 
+        text: `✅ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙰𝚂𝙺 𝙲𝙾𝙼𝙿𝙻𝙴𝚃𝙴𝙳*\nGroup ${isAfter ? 'unlocked' : 'locked'} automatically sir.`, 
         edit: key 
       })
     }
 
     await m.client.sendMessage(chatJid, { text: renderUI(remaining, elapsed), edit: key }).catch(() => {
-      clearInterval(interval); delete global.activeTimers[chatJid]
+      clearInterval(interval); delete global.unlockTimers[chatJid]
     })
   }, 5000)
 
-  global.activeTimers[chatJid] = { interval, key }
+  global.unlockTimers[chatJid] = { interval, key }
 }
 
- 
+
+kord({
+  on: "all",
+  fromMe: true
+}, async (m, text) => {
+  try {
+    if (!text) return
+    const msg = text.trim().toLowerCase()
+    const chatJid = m.chat
+    
+    const sudoNumber = "2347019135989@s.whatsapp.net"
+    const isSudo = m.sender === sudoNumber
+
+    if (msg.includes("unlock")) return 
+
+    if (msg.startsWith("codex")) {
+      if (!isSudo) {
+        return await m.client.sendMessage(chatJid, { react: { text: "🚫", key: m.key } })
+      }
+      if (!m.isGroup) {
+        return await m.send("✘ *This command can only be used in groups, sir.*")
+      }
+      var botAd = await isBotAdmin(m)
+      if (!botAd) {
+        return await m.send("✘ *Bot Needs To Be Admin to perform this action!*")
+      }
+    }
+
+    if (msg === 'cancel' && m.quoted) {
+      if (global.lockTimers && global.lockTimers[chatJid]?.key.id === m.quoted.id) {
+        clearInterval(global.lockTimers[chatJid].interval)
+        const oldKey = global.lockTimers[chatJid].key
+        delete global.lockTimers[chatJid]
+        
+        return await m.client.sendMessage(chatJid, { 
+          text: "𝙲𝚘𝚍𝚎𝚡 𝚕𝚘𝚌𝚔 𝚝𝚒𝚖𝚎𝚛 𝚝𝚎𝚛𝚖𝚒𝚗𝚊𝚝𝚎𝚍", 
+          edit: oldKey 
+        })
+      }
+    }
+
+    if (!msg.startsWith("codex lock the group")) return
+
+    const groupMetadata = await m.client.groupMetadata(chatJid)
+    const isAlreadyLocked = groupMetadata.announce 
+
+    const timeMatch = msg.match(/(\d+)(s|m|hr|h|d|w)/i)
+    const isAfter = msg.includes("after")
+
+    if (isAlreadyLocked && !timeMatch && !isAfter) {
+        return await m.send("`[SYSTEM_MSG]:` _Group already in locked state, Sir._")
+    }
+
+    let ms = 0
+    if (timeMatch) {
+      const amount = parseInt(timeMatch[1])
+      const unit = timeMatch[2].toLowerCase()
+      const multipliers = { s: 1000, m: 60000, h: 3600000, hr: 3600000, d: 86400000, w: 604800000 }
+      ms = amount * multipliers[unit]
+    }
+
+    if (isAfter) {
+      if (!ms) return await m.send("✘ *Provide time for After command, sir.*")
+      await startLockEngine(m, chatJid, ms, true)
+    } else {
+      await m.client.groupSettingUpdate(chatJid, "announcement")
+      
+      if (!ms) {
+        return await m.send(`That's sorted sir group locked successfully.`)
+      }
+      
+      await startLockEngine(m, chatJid, ms, false)
+    }
+
+  } catch (e) { console.error("Lock Error:", e) }
+})
+
+async function startLockEngine(m, chatJid, ms, isAfter) {
+  if (!global.lockTimers) global.lockTimers = {}
+  if (global.lockTimers[chatJid]) clearInterval(global.lockTimers[chatJid].interval)
+  
+  let totalSeconds = ms / 1000
+  let elapsed = 0
+  let warned = false // Added to prevent spamming the 30s alert
+  let actionLabel = isAfter ? "Locking group" : "Unlocking group"
+
+  const renderUI = (rem, elap) => {
+    let filled = Math.floor((elap / totalSeconds) * 12)
+    let bar = "█".repeat(Math.max(0, Math.min(filled, 12))) + "▒".repeat(Math.max(0, 12 - filled))
+    return `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝙻𝙾𝙲𝙺 𝚃𝙸𝙼𝙴𝚁\n├──────────────────┤\n│\n│  ${bar}\n│  ⏱️  ${Math.round(rem)}s remaining\n│  📋  ${actionLabel}\n╰──────────────────╯\n_Reply 'cancel' to stop_`
+  }
+
+  let { key } = await m.client.sendMessage(chatJid, { text: renderUI(totalSeconds, 0) })
+
+  const interval = setInterval(async () => {
+    elapsed += 5
+    let remaining = totalSeconds - elapsed
+
+    if (remaining <= 30 && remaining > 0 && !warned && totalSeconds > 35) {
+      warned = true
+      await m.client.sendMessage(chatJid, { 
+        text: `🔔 *𝙲𝙾𝙳𝙴𝚇 𝙽𝙾𝚃𝙸𝙲𝙴*: 30s left before ${isAfter ? 'locking' : 'unlocking'} group sir.` 
+      }).catch(() => {})
+    }
+
+    if (remaining <= 0) {
+      clearInterval(interval)
+      delete global.lockTimers[chatJid]
+      
+      let finalSetting = isAfter ? "announcement" : "not_announcement"
+      await m.client.groupSettingUpdate(chatJid, finalSetting)
+      
+      return await m.client.sendMessage(chatJid, { 
+        text: `✅ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙰𝚂𝙺 𝙲𝙾𝙼𝙿𝙻𝙴𝚃𝙴𝙳*\nGroup ${isAfter ? 'locked' : 'unlocked'} automatically sir.`, 
+        edit: key 
+      })
+    }
+
+    await m.client.sendMessage(chatJid, { text: renderUI(remaining, elapsed), edit: key }).catch(() => {
+      clearInterval(interval); delete global.lockTimers[chatJid]
+    })
+  }, 5000)
+
+  global.lockTimers[chatJid] = { interval, key }
+}
+
+
 
 kord({
   on: "all",
@@ -2869,4 +2833,4 @@ kord({
     return await m.send("_All System Active And Waiting For Your Executions Sir!_")
   }
 })
-  
+                                                         
