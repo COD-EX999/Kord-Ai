@@ -2501,7 +2501,7 @@ kord({
         const start = Date.now();
         const { key } = await m.client.sendMessage(chatJid, { text: "🚀 *𝙿𝙸𝙽𝙶𝙸𝙽𝙶...*" });
         const speed = Date.now() - start;
-        await m.client.sendMessage(chatJid, { text: `*𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳 🚀: ${speed}𝙼𝚂*`, edit: key });
+        await m.client.sendMessage(chatJid, { text: `*𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳 : 🚀${speed}𝙼𝚂*`, edit: key });
     }
 
     if (input === "codex ai") {
