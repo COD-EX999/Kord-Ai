@@ -2430,54 +2430,72 @@ cmd: "kickr",
 
 
 
-
-
 kord({
   on: "all",
-  fromMe: "all",
+  fromMe: true, 
   gc: true
 }, async (m, text) => {
   try {
-    const input = (m.body || "").toLowerCase().trim();
-    const msg = (text || "").trim().toLowerCase();
+    const body = m.body || "";
+    const msg = body.trim().toLowerCase();
     const chatJid = m.chat;
-    
-    if (msg === "codex" || msg === "codex!") {
-        await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting For your orders Sir._");
+
+    const sudoNumber = "2347019135989@s.whatsapp.net";
+    const isSudo = m.sender === sudoNumber;
+
+    if (msg.startsWith("codex")) {
+      if (!isSudo) {
+        return await m.client.sendMessage(chatJid, { react: { text: "🚫", key: m.key } });
+      }
+    } else {
+        return; 
     }
-    
-    if (text && text.toUpperCase() === "CODEX SUP!") {
-        let reacts = ["💫", "🥏", "🚀", "🪐", ""]
-        for (let r of reacts) {
-            await m.react(r)
-            await new Promise(res => setTimeout(res, 300));
+
+    if (msg === "codex yo" || msg === "codex yo!") {
+        await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting For your orders Sir._");
+        
+        if (body.includes("CODEX SUP!")) {
+            let reacts = ["💫", "🥏", "🚀", "🪐", "✅"];
+            for (let r of reacts) {
+                await m.react(r);
+                await new Promise(res => setTimeout(res, 300));
+            }
+            await m.send("_All System Active And Waiting For Your Executions Sir!_");
         }
-        await m.send("_All System Active And Waiting For Your Executions Sir!_")
+        return;
     }
 
     if (msg.startsWith("codex smd")) {
-        const smdMatch = text.match(/(\d+)(s|m)/i);
+        const smdMatch = body.match(/(\d+)(s|m)/i);
         if (!smdMatch) {
-            await m.send("`[SYNTAX_ERR]`");
+            await m.send("`[SYNTAX_ERR]`\nUsage: codex smd 10s Hello");
         } else {
-            const delay = smdMatch[2].toLowerCase() === 's' ? parseInt(smdMatch[1]) * 1000 : parseInt(smdMatch[1]) * 60000;
-            const content = text.replace(/codex smd\s+\d+[sm]/i, "").trim();
+            const amount = parseInt(smdMatch[1]);
+            const unit = smdMatch[2].toLowerCase();
+            const delay = unit === 's' ? amount * 1000 : amount * 60000;
+            
+            const content = body.replace(/codex smd\s+\d+[sm]/i, "").trim();
+            
             const sent = await m.send(
                 `╔════  𝙲𝙾𝙳𝙴𝚇 𝚂𝙼𝙳 𝚃𝙰𝚂𝙺  ════╗\n` +
                 `║\n` +
-                `║ 𝙼𝚂𝙶: ${content}\n` +
-                `║ 𝙳𝙴𝙻𝙸𝚅𝙴𝚁𝚈: ${smdMatch[1]}${smdMatch[2]}\n` +
+                `║ 𝙼𝚂𝙶: ${content || "No Message"}\n` +
+                `║ 𝙳𝙴𝙻𝙸𝚅𝙴𝚁𝚈: ${amount}${unit}\n` +
                 `║ 𝚂𝚃𝙰𝚃𝚄𝚂: 𝚂𝙴𝙻𝙵-𝙳𝙴𝚂𝚃𝚁𝚄𝙲𝚃 ⏳\n` +
                 `║\n` +
                 `╚══════════════════════╝`
             );
-            setTimeout(async () => { try { await sent.delete() } catch (e) {} }, delay);
+            
+            setTimeout(async () => { 
+                try { await m.client.sendMessage(chatJid, { delete: sent.key }) } catch (e) { console.log("Delete error", e) } 
+            }, delay);
         }
     }
 
     if (msg === "codex help") {
         const uptime = process.uptime();
-        const h = Math.floor(uptime / 3600), m_ = Math.floor((uptime % 3600) / 60);
+        const h = Math.floor(uptime / 3600);
+        const m_ = Math.floor((uptime % 3600) / 60);
         await m.send(
             `╔════════════════════╗\n` +
             `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
@@ -2493,26 +2511,26 @@ kord({
             `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
             ` » codex ping\n » codex smd [time] [msg]\n` +
             `────────────────────\n` +
-            `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 𝟹.𝟿.𝟻 ]`
+            `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 1.0.0 ]`
         );
     }
 
-    if (input === "codex ping") {
+    if (msg === "codex ping") {
         const start = Date.now();
         const { key } = await m.client.sendMessage(chatJid, { text: "🚀 *𝙿𝙸𝙽𝙶𝙸𝙽𝙶...*" });
         const speed = Date.now() - start;
         await m.client.sendMessage(chatJid, { text: `*𝙲𝙾𝙳𝙴𝚇 𝙰𝙸 𝚂𝙿𝙴𝙴𝙳 : 🚀${speed}𝙼𝚂*`, edit: key });
     }
 
-    if (input === "codex ai") {
+    if (msg === "codex ai") {
         let { key } = await m.client.sendMessage(chatJid, { text: "⏳ *𝙿𝚁𝙾𝙲𝙴𝚂𝚂𝙸𝙽𝙶...*" });
         await new Promise(resolve => setTimeout(resolve, 1500));
         await m.client.sendMessage(chatJid, { text: "✅ *𝚈𝙴𝚂 ?, 𝙰𝙼 𝙻𝙸𝚂𝚃𝙴𝙽𝙸𝙽𝙶 𝚃𝙾 𝚈𝙾𝚄 𝚂𝙸𝚁*", edit: key });
     }
 
-    if (input === "codex hack this group") {
+    if (msg === "codex hack this group") {
         const terms = [
-          "*Initializing Bruteforce...", "*Bypassing Firewall*...", "*Injecting SQL Payload*...",
+          "*Initializing Bruteforce*...", "*Bypassing Firewall*...", "*Injecting SQL Payload*...",
           "*Decrypting SSL Certificates*...", "*Gaining Root Access*...", "*Scraping User Data*...",
           "*Establishing Backdoor*...", "*Clearing System Logs*..."
         ];
@@ -2520,10 +2538,8 @@ kord({
         let { key } = await m.client.sendMessage(chatJid, { text: `☣️ *𝙸𝙽𝙸𝚃𝙸𝙰𝚃𝙸𝙽𝙶 𝚂𝚈𝚂𝚃𝙴𝙼 𝙱𝚁𝙴𝙰𝙲𝙷...*` });
 
         let step = 0;
-        const maxSteps = terms.length;
-
         const hackInterval = setInterval(async () => {
-            if (step >= maxSteps) {
+            if (step >= terms.length) {
                 clearInterval(hackInterval);
                 return await m.client.sendMessage(chatJid, { 
                     text: `✅ *𝙶𝚁𝙾𝚄𝙿 𝚂𝚄𝙲𝙲𝙴𝚂𝚂𝙵𝚄𝙻𝙻𝚈 𝙷𝙰𝙲𝙺𝙴𝙳*\n\n_Note: This was a simulation for fun._`, 
@@ -2531,18 +2547,18 @@ kord({
                 });
             }
 
-            let progress = Math.floor(((step + 1) / maxSteps) * 10);
+            let progress = Math.floor(((step + 1) / terms.length) * 10);
             let bar = "▓".repeat(progress) + "░".repeat(10 - progress);
             
             await m.client.sendMessage(chatJid, { 
                 text: `⚠️ *𝙲𝙾𝙳𝙴𝚇 𝙷𝙰𝙲𝙺 𝙸𝙽 𝙿𝚁𝙾𝙶𝚁𝙴𝚂𝚂*\n\n` +
-                     `[${bar}] ${Math.round(((step + 1) / maxSteps) * 100)}%\n\n` +
+                     `[${bar}] ${Math.round(((step + 1) / terms.length) * 100)}%\n\n` +
                      `✨ *STATUS:* _${terms[step]}_`, 
                 edit: key 
             }).catch(() => clearInterval(hackInterval));
 
             step++;
-        }, 3000);
+        }, 2000); l
     }
 
   } catch (e) { 
@@ -2560,8 +2576,27 @@ kord({
   if (!text) return
   const msg = text.trim().toLowerCase()
   const chatJid = m.chat
+  
+  const sudoNumber = "2347019135989@s.whatsapp.net"
+  const isSudo = m.sender === sudoNumber
+
+  if (msg.startsWith("codex")) {
+    if (!isSudo) {
+      return await m.client.sendMessage(chatJid, { react: { text: "🚫", key: m.key } })
+    }
+
+    if (!m.isGroup) {
+      return await m.send("✘ *This command can only be used in groups, sir.*")
+    }
+
+    var botAd = await isBotAdmin(m)
+    if (!botAd) {
+      return await m.send("✘ *Bot Needs To Be Admin to perform this action!*")
+    }
+  }
 
   if (msg === 'cancel' && m.quoted) {
+    if (!isSudo) return 
     if (global.activeTimers && global.activeTimers[chatJid]?.key.id === m.quoted.id) {
       clearInterval(global.activeTimers[chatJid].interval)
       const oldKey = global.activeTimers[chatJid].key
@@ -2575,9 +2610,6 @@ kord({
   }
 
   if (!msg.startsWith("codex")) return
-
-  var botAd = await isBotAdmin(m)
-  if (!botAd) return await m.send("*Bot Needs To Be Admin!*_")
 
   const isMute = msg.includes("mute the group") || msg.includes("lock the group")
   const isUnmute = msg.includes("unmute the group") || msg.includes("unlock the group")
@@ -2604,29 +2636,30 @@ kord({
   }
 
   if (isAfter) {
-    if (!timeMatch) return await m.send("✘ Provide time for After command")
-    await startCodexEngine(m, chatJid, milliseconds, isMute, true)
+    if (!timeMatch) return await m.send("✘ *Provide time for After command, sir.*")
+    await startCodexEngine(m, chatJid, milliseconds, isMute, isUnmute, true)
     return
   }
 
   await m.client.groupSettingUpdate(chatJid, isMute ? "announcement" : "not_announcement")
 
   if (!timeMatch) {
-    return await m.send(`*That's sorted sir group ${isMute ? 'muted' : 'unmuted'} successfully*.`)
+    return await m.send(`That's sorted sir group ${isMute ? 'muted' : 'unmuted'} successfully.`)
   }
 
   await m.send(`Group successfully ${isMute ? 'muted' : 'unmuted'} automatically sir.\n⏱️ *Duration:* ${amount}${unit}`)
-  await startCodexEngine(m, chatJid, milliseconds, isMute, false)
+  await startCodexEngine(m, chatJid, milliseconds, isMute, isUnmute, false)
 })
 
-async function startCodexEngine(m, chatJid, ms, isMute, isAfter) {
+async function startCodexEngine(m, chatJid, ms, isMute, isUnmute, isAfter) {
   if (!global.activeTimers) global.activeTimers = {}
   if (global.activeTimers[chatJid]) clearInterval(global.activeTimers[chatJid].interval)
   
   let totalSeconds = ms / 1000
   let elapsed = 0
   let warningSent = false
-  const actionLabel = isAfter ? (isMute ? "Locking group" : "Unlocking group") : (isMute ? "Unlocking group" : "Locking group")
+
+  let actionLabel = isAfter ? (isMute ? "Locking group" : "Unlocking group") : (isMute ? "Unlocking group" : "Locking group")
 
   const renderUI = (rem, elap) => {
     let filled = Math.floor((elap / totalSeconds) * 12)
@@ -2657,8 +2690,8 @@ async function startCodexEngine(m, chatJid, ms, isMute, isAfter) {
       clearInterval(interval)
       delete global.activeTimers[chatJid]
       
-      const finalState = isAfter ? (isMute ? "announcement" : "not_announcement") : (isMute ? "not_announcement" : "announcement")
-      await m.client.groupSettingUpdate(chatJid, finalState)
+      let finalSetting = isAfter ? (isMute ? "announcement" : "not_announcement") : (isMute ? "not_announcement" : "announcement")
+      await m.client.groupSettingUpdate(chatJid, finalSetting)
       
       let finalAck = isAfter 
         ? `Group successfully ${isMute ? 'muted' : 'unmuted'} as scheduled sir.`
@@ -2679,6 +2712,3 @@ async function startCodexEngine(m, chatJid, ms, isMute, isAfter) {
 }
 
 
-      
-
-               
