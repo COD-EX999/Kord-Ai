@@ -2446,7 +2446,7 @@ kord({
         await m.send("`[SYSTEM_MSG]:` _All protocols initialized. Awaiting For your orders Sir._");
     }
     
-    if (text && text.toUpperCase() === "CODEX!") {
+    if (text && text.toUpperCase() === "CODEX SUP!") {
         let reacts = ["💫", "🥏", "🚀", "🪐", ""]
         for (let r of reacts) {
             await m.react(r)
@@ -2553,139 +2553,132 @@ kord({
 
 
 
-
 kord({
-  cmd: "codex",
-  desc: "Master security with specific dynamic acknowledgements",
-  fromMe: wtype,
-  gc: true,
-  adminOnly: true,
-  type: "group"
-}, async (m, text, cmd) => {
-  try {
-    if (!clientInstance) { clientInstance = m.client }
-    
-    var botAd = await isBotAdmin(m)
-    if (!botAd) return await m.send("*Bot Needs To Be Admin!*_")
-    
-    const chatJid = m.chat
-    const input = (text || "").toLowerCase().trim()
+  on: "all",
+  fromMe: true
+}, async (m, text) => {
+  if (!text) return
+  const msg = text.trim().toLowerCase()
+  const chatJid = m.chat
 
-    if (input === 'cancel' && m.quoted) {
-      if (global.activeTimers && global.activeTimers[chatJid]?.key.id === m.quoted.id) {
-          clearInterval(global.activeTimers[chatJid].interval);
-          const oldKey = global.activeTimers[chatJid].key;
-          delete global.activeTimers[chatJid];
-          
-          return await m.client.sendMessage(chatJid, { 
-              text: `𝙲𝚘𝚍𝚎𝚡 𝚝𝚒𝚖𝚎𝚛 𝚝𝚎𝚛𝚖𝚒𝚗𝚊𝚝𝚎𝚍`, 
-              edit: oldKey 
-          });
-      }
+  if (msg === 'cancel' && m.quoted) {
+    if (global.activeTimers && global.activeTimers[chatJid]?.key.id === m.quoted.id) {
+      clearInterval(global.activeTimers[chatJid].interval)
+      const oldKey = global.activeTimers[chatJid].key
+      delete global.activeTimers[chatJid]
+      
+      return await m.client.sendMessage(chatJid, { 
+        text: "𝙲𝚘𝚍𝚎𝚡 𝚝𝚒𝚖𝚎𝚛 𝚝𝚎𝚛𝚖𝚒𝚗𝚊𝚝𝚎𝚍", 
+        edit: oldKey 
+      })
     }
-
-    const isMute = input.includes("mute the group") || input.includes("lock the group");
-    const isUnmute = input.includes("unmute the group") || input.includes("unlock the group");
-    const isAfter = input.includes("after");
-
-    if (!isMute && !isUnmute) return await m.send("✘ *Usage:* codex mute the group 10m");
-
-    const timeMatch = input.match(/(\d+)(s|m|hr|h|d|w)/i);
-    let milliseconds = 0;
-    if (timeMatch) {
-        const amount = parseInt(timeMatch[1]);
-        const unit = timeMatch[2].toLowerCase();
-        switch(unit) {
-          case 's': milliseconds = amount * 1000; break
-          case 'm': milliseconds = amount * 60 * 1000; break
-          case 'h':
-          case 'hr': milliseconds = amount * 60 * 60 * 1000; break
-          case 'd': milliseconds = amount * 24 * 60 * 60 * 1000; break
-          case 'w': milliseconds = amount * 7 * 24 * 60 * 60 * 1000; break
-        }
-    }
-
-    if (isAfter) {
-        if (!timeMatch) return await m.send("✘ Provide time for After command");
-        await startCodexEngine(m, chatJid, milliseconds, isMute, true);
-        return;
-    }
-
-    await m.client.groupSettingUpdate(chatJid, isMute ? "announcement" : "not_announcement");
-    
-    if (!timeMatch) {
-        return await m.send(`That's sorted sir group ${isMute ? 'muted' : 'unmuted'} successfully.`);
-    }
-
-    await m.send(`Group successfully ${isMute ? 'muted' : 'unmuted'} automatically sir.\n⏱️ *Duration:* ${timeMatch[1]}${timeMatch[2]}`);
-    await startCodexEngine(m, chatJid, milliseconds, isMute, false);
-
-  } catch (e) {
-    console.log("codex cmd error", e)
-    return await m.sendErr(e)
   }
-});
+
+  if (!msg.startsWith("codex")) return
+
+  var botAd = await isBotAdmin(m)
+  if (!botAd) return await m.send("*Bot Needs To Be Admin!*_")
+
+  const isMute = msg.includes("mute the group") || msg.includes("lock the group")
+  const isUnmute = msg.includes("unmute the group") || msg.includes("unlock the group")
+  const isAfter = msg.includes("after")
+
+  if (!isMute && !isUnmute) return
+
+  const timeMatch = msg.match(/(\d+)(s|m|hr|h|d|w)/i)
+  let milliseconds = 0
+  let amount = 0
+  let unit = ""
+
+  if (timeMatch) {
+    amount = parseInt(timeMatch[1])
+    unit = timeMatch[2].toLowerCase()
+    switch(unit) {
+      case 's': milliseconds = amount * 1000; break
+      case 'm': milliseconds = amount * 60 * 1000; break
+      case 'h':
+      case 'hr': milliseconds = amount * 60 * 60 * 1000; break
+      case 'd': milliseconds = amount * 24 * 60 * 60 * 1000; break
+      case 'w': milliseconds = amount * 7 * 24 * 60 * 60 * 1000; break
+    }
+  }
+
+  if (isAfter) {
+    if (!timeMatch) return await m.send("✘ Provide time for After command")
+    await startCodexEngine(m, chatJid, milliseconds, isMute, true)
+    return
+  }
+
+  await m.client.groupSettingUpdate(chatJid, isMute ? "announcement" : "not_announcement")
+
+  if (!timeMatch) {
+    return await m.send(`*That's sorted sir group ${isMute ? 'muted' : 'unmuted'} successfully*.`)
+  }
+
+  await m.send(`Group successfully ${isMute ? 'muted' : 'unmuted'} automatically sir.\n⏱️ *Duration:* ${amount}${unit}`)
+  await startCodexEngine(m, chatJid, milliseconds, isMute, false)
+})
 
 async function startCodexEngine(m, chatJid, ms, isMute, isAfter) {
-    if (!global.activeTimers) global.activeTimers = {};
-    if (global.activeTimers[chatJid]) clearInterval(global.activeTimers[chatJid].interval);
-    
-    let totalSeconds = ms / 1000;
-    let elapsed = 0;
-    let warningSent = false;
-    const actionLabel = isAfter ? (isMute ? "Locking group" : "Unlocking group") : (isMute ? "Unlocking group" : "Locking group");
+  if (!global.activeTimers) global.activeTimers = {}
+  if (global.activeTimers[chatJid]) clearInterval(global.activeTimers[chatJid].interval)
+  
+  let totalSeconds = ms / 1000
+  let elapsed = 0
+  let warningSent = false
+  const actionLabel = isAfter ? (isMute ? "Locking group" : "Unlocking group") : (isMute ? "Unlocking group" : "Locking group")
 
-    const renderUI = (rem, elap) => {
-        let filled = Math.floor((elap / totalSeconds) * 12);
-        let bar = "█".repeat(Math.min(filled, 12)) + "▒".repeat(Math.max(0, 12 - filled));
-        return `╭──────────────────╮\n` +
-               `│  .: 𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁\n` +
-               `├──────────────────┤\n` +
-               `│\n` +
-               `│  ${bar}\n` +
-               `│  ⏱️  ${Math.round(rem)}s remaining\n` +
-               `│  📋  ${actionLabel}\n` +
-               `╰──────────────────╯\n` +
-               `_Reply 'cancel' to stop_`;
-    };
+  const renderUI = (rem, elap) => {
+    let filled = Math.floor((elap / totalSeconds) * 12)
+    let bar = "█".repeat(Math.min(filled, 12)) + "▒".repeat(Math.max(0, 12 - filled))
+    return `╭──────────────────╮\n` +
+           `│  .: 𝙲𝙾𝙳𝙴𝚇 𝚃𝙸𝙼𝙴𝚁\n` +
+           `├──────────────────┤\n` +
+           `│\n` +
+           `│  ${bar}\n` +
+           `│  ⏱️  ${Math.round(rem)}s remaining\n` +
+           `│  📋  ${actionLabel}\n` +
+           `╰──────────────────╯\n` +
+           `_Reply 'cancel' to stop_`
+  }
 
-    let { key } = await m.client.sendMessage(chatJid, { text: renderUI(totalSeconds, 0) });
+  let { key } = await m.client.sendMessage(chatJid, { text: renderUI(totalSeconds, 0) })
 
-    const interval = setInterval(async () => {
-        elapsed += 5;
-        let remaining = totalSeconds - elapsed;
+  const interval = setInterval(async () => {
+    elapsed += 5
+    let remaining = totalSeconds - elapsed
 
-        if (remaining <= 30 && remaining > 0 && !warningSent && totalSeconds > 40) {
-            warningSent = true;
-            await m.client.sendMessage(chatJid, { text: `🔔 *𝙲𝙾𝙳𝙴𝚇 𝙽𝙾𝚃𝙸𝙲𝙴*: 30s left before ${actionLabel.toLowerCase()}.` });
-        }
+    if (remaining <= 30 && remaining > 0 && !warningSent && totalSeconds > 40) {
+      warningSent = true
+      await m.client.sendMessage(chatJid, { text: `🔔 *𝙲𝙾𝙳𝙴𝚇 𝙽𝙾𝚃𝙸𝙲𝙴*: 30s left before ${actionLabel.toLowerCase()}.` })
+    }
 
-        if (remaining <= 0) {
-            clearInterval(interval);
-            delete global.activeTimers[chatJid];
-            
-            const finalState = isAfter ? (isMute ? "announcement" : "not_announcement") : (isMute ? "not_announcement" : "announcement");
-            await m.client.groupSettingUpdate(chatJid, finalState);
-            
-            let finalAck = isAfter 
-                ? `Group successfully ${isMute ? 'muted' : 'unmuted'} as scheduled sir.`
-                : `Group ${isMute ? 'unmuted' : 'muted'} automatically sir.`;
+    if (remaining <= 0) {
+      clearInterval(interval)
+      delete global.activeTimers[chatJid]
+      
+      const finalState = isAfter ? (isMute ? "announcement" : "not_announcement") : (isMute ? "not_announcement" : "announcement")
+      await m.client.groupSettingUpdate(chatJid, finalState)
+      
+      let finalAck = isAfter 
+        ? `Group successfully ${isMute ? 'muted' : 'unmuted'} as scheduled sir.`
+        : `Group ${isMute ? 'unmuted' : 'muted'} automatically sir.`
 
-            return await m.client.sendMessage(chatJid, { 
-                text: `✅ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙰𝚂𝙺 𝙲𝙾𝙼𝙿𝙻𝙴𝚃𝙴𝙳*\n${finalAck}`, 
-                edit: key 
-            });
-        }
+      return await m.client.sendMessage(chatJid, { 
+        text: `✅ *𝙲𝙾𝙳𝙴𝚇 𝚃𝙰𝚂𝙺 𝙲𝙾𝙼𝙿𝙻𝙴𝚃𝙴𝙳*\n${finalAck}`, 
+        edit: key 
+      })
+    }
 
-        await m.client.sendMessage(chatJid, { text: renderUI(remaining, elapsed), edit: key }).catch(() => {
-            clearInterval(interval); delete global.activeTimers[chatJid];
-        });
-    }, 5000);
+    await m.client.sendMessage(chatJid, { text: renderUI(remaining, elapsed), edit: key }).catch(() => {
+      clearInterval(interval); delete global.activeTimers[chatJid]
+    })
+  }, 5000)
 
-    global.activeTimers[chatJid] = { interval, key };
+  global.activeTimers[chatJid] = { interval, key }
 }
 
 
+      
 
-
-    
+               
