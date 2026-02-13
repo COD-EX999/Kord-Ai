@@ -2581,7 +2581,7 @@ kord({
 
     if (msg.includes("lock") && !msg.includes("unlock")) return 
 
-    if (msg.startsWith("codex")) {
+    if (msg.startsWith("codexxx")) {
       if (!isSudo) {
         return await m.client.sendMessage(chatJid, { react: { text: "🚫", key: m.key } })
       }
@@ -2699,7 +2699,7 @@ kord({
 
     if (msg.includes("unlock")) return 
 
-    if (msg.startsWith("codex")) {
+    if (msg.startsWith("codexxx")) {
       if (!isSudo) {
         return await m.client.sendMessage(chatJid, { react: { text: "🚫", key: m.key } })
       }
@@ -2817,3 +2817,56 @@ kord({
   }
 })
                                                          
+
+
+
+kord({
+  on: "all",
+  fromMe: true
+}, async (m, text) => {
+  try {
+    if (!text) return
+    const msg = text.trim().toLowerCase()
+    
+    if (!msg.includes("codex") || (!msg.includes("remind") && !msg.includes("remember"))) return
+
+    const timeMatch = msg.match(/(\d+)(s|m|hr|h|d|w)/i)
+    
+    let ms;
+    let timeLabel;
+
+    if (timeMatch) {
+      const amount = parseInt(timeMatch[1])
+      const unit = timeMatch[2].toLowerCase()
+      const multipliers = { s: 1000, m: 60000, h: 3600000, hr: 3600000, d: 86400000, w: 604800000 }
+      ms = amount * multipliers[unit]
+      timeLabel = `${amount}${unit}`
+    } else {
+      ms = 300000 
+      timeLabel = "5m (Standard Protocol)"
+    }
+
+    let task = ""
+    if (msg.includes(" to ")) task = text.split(/ to /i)[1].trim()
+    else if (msg.includes(" remember ")) task = text.split(/ remember /i)[1].trim()
+    else if (msg.includes(" remind me ")) task = text.split(/ remind me /i)[1].trim()
+    else task = "execute the pending system command"
+
+    await m.client.sendMessage(m.chat, { 
+      text: `╭──────────────────╮\n│  .: 𝙼𝙴𝙼𝙾𝚁𝚈 𝙻𝙾𝙲𝙺𝙴𝙳 :.\n├──────────────────┤\n│\n│  𝚃𝚊𝚜𝚔: ${task.toUpperCase()}\n│  𝙸𝚗𝚝𝚎𝚛𝚟𝚊𝚕: ${timeLabel}\n│\n╰──────────────────╯` 
+    })
+
+    setTimeout(async () => {
+      const reminderBox = `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝙱𝚁𝙸𝙴𝙵\n├──────────────────┤\n│\n│  𝚂𝚒𝚛, 𝚝𝚑𝚎 𝚜𝚢𝚜𝚝𝚎𝚖 𝚑𝚊𝚜 \n│  𝚛𝚎𝚝𝚛𝚒𝚎𝚟𝚎𝚍 𝚊 𝚕𝚘𝚐𝚐𝚎𝚍 𝚝𝚊𝚜𝚔:\n│\n│  👉 *${task.toUpperCase()}*\n│\n│  𝙿𝚕𝚎𝚊𝚜𝚎 𝚎𝚡𝚎𝚌𝚞𝚝𝚎 𝚝𝚑𝚒𝚜 \n│  𝚗𝚘𝚠 𝚝𝚘 𝚖𝚊𝚒𝚗𝚝𝚊𝚒𝚗 \n│  𝚜𝚎𝚌𝚞𝚛𝚒𝚝𝚢 𝚙𝚛𝚘𝚝𝚘𝚌𝚘𝚕𝚜.\n│\n╰──────────────────╯`
+      
+      await m.client.sendMessage(m.chat, { 
+        text: reminderBox,
+        mentions: [m.sender] 
+      })
+    }, ms)
+
+  } catch (e) { console.error("Codex Memory Error:", e) }
+})
+
+
+
