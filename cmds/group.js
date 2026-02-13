@@ -2818,11 +2818,9 @@ kord({
 })
                                                          
 
-
-
 kord({
   on: "all",
-  fromMe: true
+  fromMe: true 
 }, async (m, text) => {
   try {
     if (!text) return
@@ -2830,8 +2828,16 @@ kord({
     
     if (!msg.includes("codex") || (!msg.includes("remind") && !msg.includes("remember"))) return
 
-    const timeMatch = msg.match(/(\d+)(s|m|hr|h|d|w)/i)
+    const sudoUsers = ["2347019135989@s.whatsapp.net"]; 
+    const isSudo = sudoUsers.includes(m.sender) || m.fromMe;
     
+    if (!isSudo) {
+      return await m.client.sendMessage(m.chat, { 
+        react: { text: "🚫", key: m.key } 
+      })
+    }
+    
+    const timeMatch = msg.match(/(\d+)(s|m|hr|h|d|w)/i)
     let ms;
     let timeLabel;
 
@@ -2852,12 +2858,12 @@ kord({
     else if (msg.includes(" remind me ")) task = text.split(/ remind me /i)[1].trim()
     else task = "execute the pending system command"
 
-    await m.client.sendMessage(m.chat, { 
-      text: `╭──────────────────╮\n│  .: 𝙼𝙴𝙼𝙾𝚁𝚈 𝙻𝙾𝙲𝙺𝙴𝙳 :.\n├──────────────────┤\n│\n│  𝚃𝚊𝚜𝚔: ${task.toUpperCase()}\n│  𝙸𝚗𝚝𝚎𝚛𝚟𝚊𝚕: ${timeLabel}\n│\n╰──────────────────╯` 
+ m.client.sendMessage(m.chat, { 
+      text: `╭──────────────────╮\n│  .: 𝙼𝙴𝙼𝙾𝚁𝚈 𝙻𝙾𝙲𝙺𝙴𝙳 🔐:.\n├──────────────────┤\n│\n│  𝙰𝚄𝚃𝙷𝙾𝚁𝙸𝚃𝚈: ✞ 𝙲𝙾𝙳𝙴𝚇 ✞\n│  𝚃𝚊𝚜𝚔: ${task.toUpperCase()}\n│  𝙸𝚗𝚝𝚎𝚛𝚟𝚊𝚕: ${timeLabel}\n│\n╰──────────────────╯` 
     })
 
     setTimeout(async () => {
-      const reminderBox = `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈 𝙱𝚁𝙸𝙴𝙵\n├──────────────────┤\n│\n│  𝚂𝚒𝚛, 𝚝𝚑𝚎 𝚜𝚢𝚜𝚝𝚎𝚖 𝚑𝚊𝚜 \n│  𝚛𝚎𝚝𝚛𝚒𝚎𝚟𝚎𝚍 𝚊 𝚕𝚘𝚐𝚐𝚎𝚍 𝚝𝚊𝚜𝚔:\n│\n│  👉 *${task.toUpperCase()}*\n│\n│  𝙿𝚕𝚎𝚊𝚜𝚎 𝚎𝚡𝚎𝚌𝚞𝚝𝚎 𝚝𝚑𝚒𝚜 \n│  𝚗𝚘𝚠 𝚝𝚘 𝚖𝚊𝚒𝚗𝚝𝚊𝚒𝚗 \n│  𝚜𝚎𝚌𝚞𝚛𝚒𝚝𝚢 𝚙𝚛𝚘𝚝𝚘𝚌𝚘𝚕𝚜.\n│\n╰──────────────────╯`
+      const reminderBox = `╭──────────────────╮\n│  .: 𝙲𝙾𝙳𝙴𝚇 𝚁𝙴𝙼𝙸𝙽𝙳𝙴𝚁 📢🔔 :.\n├──────────────────┤\n│\n│  𝚂𝚒𝚛, 𝚝𝚑𝚎 𝚜𝚢𝚜𝚝𝚎𝚖 𝚑𝚊𝚜 \n│  𝚛𝚎𝚝𝚛𝚒𝚎𝚟𝚎𝚍 𝚊 𝚕𝚘𝚐𝚐𝚎𝚍 𝚝𝚊𝚜𝚔:\n│\n│  👉 *${task.toUpperCase()}*\n│\n│  𝙿𝚕𝚎𝚊𝚜𝚎 𝚎𝚡𝚎𝚌𝚞𝚝𝚎 𝚝𝚑𝚒𝚜 \n│  𝚗𝚘𝚠 𝚝𝚘 𝚖𝚊𝚒𝚗𝚝𝚊𝚒𝚗 \n│  𝚜𝚎𝚌𝚞𝚛𝚒𝚝𝚢 𝚙𝚛𝚘𝚝𝚘𝚌𝚘𝚕𝚜.\n│\n╰──────────────────╯`
       
       await m.client.sendMessage(m.chat, { 
         text: reminderBox,
@@ -2865,8 +2871,10 @@ kord({
       })
     }, ms)
 
-  } catch (e) { console.error("Codex Memory Error:", e) }
+  } catch (e) { console.error("Codex Sudo Error:", e) }
 })
 
 
 
+
+      
