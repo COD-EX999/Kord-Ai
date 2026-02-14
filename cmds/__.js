@@ -171,22 +171,22 @@ Kord({
         `║╰───────────────◆\n` +
         `╚══════════════════❒\n` +
         `╔══════════════════❒\n` +
-        `║  CODEX LOCK [Time]\n` +
-        `║  CODEX UNLOCK [Time]\n` +
-        `║  CODEX REMINDER\n` +
-        `║  CODEX PING\n` +
-        `║  CODEX AFTER\n` +
-        `║  CODEX SMD\n` +
-        `║  CODEX HACK\n` +
-        `║  CODEX AI RESPONDER\n` +
-        `║  CODEX YO\n` +
-        `║  CODEX!\n` +
-        `║  CODEX LOCK\n` +
-        `║  CODEX UNLOCK\n` +
-        `║  UPTIME: ${h}h ${m_}m\n` +
-        `║  HOST COMING SOON\n` +
-        `║  OTHER CMDS COMING SOON\n` +
-        `║  DEVELOPED BY ⁨✞CODEX✞\n` +
+        `║ ⿻ CODEX LOCK [Time]\n` +
+        `║ ⿻ CODEX UNLOCK [Time]\n` +
+        `║ ⿻ CODEX REMINDER\n` +
+        `║ ⿻ CODEX PING\n` +
+        `║ ⿻ CODEX AFTER\n` +
+        `║ ⿻ CODEX SMD\n` +
+        `║ ⿻ CODEX HACK\n` +
+        `║ ⿻ CODEX AI RESPONDER\n` +
+        `║ ⿻ CODEX YO\n` +
+        `║ ⿻ CODEX!\n` +
+        `║ ⿻ CODEX LOCK\n` +
+        `║ ⿻ CODEX UNLOCK\n` +
+        `║ ⿻ UPTIME: ${h}h ${m_}m\n` +
+        `║ ⿻ HOST COMING SOON\n` +
+        `║ ⿻ OTHER CMDS COMING SOON\n` +
+        `║ ⿻ DEVELOPED BY CODEX\n` +
         `╚══════════════════❒`
     );
   }
