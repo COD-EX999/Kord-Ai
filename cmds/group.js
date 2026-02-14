@@ -2505,30 +2505,36 @@ if (msg === "codex interface") {
         `╚══════════════════❒\n` +
         `╔═══〔❍CODEX AI❍═══❒\n` +
         `║╭───────────────◆\n` +
+        `║│ ❍UPTIME❍ ${h}h ${m_}m\n` + 
+        `║╰───────────────◆\n` +
+        `╚══════════════════❒\n` +
+        `╔═══〔❍CODEX AI❍═══❒\n` +
+        `║╭───────────────◆\n` +
         `║│ ❍CODEX AI MENU❍ \n` +
         `║╰───────────────◆\n` +
         `╚══════════════════❒\n` +
         `╔══════════════════❒\n` +
-        `║ ⿻ CODEX LOCK [Time]\n` +
-        `║ ⿻ CODEX UNLOCK [Time]\n` +
-        `║ ⿻ CODEX REMINDER\n` +
-        `║ ⿻ CODEX PING\n` +
-        `║ ⿻ CODEX AFTER\n` +
-        `║ ⿻ CODEX SMD\n` +
-        `║ ⿻ CODEX HACK\n` +
-        `║ ⿻ CODEX AI RESPONDER\n` +
-        `║ ⿻ CODEX YO\n` +
-        `║ ⿻ CODEX!\n` +
-        `║ ⿻ CODEX LOCK\n` +
-        `║ ⿻ CODEX UNLOCK\n` +
-        `║ ⿻ UPTIME: ${h}h ${m_}m\n` +
-        `║ ⿻ HOST COMING SOON\n` +
-        `║ ⿻ OTHER CMDS COMING SOON\n` +
-        `║ ⿻ FOUNDED BY ⁨✞CODEX✞\n` +
+        `║╭───────────────◆\n` +
+        `║│⿻ CODEX LOCK [Time]\n` +
+        `║│ ⿻ CODEX UNLOCK [Time]\n` +
+        `║│ ⿻ CODEX REMINDER\n` +
+        `║│ ⿻ CODEX PING\n` +
+        `║│ ⿻ CODEX AFTER\n` +
+        `║│ ⿻ CODEX SMD\n` +
+        `║│ ⿻ CODEX HACK\n` +
+        `║│ ⿻ CODEX AI RESPONDER\n` +
+        `║│ ⿻ CODEX YO\n` +
+        `║│ ⿻ CODEX!\n` +
+        `║│ ⿻ CODEX LOCK\n` +
+        `║│ ⿻ CODEX UNLOCK\n` +
+        `║│ ⿻ HOST COMING SOON\n` +
+        `║│ ⿻ OTHER CMDS COMING SOON\n` +
+        `║│ ⿻ FOUNDED BY CODEX\n` +
+        `║╰───────────────◆\n` +
         `╚══════════════════❒`
     );
 }
-
+    
     if (msg === "codex ping") {
         const start = Date.now();
         const { key } = await m.client.sendMessage(chatJid, { text: "🚀 *𝙿𝙸𝙽𝙶𝙸𝙽𝙶...*" });
