@@ -144,3 +144,50 @@ ${formattedCmds}
     return await m.sendErr(e)
   }
 })
+
+
+Kord({
+  on: "all",
+  fromMe: true
+}, async (m, text) => {
+  if (!text) return
+
+  const msg = text.trim().toLowerCase()
+
+  if (msg === "codex help") {
+    const uptime = process.uptime();
+    const h = Math.floor(uptime / 3600);
+    const m_ = Math.floor((uptime % 3600) / 60);
+
+    return await m.send(
+        `╔═══〔❍CODEX AI❍═══❒\n` +
+        `║╭───────────────◆\n` +
+        `║│ ❍VERSION❍ 1.1.0\n` +
+        `║╰───────────────◆\n` +
+        `╚══════════════════❒\n` +
+        `╔═══〔❍CODEX AI❍═══❒\n` +
+        `║╭───────────────◆\n` +
+        `║│ ❍CODEX AI MENU❍ \n` +
+        `║╰───────────────◆\n` +
+        `╚══════════════════❒\n` +
+        `╔══════════════════❒\n` +
+        `║ ⿻ CODEX LOCK [Time]\n` +
+        `║ ⿻ CODEX UNLOCK [Time]\n` +
+        `║ ⿻ CODEX REMINDER\n` +
+        `║ ⿻ CODEX PING\n` +
+        `║ ⿻ CODEX AFTER\n` +
+        `║ ⿻ CODEX SMD\n` +
+        `║ ⿻ CODEX HACK\n` +
+        `║ ⿻ CODEX AI RESPONDER\n` +
+        `║ ⿻ CODEX YO\n` +
+        `║ ⿻ CODEX!\n` +
+        `║ ⿻ CODEX LOCK\n` +
+        `║ ⿻ CODEX UNLOCK\n` +
+        `║ ⿻ UPTIME: ${h}h ${m_}m\n` +
+        `║ ⿻ HOST COMING SOON\n` +
+        `║ ⿻ OTHER CMDS COMING SOON\n` +
+        `║ ⿻ DEVELOPED BY ⁨✞CODEX✞\n` +
+        `╚══════════════════❒`
+    );
+  }
+})
