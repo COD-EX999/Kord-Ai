@@ -2522,7 +2522,7 @@ kord({
 `║ ⿻ CODEX UNLOCK\n` + 
 `║ ⿻ HOST COMING SOON\n` + 
 `║ ⿻ OTHER CMDS COMING SOON\n` + 
-`║ ⿻ FOUNDED AND DEVELOPED BY ⁨✞CODEX✞⁩\n` + ⁩
+`║ ⿻ FOUNDED BY CODEX ⁩\n` + ⁩
 `╚══════════════════❒\n` +
         );
     }
