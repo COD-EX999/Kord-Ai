@@ -2497,21 +2497,33 @@ kord({
         const h = Math.floor(uptime / 3600);
         const m_ = Math.floor((uptime % 3600) / 60);
         await m.send(
-            `╔════════════════════╗\n` +
-            `   🚀 𝙲𝙾𝙳𝙴𝚇 𝙸𝙽𝚃𝙴𝚁𝙵𝙰𝙲𝙴 📡\n` +
-            `╚════════════════════╝\n` +
-            `   『 𝚂𝚈𝚂𝚃𝙴𝙼_𝙾𝚅𝙴𝚁𝚅𝙸𝙴𝚆 』\n` +
-            ` • 𝚂𝚃𝙰𝚃𝚄𝚂: 𝙾𝙿𝙴𝚁𝙰𝚃𝙸𝙾𝙽𝙰𝙻\n` +
-            ` • 𝚄𝙿𝚃𝙸𝙼𝙴: ${h}𝚑 ${m_}𝚖\n` +
-            `────────────────────\n` +
-            `   『 𝚂𝙴𝙲𝚄𝚁𝙸𝚃𝚈_𝙷𝚄𝙱 』\n` +
-            ` » codex mute/lock\n » codex after [time] lock\n` +
-            `   『 𝙸𝙽𝚃𝙴𝙻𝙻𝙸𝙶𝙴𝙽𝙲𝙴 』\n` +
-            ` » codex ai\n » codex hack this group\n` +
-            `   『 𝙳𝙸𝙰𝙶𝙽𝙾𝚂𝚃𝙸𝙲𝚂 』\n` +
-            ` » codex ping\n » codex smd [time] [msg]\n` +
-            `────────────────────\n` +
-            `   [ 𝚅𝙴𝚁𝚂𝙸𝙾𝙽 : 1.0.0 ]`
+            `╔═══〔❍CODEX AI❍═══❒\n` +
+`║╭───────────────◆\n` +
+`║│ ❍VERSION❍ 1.1.0\n` +
+`║╰───────────────◆\n` +
+`╚══════════════════❒\n` +
+`╔═══〔❍CODEX AI❍═══❒\n` +
+`║╭───────────────◆\n` +
+`║│ ❍CODEX AI MENU❍ \n` +
+`║╰───────────────◆\n` +
+`╚══════════════════❒\n` +
+`╔══════════════════❒\n` +
+`║ ⿻ CODEX LOCK [Time]\n` +
+`║ ⿻ CODEX UNOLCK [Time]\n` +
+`║ ⿻ CODEX REMINDER\n` + 
+`║ ⿻ CODEX PING\n` +
+`║ ⿻ CODEX AFTER\n` + 
+`║ ⿻ CODEX SMD\n` +
+`║ ⿻ CODEX HACK\n` + 
+`║ ⿻ CODEX AI RESPONDER\n` +
+`║ ⿻ CODEX YO\n` +
+`║ ⿻ CODEX!\n` +
+`║ ⿻ CODEX LOCK\n` +
+`║ ⿻ CODEX UNLOCK\n` + 
+`║ ⿻ HOST COMING SOON\n` + 
+`║ ⿻ OTHER CMDS COMING SOON\n` + 
+`║ ⿻ DEVELOPED AND FOUNDED BY ⁨✞CODEX✞\n` + ⁩
+`╚══════════════════❒\n` +
         );
     }
 
