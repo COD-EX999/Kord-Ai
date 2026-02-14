@@ -2497,33 +2497,33 @@ kord({
         const h = Math.floor(uptime / 3600);
         const m_ = Math.floor((uptime % 3600) / 60);
         await m.send(
-            `╔═══〔❍CODEX AI❍═══❒\n` +
-`║╭───────────────◆\n` +
-`║│ ❍VERSION❍ 1.1.0\n` +
-`║╰───────────────◆\n` +
-`╚══════════════════❒\n` +
-`╔═══〔❍CODEX AI❍═══❒\n` +
-`║╭───────────────◆\n` +
-`║│ ❍CODEX AI MENU❍ \n` +
-`║╰───────────────◆\n` +
-`╚══════════════════❒\n` +
-`╔══════════════════❒\n` +
-`║ ⿻ CODEX LOCK [Time]\n` +
-`║ ⿻ CODEX UNOLCK [Time]\n` +
-`║ ⿻ CODEX REMINDER\n` + 
-`║ ⿻ CODEX PING\n` +
-`║ ⿻ CODEX AFTER\n` + 
-`║ ⿻ CODEX SMD\n` +
-`║ ⿻ CODEX HACK\n` + 
-`║ ⿻ CODEX AI RESPONDER\n` +
-`║ ⿻ CODEX YO\n` +
-`║ ⿻ CODEX!\n` +
-`║ ⿻ CODEX LOCK\n` +
-`║ ⿻ CODEX UNLOCK\n` + 
-`║ ⿻ HOST COMING SOON\n` + 
-`║ ⿻ OTHER CMDS COMING SOON\n` + 
-`║ ⿻ FOUNDED BY CODEX ⁩\n` + ⁩
-`╚══════════════════❒\n` +
+            ╔═══〔❍CODEX AI❍═══❒
+║╭───────────────◆
+║│ ❍VERSION❍ 1.1.0
+║╰───────────────◆
+╚══════════════════❒
+╔═══〔❍CODEX AI❍═══❒
+║╭───────────────◆
+║│ ❍CODEX AI MENU❍ 
+║╰───────────────◆
+╚══════════════════❒
+╔══════════════════❒
+║ ⿻ CODEX LOCK [Time]
+║ ⿻ CODEX UNOLCK [Time]
+║ ⿻ CODEX REMINDER
+║ ⿻ CODEX PING
+║ ⿻ CODEX AFTER
+║ ⿻ CODEX SMD
+║ ⿻ CODEX HACK
+║ ⿻ CODEX AI RESPONDER
+║ ⿻ CODEX YO
+║ ⿻ CODEX!
+║ ⿻ CODEX LOCK
+║ ⿻ CODEX UNLOCK
+║ ⿻ HOST COMING SOON
+║ ⿻ OTHER CMDS COMING SOON
+║ ⿻ DEVELOPED AND FOUNDED BY ⁨CODEX ⁩
+╚══════════════════❒
         );
     }
 
